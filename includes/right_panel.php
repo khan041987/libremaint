@@ -1,0 +1,180 @@
+<?php 
+?>
+
+    <!-- Right Panel -->
+
+    <div id="right-panel" class="right-panel">
+
+        
+        <header id="header" class="header">
+
+            <div class="header-menu">
+
+                <div class="col-sm-7">
+                    <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
+                    <div class="header-left">
+               <!--          <button class="search-trigger"><i class="fa fa-search"></i></button>
+                        
+                          <div class="form-inline">
+                           <form class="search-form">
+                                <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search" name="search">
+                                <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
+                            </form>
+                        </div>
+  -->                      
+<?php 
+if ($_SESSION['user_level']<4 && IOT_SUPPORT){
+$SQL="SELECT users_assets FROM users WHERE user_id=".$_SESSION['user_id'];
+$row=$dba->getRow($SQL);
+$users_assets=json_decode($row['users_assets'], true);
+if (!empty($users_assets))
+{
+$SQL="SELECT * FROM received_messages LEFT JOIN iot_sensors ON received_messages.sensor_id=iot_sensors.sensor_id WHERE 1=1";
+$SQL.=" AND main_asset_id IN (";
+$need_a_comma=false;
+foreach ($users_assets as $key=>$value){
+if ($need_a_comma)
+$SQL.=",";
+$need_a_comma=true;
+$SQL.=$value;
+
+}
+$SQL.=")";
+
+$SQL.=" AND message_type>2";
+$SQL.=" AND user_id_who_checked=0";
+$result=$dba->Select($SQL);
+$not_number=$dba->affectedRows();
+
+                           
+
+?>
+                        
+                        <div class="dropdown for-notification">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-bell">
+<?php
+                                echo '<span class="count bg-danger">'.$not_number.'</span>';
+?>
+                                </i>
+                                
+
+</button>
+                            <div class="dropdown-menu" aria-labelledby="notification">
+<?php                               
+echo '<p class="red">'.gettext('You have ').$not_number.gettext(' notification').'</p>';
+if ($not_number>0){
+foreach ($result as $row){
+$SQL="SELECT message_".$lang." FROM messages WHERE message_id=".(int) $row["received_message"];
+    $row1=$dba->getRow($SQL);
+
+echo '<a class="dropdown-item media bg-flat-color-1" href="#">';
+                                echo '<i class="fa fa-check"></i><p>';
+                                $n="";
+                foreach (get_whole_path("asset",$row['asset_id'],1) as $k){
+                if ($n=="") // the first element is the main asset_id -> ignore it
+                $n=" ";
+                else
+                $n.=$k."-><wbr>";}
+
+                if ($n!="")
+                echo substr($n,0,-7).': '.$row1['message_'.$lang];
+                                
+                                echo '</p></a>';
+
+}
+}
+?>                           </div>
+                        </div>
+<?php 
+}
+}
+
+if (OPERATOR_NOTIFICATIONS_SUPPORT && $_SESSION['user_level']<3){
+$SQL="SELECT count(notification_id) as count FROM notifications WHERE  notification_status=1";
+$row=$dba->getRow($SQL);
+
+?>
+                        <div class="dropdown for-message">
+                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                id="message"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="ti-email"></i>
+                                <span class="count bg-primary"><?php echo $row['count']; ?></span>
+                            </button>
+                            
+                        </div>
+                    
+ <?php
+ }
+if ($req_page=="stock"){
+echo "<script src=\"".INCLUDES_LOC."luhn.js\"></script>\n";
+
+ echo gettext("Product id").": <INPUT TYPE='text' autocomplete='off' name='prod_id' id='prod_id' VALUE='";
+
+if (isset($_GET['product_id'])){
+echo luhn($_GET['product_id']);
+}
+echo "' SIZE='3' onKeyPress=\"this.onkeydown=function(e){
+    if(e.keyCode==13){
+    event.preventDefault();
+if (Validate(this.value))
+location.href='index.php?page=stock&product_id='+(this.value).substring(0,this.value.length-1);
+else
+alert ('".gettext("Wrong number! Check it!")."');
+   return false; 
+    }
+}\">";
+
+}
+?>                   
+                </div></div>
+
+                <div class="col-sm-5">
+                    <div class="user-area dropdown float-right">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <?php
+                            if (is_user_working($_SESSION['user_id']))
+                            {
+                            send_telegram_messages();
+                            echo "<strong>".gettext("Logged as:")." ".$_SESSION['username']."</strong>";
+                            }
+                            else
+                            echo gettext("Logged as:")." ".$_SESSION['username'];?>
+                        </a>
+
+                        <div class="user-menu dropdown-menu">
+                            <a class="nav-link" href="#"><i class="fa fa-user"></i> My Profile</a>
+
+                            <a class="nav-link" href="#"><i class="fa fa-user"></i> Notifications <span class="count">13</span></a>
+
+                            <a class="nav-link" href="index.php?page=settings"><i class="fa fa-cog"></i> <?php echo gettext("Change password");?></a>
+
+                            <?php echo "<a class=\"nav-link\" href=\"".URL."index.php?logout\"><i class=\"fa fa-power-off\"></i> Logout</a>";?>
+                        </div>
+                    </div>
+                    <div class="language-select dropdown" id="language-select">
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
+                            <i class="flag-icon flag-icon-<?php if ($lang=="en") echo "us"; else echo $lang;?>"></i>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="language">
+                            <div class="dropdown-item">
+                              <a href="index.php?lang=hu"><span class="flag-icon flag-icon-hu"></span></a>
+                            </div>
+                            
+                            <div class="dropdown-item">
+                              <a href="index.php?lang=en"><i class="flag-icon flag-icon-us"></i></a>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </header><!-- /header -->
+        <!-- Header-->
+<?php
+
+
+?>
