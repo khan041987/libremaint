@@ -108,7 +108,7 @@ $html.='<tr><td width="20">'.++$i.'</td><td><strong>'.get_product_name_from_id($
 $total+=round($row['workhour'],1);
 }
 }
-$html.='<tr><td width="20"></td><td><strong>Összesen:</strong></td><td width="60" style="text-align:right">'.$total.' '.gettext('hours').'</td></tr>';
+$html.='<tr><td width="20"></td><td><strong>'.gettext("Total").':</strong></td><td width="60" style="text-align:right">'.$total.' '.gettext('hours').'</td></tr>';
 
 $html.='</table>';
 $pdf->writeHTML($html, true, false, false, false, '');

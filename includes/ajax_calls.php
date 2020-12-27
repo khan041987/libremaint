@@ -1401,7 +1401,7 @@ echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"doc
 echo "<span aria-hidden=\"true\">×</span>\n</button>";
 $unit=get_quantity_unit_from_product_id($_GET['param2']);
     $SQL="SELECT stock_movement_id, to_partner_id,from_partner_id,workorder_id,from_stock_location_id,to_stock_location_id,stock_movement_quantity,product_id,from_asset_id,to_asset_id,stock_movement_time FROM stock_movements WHERE product_id='".(int) $_GET['param2']."'";
-    
+   $SQL.=" ORDER BY stock_movement_time DESC"; 
     if (LM_DEBUG)
             error_log($SQL,0);
     $result=$dba->Select($SQL);

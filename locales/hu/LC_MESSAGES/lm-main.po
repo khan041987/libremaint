@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Libremaint\n"
-"POT-Creation-Date: 2020-12-27 09:07+0100\n"
-"PO-Revision-Date: 2020-12-27 09:15+0100\n"
+"POT-Creation-Date: 2020-12-27 10:20+0100\n"
+"PO-Revision-Date: 2020-12-27 10:20+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu_HU\n"
@@ -1438,6 +1438,10 @@ msgstr "Vagyontárgy"
 #: includes/pdf_create/work_stat_by_assets.php:94
 msgid "Workhours"
 msgstr "Munkaórák száma"
+
+#: includes/pdf_create/work_stat_by_assets.php:111
+msgid "Total"
+msgstr "Összesen:"
 
 #: includes/pdf_create/work_stat_by_assets.php:111
 #: includes/work_stat_query.php:81 includes/work_stat_query.php:93

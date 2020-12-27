@@ -377,7 +377,7 @@ if ($_SESSION['only_in_stock']==1)
 $SQL.=" AND stock_quantity>0";
 
 if ($_SESSION['only_in_stock']==2)
-$SQL.=" AND stock_quantity<=min_stock_quantity AND stock_quantity>0";
+$SQL.=" AND stock_quantity<=min_stock_quantity AND min_stock_quantity>0";
 
 
 $SQL.=" ORDER BY product_type_".$lang;
@@ -398,10 +398,10 @@ foreach ($result as $row)
 {
     $from++;
     echo "<tr";
-    if ($row['stock_quantity']<$row['min_stock_quantity'])
-    echo " style=\"background-color:'red'\"";
-    else if ($row['stock_quantity']==$row['min_stock_quantity'] && $row['min_stock_quantity']>0) 
-    echo " style=\"background-color:'pink'\"";
+    if ($row['min_stock_quantity']>0 && $row['stock_quantity']<$row['min_stock_quantity'])
+    echo " class=\"bg-flat-color-4\"";
+    else if ($row['min_stock_quantity']>0 && $row['stock_quantity']==$row['min_stock_quantity']) 
+    echo " class=\"bg-flat-color-3\"";
     echo ">\n";
     echo "<td>\n";
     
