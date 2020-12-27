@@ -358,7 +358,7 @@ echo gettext("pc");
                         <h4 class="mb-0">
                             <span class="count">
 <?php 
-$SQL="SELECT count(workorder_work_id) as count FROM workorder_works WHERE workorder_user_id=".$SESSION['user_id'];
+$SQL="SELECT count(workorder_work_id) as count FROM workorder_works WHERE workorder_works.deleted<>1 AND workorder_user_id=".$SESSION['user_id'];
 $row=$dba->getRow($SQL);
 echo (int) $row['count']." ";
 if ($row['count']>1)
@@ -394,7 +394,7 @@ echo gettext("pc");
 <?php
 //$SQL="select SUM(TIME_TO_SEC(workorder_work_end_time  - workorder_work_start_time)/3600) as workhour, priority FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE `workorder_work_end_time` >now() - INTERVAL 30 day GROUP BY priority ORDER BY workhour DESC" ; 
 
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, priority FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE `workorder_work_end_time` >now() - INTERVAL 30 day GROUP BY priority ORDER BY workhour DESC" ; 
+$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, priority FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND `workorder_work_end_time` >now() - INTERVAL 30 day GROUP BY priority ORDER BY workhour DESC" ; 
 
 
 
@@ -451,7 +451,7 @@ new Chart(document.getElementById("pie-chart2"), {
 <?php
 //$SQL="select SUM(TIME_TO_SEC(workorder_work_end_time  - workorder_work_start_time)/3600) as workhour, request_type FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE `workorder_work_end_time` >now() - INTERVAL 30 day GROUP BY request_type ORDER BY workhour DESC" ; 
 
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, request_type FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE `workorder_work_end_time` >(now() - INTERVAL 30 day) GROUP BY request_type ORDER BY workhour DESC" ; 
+$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, request_type FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND `workorder_work_end_time` >(now() - INTERVAL 30 day) GROUP BY request_type ORDER BY workhour DESC" ; 
 $result=$dba->Select($SQL);
 
 ?>
@@ -507,7 +507,7 @@ new Chart(document.getElementById("pie-chart3"), {
 <?php
 //$SQL="select SUM(TIME_TO_SEC(workorder_work_end_time  - workorder_work_start_time)/3600) as workhour, main_asset_id FROM workorder_works WHERE `workorder_work_end_time` >now() - INTERVAL 30 day GROUP BY main_asset_id ORDER BY workhour DESC" ; 
 
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, main_asset_id FROM workorder_works WHERE `workorder_work_end_time` >now() - INTERVAL 30 day GROUP BY main_asset_id ORDER BY workhour DESC" ; 
+$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, main_asset_id FROM workorder_works WHERE workorder_works.deleted<>1 AND `workorder_work_end_time` >now() - INTERVAL 30 day GROUP BY main_asset_id ORDER BY workhour DESC" ; 
 
 
 $result=$dba->Select($SQL);

@@ -26,7 +26,32 @@ echo "','".URL."index.php','ajax_button');";
 <div id='for_ajaxcall'>
 </div>
 <?php
-
+if (isset($_GET['delete']) && isset($_SESSION['DELETE_WORK']) && is_it_valid_submit()){
+$SQL="SELECT workorders.workorder_id,workorder_user_id,workrequest_id FROM workorders LEFT JOIN workorder_works ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_work_id=".(int) $_GET['workorder_work_id'];
+$row=$dba->getRow($SQL);
+if (LM_DEBUG)
+        error_log($SQL,0);
+        
+if ($row['workorder_user_id']==$_SESSION['user_id'] || $_SESSION['user_level']<3)
+    {
+    $SQL="UPDATE workorder_works SET deleted=1 WHERE workorder_work_id=".(int) $_GET['workorder_work_id'];
+    $dba->Query($SQL);
+    
+    if (LM_DEBUG)
+        error_log($SQL,0);
+    
+    check_workorder_to_close($row['workorder_id']);
+    
+    if ($row['workrequest_id']>0){
+    $SQL="SELECT workorder_user_id,workorder_work_end_time FROM workorder_works WHERE workrequest_id=".$row['workrequest_id']." AND workorder_works.deleted<>1 ORDER BY workorder_work_end_time DESC LIMIT 0,1";
+    $row1=$dba->getRow($SQL);
+    $SQL="UPDATE workrequests SET last_ready_date='".$row1['workorder_work_end_time']."', last_ready_user_id=".$row1['workorder_user_id']." WHERE workrequest_id=".$row['workrequest_id'];
+            $dba->Query($SQL);
+    if (LM_DEBUG)
+        error_log($SQL,0);
+    }
+    }
+}
 
 if (isset($_POST['page']) && isset($_POST['modify']) && isset($_POST["workorder_work"]) && isset($_SESSION['MODIFY_WORK']) && is_it_valid_submit()){// add/modify work form 
 
@@ -93,7 +118,7 @@ echo "<div class=\"card\">";
         if (isset($_GET['new']))        
         echo "<strong>".gettext("Add activity")."</strong>\n";
         
-        $SQL="SELECT sum(TIME_TO_SEC(workorder_worktime))/3600 as sum_work FROM workorder_works WHERE workorder_id=".(int) $_GET["workorder_id"]." GROUP BY workorder_id";
+        $SQL="SELECT sum(TIME_TO_SEC(workorder_worktime))/3600 as sum_work FROM workorder_works WHERE workorder_works.deleted<>1 AND workorder_id=".(int) $_GET["workorder_id"]." GROUP BY workorder_id";
         $row=$dba->getRow($SQL);
         if (isset($row['sum_work']) && $row['sum_work']>0)
         echo "<p><strong>".gettext("Working hours by this time:")." ".round($row['sum_work'],1)." ".gettext("hours")."</strong></p>";
@@ -333,7 +358,8 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
        echo "<button type=\"submit\" id='submit_button' class=\"btn btn-primary btn-sm\">";
     echo "<i class=\"fa fa-dot-circle-o\"></i>";
     echo gettext("Submit");
-    echo " </button>\n";}
+    echo " </button>\n";
+    }
       //<button type=\"submit\" id='submit_button' class=\"btn btn-primary btn-sm\">
       echo "</div>\n";
     
@@ -357,7 +383,7 @@ echo "</script>\n";
 
 if (isset($_SESSION['SEE_WORKS']))
 {
-$SQL="SELECT workorders.workorder_id,workorder_user_id,workorder_work,workorder_work_start_time,workorder_work_end_time,workorder,workorder_short FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorders.asset_id =".$asset_id." ORDER BY workorder_work_end_time DESC LIMIT 0,5";
+$SQL="SELECT workorders.workorder_id,workorder_user_id,workorder_work,workorder_work_start_time,workorder_work_end_time,workorder,workorder_short FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND workorders.asset_id =".$asset_id." ORDER BY workorder_work_end_time DESC LIMIT 0,5";
 
 $result=$dba->Select($SQL);
 if ($dba->affectedRows()>0){
@@ -485,7 +511,7 @@ echo "<th>".gettext("Work")."</th><th></th></tr>";
 echo "</thead>";
 echo "<tbody>";
 
-$SQL="SELECT workorder_works.workorder_id,workorder_works.workorder_status, workorder_work_id,workorder_works.main_asset_id,workorder_works.asset_id,workorder_work_start_time,workorder_work_end_time,workorder_work,workorder_works.workorder_user_id,workorder_works.workorder_partner_id,workorder_short FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE 1=1";
+$SQL="SELECT workorder_works.workorder_id,workorder_works.workorder_status, workorder_work_id,workorder_works.main_asset_id,workorder_works.asset_id,workorder_work_start_time,workorder_work_end_time,workorder_work,workorder_works.workorder_user_id,workorder_works.workorder_partner_id,workorder_short FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1";
 
 if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>=0)
 $SQL.=" AND workorder_works.main_asset_id='".$_SESSION['main_asset_id']."'";
@@ -527,6 +553,14 @@ foreach ($result as $row){
          }
          if (isset($_SESSION['TAKE_PRODUCT_FROM_STOCK']))
                         echo "<a href=\"javascript:ajax_call('product_to_workorder','','','','".$row["workorder_id"]."','".URL."index.php','for_ajaxcall')\" title=\"".gettext("Product to workorder")."\"> <i class=\"fa fa-cart-plus\" style='color:red'></i></a> ";
+          
+        if (isset($_SESSION["DELETE_WORK"]) && (($row['workorder_user_id']==$_SESSION['user_id'] && $allow_to_modify_date>$now) || $_SESSION['user_level']<3) ){
+         echo "<a href=\"javascript:
+         var a=confirm('".gettext("You are about to delete a work. Are you sure?")."');
+                if (a==true)
+         location.href='index.php?page=works&delete=1&workorder_work_id=".$row['workorder_work_id']."&valid=".$_SESSION['tit_id']."'\"><i class=\"fa fa-trash\"></i></a>";
+         
+         }              
              
 echo "</div></td>";
 echo "<td>".date("Y.m.d H:i", strtotime($row['workorder_work_start_time']))."</td>";

@@ -21,7 +21,7 @@ else
 $SQL.=" FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id";
 if ($asset_vs_product==1)
 $SQL.=" LEFT JOIN assets ON assets.asset_id=workorder_works.main_asset_id";
-$SQL.=" WHERE 1=1";
+$SQL.=" WHERE workorder_works.deleted<>1";
 
 if ($request_type>0)
 $SQL.=" AND request_type=".$request_type;

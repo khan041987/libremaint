@@ -821,7 +821,7 @@ if ($workorder_id>0 ){
                 {
                     if ($all_employees_have_finished==true && strstr($key,"employee_id") && $value==1 )
                     {
-                    $SQL="SELECT workorder_status,workorder_work_end_time from workorder_works WHERE workorder_user_id=".(int) substr($key,11)." AND workorder_id=".$workorder_id." ORDER BY workorder_work_end_time DESC LIMIT 1";
+                    $SQL="SELECT workorder_status,workorder_work_end_time from workorder_works WHERE workorder_works.deleted<>1 AND workorder_user_id=".(int) substr($key,11)." AND workorder_id=".$workorder_id." ORDER BY workorder_work_end_time DESC LIMIT 1";
                     $row1=$dba->getRow($SQL);
                     if (!isset($latest_activity_time) || $row1['workorder_work_end_time']>$latest_activity_time)
                     $latest_activity_time=$row1['workorder_work_end_time'];
@@ -833,7 +833,7 @@ if ($workorder_id>0 ){
                     $all_employees_have_finished=false;
                     }
                    if ($all_employees_have_finished==true && $key=='workorder_partner_id' && $value>0) { 
-                    $SQL="SELECT workorder_status from workorder_works WHERE workorder_partner_id='".$value."' AND workorder_id=".$workorder_id."  ORDER BY workorder_work_end_time DESC LIMIT 1";
+                    $SQL="SELECT workorder_status from workorder_works WHERE workorder_works.deleted<>1 AND workorder_partner_id='".$value."' AND workorder_id=".$workorder_id."  ORDER BY workorder_work_end_time DESC LIMIT 1";
                     $row1=$dba->getRow($SQL);
                     if (5!=$row1['workorder_status'])
                     $all_employees_have_finished=false;
@@ -1169,7 +1169,7 @@ else {
 function is_it_valid_worktime_period($start_time,$end_time,$user_id,$workorder_id):bool{
 global $dba;
 
-$SQL="SELECT count(*)=0 as valid FROM workorder_works WHERE (workorder_work_start_time<'".$end_time."') ";
+$SQL="SELECT count(*)=0 as valid FROM workorder_works WHERE workorder_works.deleted<>1 AND (workorder_work_start_time<'".$end_time."') ";
 $SQL.="AND (workorder_work_end_time >'".$start_time."') AND workorder_user_id=".$user_id;
 if ($workorder_id>0)
 $SQL.=" AND workorder_id<>".$workorder_id;
@@ -1187,7 +1187,7 @@ global $dba;
 
 if ($workrequest_id>0)
     {
-    $SQL="SELECT workorder_work_end_time, workorder_user_id FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_status=5 AND workrequest_id=".$workrequest_id." ORDER BY workorder_work_end_time DESC LIMIT 0,1";
+    $SQL="SELECT workorder_work_end_time, workorder_user_id FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND workorder_status=5 AND workrequest_id=".$workrequest_id." ORDER BY workorder_work_end_time DESC LIMIT 0,1";
     $row=$dba->getRow($SQL);
     if (!empty($row['workorder_work_end_time']))
     {

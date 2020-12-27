@@ -89,7 +89,7 @@ else
 $request_type=0;
 
 $pdf->writeHTML($html, true, false, true, false, '');
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, asset_name_".$lang." FROM workorder_works LEFT JOIN assets ON workorder_works.main_asset_id=assets.asset_id WHERE DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorder_works.asset_id>0 GROUP BY main_asset_id ORDER BY workhour DESC" ; 
+$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, asset_name_".$lang." FROM workorder_works LEFT JOIN assets ON workorder_works.main_asset_id=assets.asset_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorder_works.asset_id>0 GROUP BY main_asset_id ORDER BY workhour DESC" ; 
 $result=$dba->Select($SQL);
 $html='<table border="0" cellspacing="2" cellpadding="2"><thead><tr><td width="20"></td><td><strong>'.gettext("Asset name").'</strong></td><td width="60" style="text-align:right"><strong>'.gettext("Workhours").'</strong></td></tr></thead>';
 $i=0;
@@ -100,7 +100,7 @@ $html.='<tr><td width="20">'.++$i.'</td><td><strong>'.$row['asset_name_'.$lang].
 $total+=round($row['workhour'],1);
 }
 }
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, product_id_to_refurbish FROM workorder_works LEFT JOIN workorders ON workorder_works.workorder_id=workorders.workorder_id WHERE DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorders.product_id_to_refurbish>0 GROUP BY product_id_to_refurbish ORDER BY workhour DESC" ; 
+$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, product_id_to_refurbish FROM workorder_works LEFT JOIN workorders ON workorder_works.workorder_id=workorders.workorder_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorders.product_id_to_refurbish>0 GROUP BY product_id_to_refurbish ORDER BY workhour DESC" ; 
 $result=$dba->Select($SQL);
 if ($dba->affectedRows()>0){
 foreach ($result as $row){
