@@ -1,5 +1,9 @@
 /config/for_install
 /images/logo2.png
 /config/lm-config.php
-/
+/assets/**
 /config/lm-settings.php
+/includes/access_query.php
+lm-debug.log
+
+
