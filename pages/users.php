@@ -1,6 +1,29 @@
 
 <?php
-if (isset($_POST['firstname']) && is_it_valid_submit() && isset($_SESSION['ADD_USER'])){//username | firstname | surname | user_phone | user_email             | user_level
+if (isset($_POST['modify']) && is_it_valid_submit() && isset($_SESSION['MODIFY_USER'])){
+$SQL="UPDATE users SET";
+$SQL.=" username='".$dba->escapeStr($_POST['username'])."',";
+$SQL.=" firstname='".$dba->escapeStr($_POST['firstname'])."',";
+$SQL.=" surname='".$dba->escapeStr($_POST['surname'])."',";
+$SQL.=" user_phone='".$dba->escapeStr($_POST['user_phone'])."',";
+$SQL.=" user_email='".$dba->escapeStr($_POST['user_email'])."',";
+$SQL.=" user_level=".(int) $_POST['user_level'].",";
+$SQL.=" user_parent_id=".(int) $_POST['user_parent_id'].",";
+$SQL.=" lang='".$dba->escapeStr($_POST['user_lang'])."',";
+$SQL.=" user_created=NOW();";
+
+
+if ($dba->Query($SQL)){
+lm_info(gettext("The user's data has been modified."));
+}
+
+}
+
+
+
+
+
+if (isset($_POST['new']) && isset($_POST['firstname']) && is_it_valid_submit() && isset($_SESSION['ADD_USER'])){//username | firstname | surname | user_phone | user_email             | user_level
 if (!isset($_SESSION['ADD_USER']))
 lm_die(gettext("You have no permission!"));
 
@@ -12,16 +35,16 @@ $SQL.="'".$dba->escapeStr($_POST['user_phone'])."',";
 $SQL.="'".$dba->escapeStr($_POST['user_email'])."',";
 $SQL.=(int) $_POST['user_level'].",";
 $SQL.=(int) $_POST['user_parent_id'].",";
-$SQL.="'".$dba->escapeStr($_POST['user_lang'])."',";
+$SQL.="'".$dba->escapeStr($_POST['lang'])."',";
 $SQL.="NOW(),";
 $SQL.="'".password_hash($_POST['username'],PASSWORD_DEFAULT)."',1)";
 
 
 if ($dba->Query($SQL)){
-
+$user_id=$dba->insertedId();
         if ($_POST['user_level']<3)
         {
-        $user_id=$dba->insertedId();
+        
         $SQL=" select column_name from information_schema.columns where table_schema = 'libremaint' and table_name='users' and column_type = 'bit(1)'";
         $result=$dba->Select($SQL);
         foreach($result as $row){
@@ -32,12 +55,12 @@ if ($dba->Query($SQL)){
 
         echo "<div class=\"card\">".gettext("The new user has been saved.")."</div>";
         //we need new column for this user in workorders table
-            
+            /*
             $SQL="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='workorders' AND COLUMN_NAME LIKE 'employee_id%'";
             $result=$dba->Select($SQL);
             $i=$dba->affectedRows();
-         
-            $SQL="ALTER TABLE workorders add column employee_id".++$i." tinyint(2) UNSIGNED not null default 0 AFTER employee_id".--$i;
+         */
+            $SQL="ALTER TABLE workorders add column employee_id".$user_id." tinyint(2) UNSIGNED not null default 0 AFTER employee_id".--$user_id;
             if(!$dba->Query($SQL)) 
             lm_info(gettext("Failed to create new field ").$SQL."\n ".$dba->err_msg);
         }
@@ -128,7 +151,7 @@ $users_assets=json_decode($_POST["users_assets_json"],true);
 
 }
 
-else if (isset($_POST['user_id']) && isset($_POST["action"]) && $_POST["action"]=='users_entry_points' && is_it_valid_submit()){// modify user's assets
+else if (isset($_POST['user_id']) && ENTRY_ACCESS_CONTROL && isset($_POST["action"]) && $_POST["action"]=='users_entry_points' && is_it_valid_submit()){// modify user's assets
 if (!isset($_SESSION['MODIFY_USER']))
 lm_die(gettext("You have no permission!"));
 
@@ -176,17 +199,29 @@ $users_entry_points=json_decode($_POST["users_entry_points_json"],true);
 
 
 
-if (isset($_GET["new"]) ){
+if (isset($_GET["new"]) || (isset($_GET["modify"]))){
 ?>
 <div class="card">
 <div class="card-header">
-<strong><?php echo gettext("New user");?></strong>
+<strong><?php 
+if (isset($_GET["new"]))
+echo gettext("New user");
+else{
+$SQL="SELECT * FROM users WHERE user_id=".(int) $_SESSION['user_id'];
+$row_mod=$dba->getRow($SQL);
+if (empty($row_mod))
+lm_die(gettext('Something went wrong...'));
+echo gettext("Modify user");
+
+}
+
+?></strong>
 </div><?php //card header ?>
 <div class="card-body card-block">
 <form action="index.php" id="user_form" method="post" enctype="multipart/form-data" class="form-horizontal">
 
 <?php
-if (!isset($_SESSION['ADD_USER']))
+if (!isset($_SESSION['ADD_USER']) || !isset($_SESSION['MODIFY_USER']))
 lm_die(gettext("You have no permission!"));
     echo "<div class=\"row form-group\">";
     echo "<div class=\"col col-md-2\"><label for=\"user_parent_id\" class=\" form-control-label\">".gettext("Report to:")."</label></div>";
@@ -200,11 +235,18 @@ lm_die(gettext("You have no permission!"));
     $result=$dba->Select($SQL);
     echo "<option value=\"0\">".gettext("Please select")."</option>\n";
     foreach ($result as $row){
-    if (FIRSTNAME_IS_FIRST)
-    echo "<option value=\"".$row["user_id"]."\">".$row["firstname"]." ".$row["surname"]."</option>\n";
-    else
-    echo "<option value=\"".$row["user_id"]."\">".$row["surname"]." ".$row["firstname"]."</option>\n";
-
+            if (FIRSTNAME_IS_FIRST){
+            echo "<option value=\"".$row["user_id"]."\" ";
+                    if(isset($_GET["modify"]) && $row_mod['user_parent_id']==$row['user_id'])
+                        echo "selected";
+            echo ">".$row["firstname"]." ".$row["surname"]."</option>\n";
+            }
+            else{
+            echo "<option value=\"".$row["user_id"]."\" ";
+                if(isset($_GET["modify"]) && $row_mod['user_parent_id']==$row['user_id'])
+                    echo "selected";
+            echo ">".$row["surname"]." ".$row["firstname"]."</option>\n";
+            }
     }
     echo "</select></div></div>";
   
@@ -220,7 +262,10 @@ lm_die(gettext("You have no permission!"));
     $result=$dba->Select($SQL);
     echo "<option value=\"\">".gettext("Please select")."</option>\n";
     foreach ($result as $row){
-    echo "<option value=\"".$row["user_level_id"]."\">".$row["user_level_".$lang]."</option>\n";
+    echo "<option value=\"".$row["user_level_id"]."\" ";
+    if (isset($_GET['modify']) && $row_mod['user_level']==$row['user_level_id'])
+    echo "selected";
+    echo ">".$row["user_level_".$lang]."</option>\n";
    
     }
     echo "</select></div></div>";
@@ -229,50 +274,72 @@ lm_die(gettext("You have no permission!"));
   
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"firstname\" class=\"form-control-label\">".gettext("Firstname:")."</label></div>\n";
-echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"firstname\" name=\"firstname\" placeholder=\"".gettext("Firstname")."\" class=\"form-control\" required></div>\n";
+echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"firstname\" name=\"firstname\" placeholder=\"".gettext("Firstname")."\" class=\"form-control\" ";
+if (isset($_GET['modify']))
+echo " VALUE=\"".$row_mod["firstname"]."\"";
+echo " required></div>\n";
 echo "</div>";
   
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"surname\" class=\"form-control-label\">".gettext("Surname:")."</label></div>\n";
-echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"surname\" name=\"surname\" placeholder=\"".gettext("Surname")."\" class=\"form-control\" required></div>\n";
+echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"surname\" name=\"surname\" placeholder=\"".gettext("Surname")."\" class=\"form-control\" ";
+if (isset($_GET['modify']))
+echo " VALUE=\"".$row_mod["surname"]."\"";
+echo " required></div>\n";
 echo "</div>";
 
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"username\" class=\"form-control-label\">".gettext("Username:")."</label></div>\n";
-echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"username\" name=\"username\" placeholder=\"".gettext("Username")."\" class=\"form-control\" required></div>\n";
+echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"username\" name=\"username\" placeholder=\"".gettext("Username")."\" class=\"form-control\"";
+if (isset($_GET['modify']))
+echo " VALUE=\"".$row_mod["username"]."\"";
+echo " required></div>\n";
 echo "</div>";
 
 echo "<div class=\"row form-group\">";
     echo "<div class=\"col col-md-2\"><label for=\"user_lang\" class=\" form-control-label\">".gettext("User language:")."</label></div>";
 
     echo "<div class=\"col col-md-2\">";
-    echo "<select name=\"user_lang\" id=\"user_lang\" class=\"form-control\" required>\n";
+    echo "<select name=\"lang\" id=\"lang\" class=\"form-control\" required>\n";
     
     if (LM_DEBUG)
     error_log($SQL,0);
     $result=$dba->Select($SQL);
     echo "<option value=\"\">".gettext("Please select")."</option>\n";
     foreach ($valid_languages as $user_lang_text=>$user_lang){
-    echo "<option value=\"".$user_lang."\">".$user_lang_text."</option>\n";
+    echo "<option value=\"".$user_lang."\" ";
+    if (isset($_GET['modify']) && $row_mod["lang"]==$user_lang)
+    echo "selected";
+    echo ">".$user_lang_text."</option>\n";
    
     }
 echo "</select></div></div>";
 
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"user_email\" class=\"form-control-label\">".gettext("Email:")."</label></div>\n";
-echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"user_email\" name=\"user_email\" placeholder=\"".gettext("Email")."\" class=\"form-control\"></div>\n";
+echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"user_email\" name=\"user_email\" placeholder=\"".gettext("Email")."\" class=\"form-control\"";
+if (isset($_GET['modify']))
+echo " VALUE=\"".$row_mod["user_email"]."\"";
+echo "></div>\n";
 echo "</div>";
 
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"user_phone\" class=\"form-control-label\">".gettext("Phone:")."</label></div>\n";
-echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"user_phone\" name=\"user_phone\" placeholder=\"".gettext("Phone")."\" class=\"form-control\"></div>\n";
+echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"user_phone\" name=\"user_phone\" placeholder=\"".gettext("Phone")."\" class=\"form-control\"";
+if (isset($_GET['modify']))
+echo " VALUE=\"".$row_mod["user_phone"]."\"";
+echo "></div>\n";
 echo "</div>";
 echo "<INPUT TYPE=\"hidden\" name=\"page\" id=\"page\" value=\"users\">";
 echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
+if (isset($_GET['modify']))
+echo "<INPUT TYPE=\"hidden\" name=\"modify\" id=\"modify\" value=\"1\">";
+else
+echo "<INPUT TYPE=\"hidden\" name=\"new\" id=\"new\" value=\"1\">";
 
 echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button></div>\n";
+echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext("Submit")."</button>\n";
+echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i>".gettext("Reset")."</button></div>\n";
 echo "</form></div>";
 }
 if (isset($_GET["new"]) || isset($_GET['modify']))
