@@ -28,6 +28,7 @@ CREATE TABLE `assets` (
   `entry_point` tinyint(1) unsigned DEFAULT NULL,
   `grouped_asset` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `asset_importance` tinyint(1) unsigned DEFAULT NULL,
+  `asset_name_hu` varchar(45) CHARACTER SET utf8 NOT NULL,
   `asset_name_en` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   `asset_parent_id` int(11) DEFAULT '0',
   `asset_category_id` int(10) unsigned DEFAULT NULL,
@@ -37,6 +38,10 @@ CREATE TABLE `assets` (
   `asset_article` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   `info_file_id1` smallint(6) unsigned DEFAULT NULL,
   `info_file_id2` smallint(6) unsigned DEFAULT NULL,
+  `info_file_id3` smallint(6) unsigned DEFAULT NULL,
+  `info_file_id4` smallint(6) unsigned DEFAULT NULL,
+  `info_file_id5` smallint(6) unsigned DEFAULT NULL,
+  `info_file_id6` smallint(6) unsigned DEFAULT NULL,
   `connection_id1` smallint(3) unsigned DEFAULT NULL,
   `connection_type1` smallint(3) unsigned DEFAULT NULL,
   `connection_id2` smallint(3) unsigned DEFAULT NULL,
@@ -46,10 +51,14 @@ CREATE TABLE `assets` (
   `asset_note_conf` varchar(200) COLLATE utf8_hungarian_ci DEFAULT NULL,
   `assets_entry_users` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `assets_users` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-  `main_part` tinyint(1) unsigned DEFAULT NULL
+  `main_part` tinyint(1) unsigned DEFAULT NULL,
   PRIMARY KEY (`asset_id`),
   KEY `info_file_id1` (`info_file_id1`),
-  KEY `info_file_id2` (`info_file_id2`)
+  KEY `info_file_id2` (`info_file_id2`),
+  KEY `info_file_id3` (`info_file_id3`),
+  KEY `info_file_id4` (`info_file_id4`),
+  KEY `info_file_id5` (`info_file_id5`),
+  KEY `info_file_id6` (`info_file_id6`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -73,6 +82,7 @@ CREATE TABLE `categories` (
   `category_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `category_name_en` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   `category_parent_id` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `category_name_hu` varchar(45) COLLATE utf8_hungarian_ci DEFAULT NULL,
   PRIMARY KEY (`category_id`),
   UNIQUE KEY `category_id_UNIQUE` (`category_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
@@ -84,7 +94,7 @@ CREATE TABLE `categories` (
 
 LOCK TABLES `categories` WRITE;
 /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-INSERT INTO `categories` VALUES (1,'Electric motor',0),(2,NULL,1),(3,'Sensor',0),(4,'proximity',3),(5,'Roll',0),(6,'Bearing',0),(7,'deep groove ball',6),(8,'Pressure sensor',3),(9,'pressure switch',3),(10,'linear transducer',3),(11,'3 phase motor',1),(12,'dc',1),(13,'Linear actuator',0),(15,'Pneumatic',13),(16,'Cylindrical roller',6),(17,'Pin roller',6),(18,'Hydraulic',13),(19,'Coupling',0),(20,'Bolt, screw',0),(21,'Hexagon socket head cap',20),(22,'Hexagon head',20),(23,'Wheel',0),(24,'Pneumatic',0),(25,'valve',24),(26,'pressure regulator',24),(27,'fitting',24),(28,'Timing pulley',0),(29,'Belt',0),(30,'metric rubber timing belt',29),(31,'metric PU timing belt',29),(32,'imperial rubber timing belt',29),(33,'Taper lock bush',0),(34,'Bracket',0),(35,'bell housing',34),(36,'Lifter',0),(37,'Inverter',0),(38,'Pump',0),(39,'hydraulic',38),(40,'Filter',0),(41,'house',40),(42,'element',40),(43,'encoder',3),(44,'with gearbox',1),(45,'buffer ring',19),(46,'Gearbox',0),(47,'Seal',0),(48,'Rotary seal',47),(49,'Fan',0),(50,'Controller',0),(51,'water pump',38),(52,'Flow',3),(53,'safety chuck',34),(54,'o-ring',47),(55,'screw drive',13),(56,'System enclosure',0),(57,'Switch',0),(58,'Main switch',57),(59,'Air compressor',0),(60,'Refrigerator',0),(61,'engraved',5),(62,'chrome plaited',5),(63,'polymer coated',5),(64,'moiton sensor',3),(65,'HMI',0),(66,'photoelectric',3),(67,'repait kit',13),(68,'gas-steam-water',0),(69,'pressure valve',68),(70,'Chain',0),(71,'Electric part',0),(72,'variable resistor',71),(73,'Tank',0),(74,'pressure tank',73),(75,'angle',3),(76,'roller chain',70),(77,'PLC',50),(78,'Burner controller',50),(79,'transformer',71),(80,'Lighting fittings',0),(81,'other',47),(82,'operating unit',57),(83,'distance',3),(84,'fitting',68),(85,'holder',3),(86,'self aligning',6),(87,'Hydraulic',0),(88,'cylinder',87),(89,'level',73),(90,'adhesive pump',38),(91,'E27 socket',80),(92,'energy',70),(93,'shaft repair sleeve',47),(94,'V-belt',29),(95,'tube t5',80),(96,'solid state relay',57),(97,'linear',6),(98,'Cable',0),(99,'connector',98),(100,'Y bearing unit',6),(101,'E14 socket',80),(102,'connector',71),(103,'GR10q compact tube',80),(104,'pneumatic actuator',68),(105,'rotary joint',68),(106,'cylinder',24),(107,'accumulator',87),(108,'spiral',5),(109,'steel',5),(110,'silicon pump',38),(111,'flat belt',29),(112,'Angular contact ball',6),(113,'other',24),(114,'expansion shaft',5),(115,'force sensor',3),(116,'safety',57);
+INSERT INTO `categories` VALUES (1,'Electric motor',0,'Villanymotor'),(2,NULL,1,'szervo'),(3,'Sensor',0,'Szenzor'),(4,'proximity',3,'közelítés'),(5,'Roll',0,'Henger'),(6,'Bearing',0,'Csapágy'),(7,'deep groove ball',6,'Mélyhornyú golyós'),(8,'Pressure sensor',3,'nyomásérzékelő'),(9,'pressure switch',3,'nyomáskapcsoló'),(10,'linear transducer',3,'útmérő'),(11,'3 phase motor',1,'3 fázisú,aszinkron'),(12,'dc',1,'egyenáramú'),(13,'Linear actuator',0,'Lineáris mozgató'),(15,'Pneumatic',13,'Pneumatikus'),(16,'Cylindrical roller',6,'Hengergörgős'),(17,'Pin roller',6,'Tűgörgős'),(18,'Hydraulic',13,'Hidraulikus'),(19,'Coupling',0,'Tengelykapcsoló'),(20,'Bolt, screw',0,'Csavar'),(21,'Hexagon socket head cap',20,'Inbusz'),(22,'Hexagon head',20,'Hatlapfejű'),(23,'Wheel',0,'Kerék'),(24,'Pneumatic',0,'Pneumatika'),(25,'valve',24,'szelep'),(26,'pressure regulator',24,'nyomásszabályzó'),(27,'fitting',24,'csatlakozó'),(28,'Timing pulley',0,'Szíjtárcsa'),(29,'Belt',0,'Hajtószíj'),(30,'metric rubber timing belt',29,'metrikus gumi fogasszíj'),(31,'metric PU timing belt',29,'metrikus PU fogasszíj'),(32,'imperial rubber timing belt',29,'collos gumi fogasszíj'),(33,'Taper lock bush',0,'Kúpos szorítóhüvely'),(34,'Bracket',0,'Tartó'),(35,'bell housing',34,'szivattyúbak'),(36,'Lifter',0,'Emelő'),(37,'Inverter',0,'Frekvenciaváltó'),(38,'Pump',0,'Szivattyú'),(39,'hydraulic',38,'hidraulika'),(40,'Filter',0,'Szűrő'),(41,'house',40,'ház'),(42,'element',40,'betét'),(43,'encoder',3,'enkóder'),(44,'with gearbox',1,'hajtóműves'),(45,'buffer ring',19,'csillag'),(46,'Gearbox',0,'Hajtómű'),(47,'Seal',0,'Tömítés'),(48,'Rotary seal',47,'Szimering'),(49,'Fan',0,'Ventillátor'),(50,'Controller',0,'Vezérlő'),(51,'water pump',38,'vízszivattyú'),(52,'Flow',3,'Térfogatáram'),(53,'safety chuck',34,'befogó pofa'),(54,'o-ring',47,'o-gyűrű'),(55,'screw drive',13,'golyósorsós'),(56,'System enclosure',0,'Kapcsolószekrény'),(57,'Switch',0,'Kapcsoló'),(58,'Main switch',57,'Főkapcsoló'),(59,'Air compressor',0,'Kompresszor'),(60,'Refrigerator',0,'Hűtő'),(61,'engraved',5,'raszter'),(62,'chrome plaited',5,'krómbevonatú'),(63,'polymer coated',5,'polimer bevonatú'),(64,'moiton sensor',3,'mozgásérzékelő'),(65,'HMI',0,'HMI'),(66,'photoelectric',3,'fotoelektromos'),(67,'repait kit',13,'javítókészlet'),(68,'gas-steam-water',0,'gáz-gőz-víz'),(69,'pressure valve',68,'nyomásszelep'),(70,'Chain',0,'Lánc'),(71,'Electric part',0,'Elektromos alkatrész'),(72,'variable resistor',71,'változtatható ellenállás'),(73,'Tank',0,'Tartály'),(74,'pressure tank',73,'nyomástartály'),(75,'angle',3,'szöghelyzet'),(76,'roller chain',70,'görgős lánc'),(77,'PLC',50,'PLC'),(78,'Burner controller',50,'Égőszabályzó'),(79,'transformer',71,'trafó'),(80,'Lighting fittings',0,'Világítótest'),(81,'other',47,'egyéb'),(82,'operating unit',57,'műkődtető'),(83,'distance',3,'távolság'),(84,'fitting',68,'csatlakozó'),(85,'holder',3,'tartó'),(86,'self aligning',6,'önbeálló'),(87,'Hydraulic',0,'Hidraulika'),(88,'cylinder',87,'munkahenger'),(89,'level',73,'szintjelző'),(90,'adhesive pump',38,'ragasztószivattyú'),(91,'E27 socket',80,'E27 foglalat'),(92,'energy',70,'energia'),(93,'shaft repair sleeve',47,'tengelyjavító persely'),(94,'V-belt',29,'ékszíj'),(95,'tube t5',80,'fénycső T5'),(96,'solid state relay',57,'szilárdtestrelé'),(97,'linear',6,'lineáris'),(98,'Cable',0,'Kábel'),(99,'connector',98,'szerelt'),(100,'Y bearing unit',6,'Y csapágyegység'),(101,'E14 socket',80,'E14 foglalat'),(102,'connector',71,'csatlakozó'),(103,'GR10q compact tube',80,'GR10q kompakt fénycső'),(104,'pneumatic actuator',68,'pneumatikus működtető'),(105,'rotary joint',68,'forgó csatlakozó'),(106,'cylinder',24,'munkahenger'),(107,'accumulator',87,'akkumulátor'),(108,'spiral',5,'spirál'),(109,'steel',5,'acél'),(110,'silicon pump',38,'szilikonszivattyú'),(111,'flat belt',29,'laposszíj'),(112,'Angular contact ball',6,'Ferde hatásvonalú'),(113,'other',24,'egyéb'),(114,'expansion shaft',5,'expanziós tengely'),(115,'force sensor',3,'erőmérő'),(116,'safety',57,'biztonsági');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -98,6 +108,7 @@ DROP TABLE IF EXISTS `connection_categories`;
 CREATE TABLE `connection_categories` (
   `connection_category_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `connection_category_en` varchar(45) NOT NULL,
+  `connection_category_hu` varchar(45) NOT NULL,
   PRIMARY KEY (`connection_category_id`),
   UNIQUE KEY `connection_category_id_UNIQUE` (`connection_category_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
@@ -109,7 +120,7 @@ CREATE TABLE `connection_categories` (
 
 LOCK TABLES `connection_categories` WRITE;
 /*!40000 ALTER TABLE `connection_categories` DISABLE KEYS */;
-INSERT INTO `connection_categories` VALUES (1,'Roll'),(2,'pump'),(3,'light source'),(4,'electric connector'),(5,'elektric motor');
+INSERT INTO `connection_categories` VALUES (1,'Roll','Henger'),(2,'pump','szivattyú'),(3,'light source','fényforrás'),(4,'electric connector','elektromos csatlakozó'),(5,'elektric motor','villanymotor');
 /*!40000 ALTER TABLE `connection_categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -123,13 +134,16 @@ DROP TABLE IF EXISTS `connections`;
 CREATE TABLE `connections` (
   `connection_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `connection_name_en` varchar(45) NOT NULL,
+  `connection_name_hu` varchar(45) NOT NULL,
   `connection_type` tinyint(1) unsigned NOT NULL,
   `connection_category_id` smallint(3) unsigned NOT NULL,
   `connection_review_en` varchar(150) DEFAULT NULL,
+  `connection_review_hu` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`connection_id`),
   UNIQUE KEY `connection_id_UNIQUE` (`connection_id`),
-  UNIQUE KEY `connection_name_UNIQUE` (`connection_name_en`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `connection_name_UNIQUE` (`connection_name_en`),
+  UNIQUE KEY `connection_name_hu_UNIQUE` (`connection_name_hu`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,7 +152,6 @@ CREATE TABLE `connections` (
 
 LOCK TABLES `connections` WRITE;
 /*!40000 ALTER TABLE `connections` DISABLE KEYS */;
-
 /*!40000 ALTER TABLE `connections` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,6 +306,7 @@ DROP TABLE IF EXISTS `locations`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `locations` (
   `location_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `location_name_hu` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   `location_parent_id` smallint(5) unsigned NOT NULL DEFAULT '0',
   `location_name_en` varchar(45) COLLATE utf8_hungarian_ci DEFAULT NULL,
   `info_file_id1` smallint(6) unsigned DEFAULT NULL,
@@ -322,9 +336,11 @@ DROP TABLE IF EXISTS `main_asset_categories`;
 CREATE TABLE `main_asset_categories` (
   `main_asset_category_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `main_asset_category_en` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `main_asset_category_hu` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`main_asset_category_id`),
   UNIQUE KEY `asset_category_id_UNIQUE` (`main_asset_category_id`),
-  UNIQUE KEY `asset_category_en_UNIQUE` (`main_asset_category_en`)
+  UNIQUE KEY `asset_category_en_UNIQUE` (`main_asset_category_en`),
+  UNIQUE KEY `asset_category_hu_UNIQUE` (`main_asset_category_hu`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -334,7 +350,7 @@ CREATE TABLE `main_asset_categories` (
 
 LOCK TABLES `main_asset_categories` WRITE;
 /*!40000 ALTER TABLE `main_asset_categories` DISABLE KEYS */;
-INSERT INTO `main_asset_categories` VALUES (3,'Auxiliary machines'),(5,'Estates'),(2,'Lifting equipments'),(1,'Production machines'),(4,'Vehicles');
+INSERT INTO `main_asset_categories` VALUES (1,'Production machines','Gyártógépek'),(2,'Lifting equipments','Emelőgépek'),(3,'Auxiliary machines','Segédberendezések'),(4,'Vehicles','Járművek'),(5,'Estates','Ingatlanok');
 /*!40000 ALTER TABLE `main_asset_categories` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -350,7 +366,7 @@ CREATE TABLE `manufacturers` (
   `manufacturer_name` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`manufacturer_id`),
   UNIQUE KEY `manufacturer_name_UNIQUE` (`manufacturer_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -359,7 +375,6 @@ CREATE TABLE `manufacturers` (
 
 LOCK TABLES `manufacturers` WRITE;
 /*!40000 ALTER TABLE `manufacturers` DISABLE KEYS */;
-INSERT INTO `manufacturers` VALUES (17,'ABB'),(56,'Aeco'),(81,'Alfaco'),(75,'Allen-Bradley'),(33,'ARI-Armaturen'),(38,'Armak'),(37,'Aventics'),(13,'Balluff'),(44,'Baumer'),(24,'BESCO'),(28,'Boge'),(32,'Bonfiglioli'),(45,'Bourns'),(31,'Brevini'),(78,'Costech'),(25,'DAEWOO'),(15,'Eaton'),(72,'Ebm-papst'),(46,'Elero'),(50,'Elobau'),(4,'FAG'),(6,'Fenner'),(7,'Festo'),(47,'Frigosystem'),(29,'Frimec'),(70,'Gefran'),(51,'Greenlux'),(20,'Grunfos'),(79,'Hafner'),(64,'Hidromechanika'),(48,'Hyfro'),(11,'HYMO'),(67,'Igus'),(82,'INA'),(22,'Jungheinrich'),(40,'Kaeser'),(35,'Kinco'),(61,'Kobold'),(54,'Kromschröder'),(10,'KTR'),(16,'Lenze'),(34,'Leuzer'),(19,'Lovejoy'),(77,'Maier'),(53,'Maxitrol'),(41,'Movex'),(76,'Norbro'),(68,'Nord'),(12,'Omron'),(63,'OMT'),(2,'Optibelt'),(66,'Osram'),(36,'Panasonic'),(14,'Parker'),(55,'Pepperl+Fuchs'),(73,'Philips'),(9,'Pro-Co'),(86,'RE'),(62,'Rexroth'),(27,'Rittal'),(60,'Rotoflux'),(43,'RS PRO'),(84,'Schneider'),(65,'Sick'),(3,'Siemens'),(21,'SIKA'),(5,'SKF'),(8,'SMC'),(85,'Sodemann'),(1,'TEC'),(57,'Techmark'),(26,'Thomson'),(23,'Toyota'),(74,'Tracon'),(71,'Turck'),(59,'Univer'),(69,'VIPA'),(30,'Vishay'),(42,'Vivoil'),(52,'Vogel'),(18,'W+S'),(58,'WIKA'),(49,'Wilo'),(39,'Worthington');
 /*!40000 ALTER TABLE `manufacturers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -377,7 +392,7 @@ CREATE TABLE `messages` (
   `unit_id` tinyint(2) unsigned DEFAULT NULL,
   PRIMARY KEY (`message_id`),
   UNIQUE KEY `message_id_UNIQUE` (`message_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -386,7 +401,6 @@ CREATE TABLE `messages` (
 
 LOCK TABLES `messages` WRITE;
 /*!40000 ALTER TABLE `messages` DISABLE KEYS */;
-INSERT INTO `messages` VALUES (1,'general error','általános hiba',NULL),(2,'online','kapcsolatban',NULL),(3,'High temperature','Magas hőmérséklet',NULL),(4,'Low temperature','Alacsony hőmérséklet',NULL);
 /*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -499,7 +513,9 @@ CREATE TABLE `products` (
   `category_id` tinyint(3) unsigned NOT NULL,
   `subcategory_id` tinyint(3) unsigned DEFAULT '0',
   `product_type_en` varchar(45) NOT NULL,
+  `product_type_hu` varchar(45) NOT NULL,
   `product_properties_en` varchar(45) DEFAULT NULL,
+  `product_properties_hu` varchar(45) DEFAULT NULL,
   `quantity_unit` tinyint(2) unsigned NOT NULL,
   `manufacturer_id` tinyint(3) unsigned DEFAULT NULL,
   `info_file_id1` smallint(6) unsigned DEFAULT NULL,
@@ -516,6 +532,7 @@ CREATE TABLE `products` (
   `info_file_id6` smallint(6) unsigned DEFAULT NULL,
   `display` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`product_id`),
+  UNIQUE KEY `product_type_UNIQUE` (`product_type_hu`),
   KEY `info_file_id1` (`info_file_id1`),
   KEY `info_file_id2` (`info_file_id2`),
   KEY `info_file_id3` (`info_file_id3`),
@@ -698,6 +715,7 @@ DROP TABLE IF EXISTS `user_levels`;
 CREATE TABLE `user_levels` (
   `user_level_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_level_en` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `user_level_hu` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`user_level_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -708,7 +726,7 @@ CREATE TABLE `user_levels` (
 
 LOCK TABLES `user_levels` WRITE;
 /*!40000 ALTER TABLE `user_levels` DISABLE KEYS */;
-INSERT INTO `user_levels` VALUES (1,'system admin'),(2,'manager'),(3,'technician'),(4,'operator');
+INSERT INTO `user_levels` VALUES (1,'system admin','rendszeradminisztrátor'),(2,'manager','vezető'),(3,'technician','karbantartó'),(4,'operator','gépkezelő');
 /*!40000 ALTER TABLE `user_levels` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -872,7 +890,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `telegram_chat_id_UNIQUE` (`telegram_chat_id`),
   UNIQUE KEY `users_card_id_UNIQUE` (`users_card_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -881,7 +899,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (6,'admin','admin','admin',NULL,'$2y$10$q1a28emMcXtyAy.KqidraO3O64A4AMGH9SdZgmjP/p2kjOtwuPZAK',1,'','',0,'2020-12-25 13:47:34','2000-01-01 12:00:00',1,_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '\0',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',NULL,NULL,NULL,'en','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000',NULL);
+INSERT INTO `users` VALUES (1,'admin','admin','admin',NULL,'$2y$10$zP4Km/pRg6Z69uLtKcLPseSW.F//jBV0QcPu2YHRpVKoDP1xQUW82',1,'','',0,'2020-12-28 13:28:35','2000-01-01 12:00:00',1,_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',NULL,NULL,NULL,'en','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -943,7 +961,6 @@ CREATE TABLE `workorders` (
   `employee_id3` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `employee_id4` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `employee_id5` tinyint(2) unsigned NOT NULL DEFAULT '0',
-  `employee_id6` tinyint(2) unsigned NOT NULL DEFAULT '0',
   `location_id` smallint(3) unsigned DEFAULT NULL,
   `main_location_id` smallint(3) DEFAULT NULL,
   `replace_to_product_id` smallint(5) unsigned DEFAULT NULL,
@@ -1027,4 +1044,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-26  9:54:01
+-- Dump completed on 2020-12-28 13:41:38
