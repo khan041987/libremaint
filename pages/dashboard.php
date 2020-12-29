@@ -89,8 +89,8 @@ echo gettext("pc");
 $fi = new FilesystemIterator(INFO_PATH, FilesystemIterator::SKIP_DOTS);
 
 echo "<span class=\"count\">";
-echo iterator_count($fi)." ".gettext("pcs");
- $size = 0;
+echo (iterator_count($fi)-1)." ".gettext("pcs");//-1 because of thumbs subfolder
+ $size = -16*1024;// because of thumbs subfolder
 foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator(INFO_PATH)) as $file){
         $size += $file->getSize();
     }
