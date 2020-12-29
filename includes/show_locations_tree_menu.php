@@ -42,14 +42,9 @@ $text="";
                   
                                 $text.= "<a class=\"nav-link\" href=\"javascript:ajax_call('add_file',".$id.",'locations','','','".URL."index.php','for_ajaxcall')\"><i class=\"fa fa-user\"></i> ".gettext("Add file")."</a>";
                                 
-                                $text.= "<a class=\"nav-link\" href=\"javascript:ajax_call('show_assets_on_this_place',".$id.",'locations','','','".URL."index.php','for_ajaxcall')\"><i class=\"fa fa-user\"></i> ".gettext("Show assets on this place")."</a>";
+                                $text.= "<a class=\"nav-link\" href=\"javascript:ajax_call('show_assets_on_this_place',".$id.",'locations','','','".URL."index.php','for_ajaxcall')\"><i class=\"fa fa-user\"></i> ".gettext("Assets on this place")."</a>";
                           
-                           $text.= "<a class=\"nav-link\" href=\"index.php?page=workrequests&new=1&location_id=".$id."\"><i class=\"fa fa-user\"></i> ";
-                               $text.=gettext("New workrequest")."</a>";
-                           
-                           $text.= "<a class=\"nav-link\" href=\"index.php?page=workorders&new=1&location_id=".$id."\"><i class=\"fa fa-user\"></i> ";
-                               $text.=gettext("New workorder")."</a>";
-                                 
+                                                         
                                                            
                             $text.= "</div>";
                        $text.="</div>";
