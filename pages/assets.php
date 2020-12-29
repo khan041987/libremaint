@@ -463,7 +463,7 @@ echo "</div>\n";
 ?>
 
 <?php
-if (isset($_GET['modify']) && $asset_row['asset_parent_id']==0){
+if ((isset($_GET['new']) && $row['asset_parent_id']==0) || (isset($_GET['modify']) && $asset_row['asset_parent_id']==0)){
 ?>
 <div class="row form-group">
 <div class="col col-md-3"><label for="grouped_asset" class="form-control-label"><?php echo gettext("Grouped:");?></label></div>
