@@ -21,6 +21,7 @@ Installation (e.g. on a Debian based system)
 	sudo cp lm-settings_orig.php lm-settings.php
 	sudo cd ..
 	sudo mkdir assets
+	sudo mkdir -p info_files/thumbs/
 	sudo chown -R www-data:www-data /var/www/libremaint
 	sudo mysql -p libremaint < libremaint/truncated_en_only.sql
 5. Getting start
@@ -67,3 +68,4 @@ Installation (e.g. on a Debian based system)
 				>RR wheel	 
 					>wheel bolts (its signed 'all wheel bolts' at 'grouped' item when creating) 
 	If you set a part as 'main part' you can add workorder(s) or workrequest(s) for it.		
+	
