@@ -1278,23 +1278,35 @@ return false;
 
 function send_telegram_messages():void{
 global $dba,$lang;
-
-$SQL="SELECT message_id,user_id,asset_id,received_message,received_time FROM telegram_messages LEFT JOIN iot_sensors ON telegram_messages.sensor_id=iot_sensors.sensor_id WHERE status=0";
+$SQL="SELECT * FROM telegram_messages WHERE status=0";
 $result=$dba->Select($SQL);
 
 if ($dba->affectedRows()>0)
 {
         foreach ($result as $row){
-        $sender=get_asset_name_from_id($row['asset_id'],$lang);
-        $SQL="SELECT telegram_chat_id,lang FROM users WHERE user_id=".$row['user_id'];
-        $row2=$dba->getRow($SQL);
+        if ($row['notification_id']>0){
+        $SQL="SELECT main_asset_id,notification_short,user_id FROM notifications WHERE notification_id=".$row['notification_id'];
+        $row1=$dba->getRow($SQL);
+        $sender=get_asset_name_from_id($row1['main_asset_id'],$lang)." (".get_username_from_id($row1['user_id']).")";
+        $message=$row1['notification_short'];
+        }
+        else if ($row['sensor_id']>0){
+        $SQL="SELECT asset_id FROM iot_sensors WHERE sensor_id=".$row['sensor_id'];
+        $row1=$dba->getRow($SQL);
+        $sender=get_asset_name_from_id($row1['asset_id'],$lang);
         $SQL="SELECT message_".$lang." FROM messages WHERE message_id=".(int) $row["received_message"];
         $row1=$dba->getRow($SQL);
+        $message=$row1['message_'.$lang];
+        }
+        $SQL="SELECT telegram_chat_id,lang FROM users WHERE user_id=".$row['user_id'];
+        $row2=$dba->getRow($SQL);
+        
+        
         
           if (LM_DEBUG)
-error_log('python /var/www/send_message.py '.$row2['telegram_chat_id'].' "'.$sender.': '.$row1['message_hu'].' '.date("Y.m.d H:i", strtotime($row['message_time'])).'"',0); 
+error_log('python /var/www/send_message.py '.$row2['telegram_chat_id'].' "'.$sender.': '.$message.' '.date("Y.m.d H:i", strtotime($row['received_time'])).'"',0); 
 
-        exec('python /var/www/send_message.py '.$row2['telegram_chat_id'].' "'.$sender.': '.$row1['message_hu'].' '.date("Y.m.d H:i", strtotime($row['received_time'])).'"');
+        exec('python /var/www/send_message.py '.$row2['telegram_chat_id'].' "'.$sender.': '.$message.' '.date("Y.m.d H:i", strtotime($row['received_time'])).'"');
         
         $SQL="UPDATE telegram_messages SET status=1,sending_time=now() WHERE message_id=".$row['message_id'];
         $dba->Query($SQL);

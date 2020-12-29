@@ -176,8 +176,36 @@ $SQL.="now(),";
 $SQL.=(int) $_POST["notification_type"];
 
 $SQL.=")";
-if ($dba->Query($SQL))
+if ($dba->Query($SQL)){
+    $notification_id=$dba->insertedId();
         echo "<div class=\"card\">".gettext("The new notification has been saved.")."</div>";
+    if ((int)$_POST['priority']==1){
+      $SQL="SELECT assets_users FROM assets where asset_id=".get_whole_path_ids('asset',(int) $_POST["main_asset_id"],1)[0];
+                if (LM_DEBUG)
+                error_log($SQL,0); 
+                $row=$dba->getRow($SQL);
+                if(!empty($row))
+                {
+                $users_to_message=json_decode($row['assets_users'],true);
+                
+                foreach ($users_to_message as $user){
+                $SQL="SELECT user_level FROM users WHERE user_id=".$user;
+                $row=$dba->getRow($SQL);
+                if ($row['user_level']<3){// we need to notify only the managers
+                $SQL="INSERT INTO telegram_messages (user_id,sensor_id,received_message,sensor_value,notification_id) VALUES (".$user.",0,0,0,".$notification_id.")";
+                $dba->Query($SQL);
+                if (LM_DEBUG)
+                error_log($SQL,0); 
+                }
+                if(is_user_working($user))
+                send_telegram_messages();
+                }
+                }
+                
+        
+        
+        }
+        }
         else
         echo "<div class=\"card\">".gettext("Failed to save new notification ").$SQL." ".$dba->err_msg."</div>";
 if (LM_DEBUG)
