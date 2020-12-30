@@ -77,7 +77,7 @@ echo "<div id=\"modal_subcategory_id\"></div>";
   
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-3\"><label for=\"modal_product_type_".$lang."\" class=\"form-control-label\">".gettext("Product type:")."</label></div>\n";
-echo "<div class=\"col-12 col-md-8\">\n";
+echo "<div class=\"col-11 col-md-8\">\n";
 echo "<input type=\"text\" id=\"modal_product_type_".$lang."\" name=\"modal_product_type_".$lang."\" placeholder=\"".gettext("product type")."\" class=\"form-control\" onkeyup=\"ajax_call('search','product_type_".$lang."','products',this.value,'modal_product_type_".$lang."','".URL."index.php','livesearch')\">\n";
 echo "<div id='livesearch'></div>\n";
 echo "<small class=\"form-text text-muted\">".gettext("product type")."</small></div>\n";
@@ -87,7 +87,7 @@ if ($lang!="en")
 {
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-3\"><label for=\"modal_product_type_en\" class=\"form-control-label\">".gettext("Product type en:")."</label></div>\n";
-echo "<div class=\"col-12 col-md-8\">\n";
+echo "<div class=\"col-11 col-md-8\">\n";
 echo "<input type=\"text\" id=\"modal_product_type_en\" name=\"modal_product_type_en\" placeholder=\"".gettext("product type en")."\" class=\"form-control\" onkeyup=\"ajax_call('search','product_type_en','products',this.value,'modal_product_type_en','".URL."index.php','livesearch_en')\">\n";
 echo "<div id='livesearch_en'></div>\n";
 echo "<small class=\"form-text text-muted\">".gettext("product type en")."</small></div>\n";
@@ -97,7 +97,7 @@ echo "</div>\n";
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-3\"><label for=\"modal_manufacturer_id\" class=\"form-control-label\">".gettext("Manufacturer:")."</label></div>\n";
 
-echo "<div class=\"col col-md-8\">";
+echo "<div class=\"col-11 col-md-8\">";
     echo "<select name=\"modal_manufacturer_id\" id=\"modal_manufacturer_id\" class=\"form-control\"";
     echo " onChange=\"if (this.value=='new')\n";
     echo " document.getElementById('modal_new_manufacturer_r').style.display='block';\n";
@@ -122,26 +122,26 @@ echo "</div>";
 echo "<div id='modal_new_manufacturer_r' style='display:none;'>\n";
 echo "<div class=\"row form-group\">\n";
 echo "<div class=\"col col-md-3\"><label for=\"modal_new_manufacturer\" class=\"form-control-label\">".gettext("New manufacturer:")."</label></div>\n";
-echo "<div class=\"col col-md-8\"><input type=\"text\" id=\"modal_new_manufacturer\" name=\"modal_new_manufacturer\" placeholder=\"".gettext("new manufacturer")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("new manufacturer")."</small></div>\n";
+echo "<div class=\"col-11 col-md-8\"><input type=\"text\" id=\"modal_new_manufacturer\" name=\"modal_new_manufacturer\" placeholder=\"".gettext("new manufacturer")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("new manufacturer")."</small></div>\n";
 echo "</div>\n";
 echo "</div>\n";
-
+if ($lang!='en'){
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-3\"><label for=\"modal_product_properties_en\" class=\"form-control-label\">".gettext("Product properties en:")."</label></div>\n";
-echo "<div class=\"col col-md-8\"><input type=\"text\" id=\"modal_product_properties_en\" name=\"modal_product_properties_en\" placeholder=\"".gettext("product properties en")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("product properties en")."</small></div>\n";
+echo "<div class=\"col-11 col-md-8\"><input type=\"text\" id=\"modal_product_properties_en\" name=\"modal_product_properties_en\" placeholder=\"".gettext("product properties en")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("product properties en")."</small></div>\n";
 echo "</div>";
-
+}
 
 
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-3\"><label for=\"modal_product_properties_".$lang."\" class=\"form-control-label\">".gettext("Product properties:")."</label></div>\n";
-echo "<div class=\"col col-md-8\"><input type=\"text\" id=\"modal_product_properties_".$lang."\" name=\"modal_product_properties_".$lang."\" placeholder=\"".gettext("product properties")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("product properties")."</small></div>\n";
+echo "<div class=\"col-11 col-md-8\"><input type=\"text\" id=\"modal_product_properties_".$lang."\" name=\"modal_product_properties_".$lang."\" placeholder=\"".gettext("product properties")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("product properties")."</small></div>\n";
 echo "</div>";
 
 
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"display\" class=\"form-control-label\">".gettext("Display:")."</label></div>\n";
-echo "<div class=\"col-12 col-md-10\">";
+echo "<div class=\"col col-md-3\"><label for=\"display\" class=\"form-control-label\">".gettext("Display:")."</label></div>\n";
+echo "<div class=\"col-11 col-md-8\">";
 
 echo "<INPUT TYPE=\"CHECKBOX\" NAME=\"display[]\" VALUE=\"1\"";
 echo "> ".gettext("Category")."\n";
@@ -172,7 +172,7 @@ echo "<div class=\"row form-group\">";
         echo "<label for=\"modal_quantity_unit\" class=\"form-control-label\">".gettext("Unit:")."</label>";
     echo "</div>\n";
 
-    echo "<div class=\"col col-md-5\">";
+    echo "<div class=\"col-11 col-md-5\">";
         echo "<select name=\"modal_quantity_unit\" id=\"modal_quantity_unit\" class=\"form-control\" >";
     $SQL="SELECT unit_id,unit_".$lang." FROM units ORDER BY unit_".$lang;
     $result=$dba->Select($SQL);
@@ -182,16 +182,16 @@ echo "<div class=\"row form-group\">";
         echo "<option value=\"".$row['unit_id']."\" >".$row['unit_'.$lang]."</option>\n";
         }
         echo "</select>\n";
-    echo "</div>";
+    echo "</div></div>\n";
     
     
     
 echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-4\">\n";
+    echo "<div class=\"col col-md-3\">\n";
         echo "<label for=\"modal_product_stockable\" class=\"form-control-label\">".gettext("Stockable:")."</label>";
     echo "</div>\n";
 
-    echo "<div class=\"col col-md-8\">";
+    echo "<div class=\"col-11 col-md-8\">";
         echo "<select name=\"modal_product_stockable\" id=\"modal_product_stockable\" class=\"form-control\" >";
       
         echo "<option value=\"1\" >".gettext("Yes")."</option>\n";
@@ -204,9 +204,9 @@ echo "</div>";
 
 
 echo "<div class=\"row form-group\">\n";
-        echo "<div class=\"col col-md-4\"><label for=\"default_stock_location_id\" class=\"form-control-label\">";
+        echo "<div class=\"col col-md-3\"><label for=\"default_stock_location_id\" class=\"form-control-label\">";
         echo gettext("Default stock:")."</label></div>\n";
-        echo "<div class=\"col col-md-8\">\n";
+        echo "<div class=\"col-11 col-md-8\">\n";
         echo "<select id=\"default_stock_location_id\" name=\"default_stock_location_id\" class=\"form-control\">";
 
         $SQL="SELECT location_name_".$lang.", location_id FROM locations WHERE set_as_stock=1 ORDER BY location_name_".$lang;
