@@ -79,8 +79,17 @@ else if (isset($_POST['stock_location_id'])){//put product into stock
             echo "<div class=\"card\">".gettext("Failed to place new product to the stock. ").$dba->err_msg." ".$SQL."</div>";
     if (LM_DEBUG)
     error_log($SQL,0);
+    if ($_POST['partner_id']=='new'){
+        $SQL="INSERT INTO partners (partner_name,partner_address,partner_created) VALUES ";
+        $SQL.="('".$dba->escapeStr($_POST['partner_name'])."','".$dba->escapeStr($_POST["partner_address"])."',NOW())";
+        $dba->Query($SQL);
+        if (LM_DEBUG)
+        error_log($SQL,0);
+        $partner_id=$dba->insertedId();
+        }else
+        $partner_id=(int) $_POST['partner_id'];
 $SQL="INSERT INTO stock_movements (from_partner_id,product_id,stock_movement_quantity,to_stock_location_id,stock_movement_time) VALUES ";
-$SQL.="('".(int) $_POST['partner_id']."',";
+$SQL.="('".$partner_id."',";
 $SQL.="'".(int) $_POST['product_id']."',";
 $SQL.="'".(float) $_POST['quantity']."',";
 $SQL.="'".(int) $_POST['stock_location_id']."','";
@@ -89,7 +98,7 @@ $dba->Query($SQL);
 if (LM_DEBUG)
 error_log($SQL,0);
 }
-else if (isset($_POST['modal_product_type_en']) && $_POST['modal_product_type_en']!="" && is_it_valid_submit() && isset($_SESSION['ADD_PRODUCT'])){// add new product from modal_add_new_product_form.php
+else if (isset($_POST['modal_product_type_'.$lang]) && $_POST['modal_product_type_'.$lang]!="" && is_it_valid_submit() && isset($_SESSION['ADD_PRODUCT'])){// add new product from modal_add_new_product_form.php
 if (!empty($dba->escapeStr($_POST['modal_new_manufacturer']))){
 $SQL="INSERT INTO manufacturers (manufacturer_name) VALUES ('".$dba->escapeStr($_POST['modal_new_manufacturer'])."')";
 if ($dba->Query($SQL)){
@@ -136,11 +145,21 @@ lm_info(gettext("Failed to save new manufacturer.")." ".$dba->err_msg);
             if ($dba->Query($SQL)){
         lm_info(gettext("The product has been placed in stock."));
         }
-        $SQL="INSERT INTO stock_movements (from_partner_id,product_id,stock_movement_quantity,to_stock_location_id) VALUES ";
-        $SQL.="(".(int) $_POST['partner_id'].",";
+        if ($_POST['partner_id']=='new'){
+        $SQL="INSERT INTO partners (partner_name,partner_address,partner_created) VALUES ";
+        $SQL.="('".$dba->escapeStr($_POST['partner_name'])."','".$dba->escapeStr($_POST["partner_address"])."',NOW())";
+        $dba->Query($SQL);
+        if (LM_DEBUG)
+        error_log($SQL,0);
+        $partner_id=$dba->insertedId();
+        }else
+        $partner_id=(int) $_POST['partner_id'];
+        $SQL="INSERT INTO stock_movements (from_partner_id,product_id,stock_movement_quantity,to_stock_location_id,stock_movement_time) VALUES ";
+        $SQL.="(".$partner_id.",";
         $SQL.=(int) $_POST['product_id'].",";
         $SQL.=(float) $_POST['quantity'].",";
-        $SQL.=(int) $_POST['stock_location_id'].")";
+        $SQL.=(int) $_POST['stock_location_id'];
+        $SQL.="'".$dba->escapeStr($_POST['stock_movement_time'])." 00:00:00')";
         $dba->Query($SQL);
         if (LM_DEBUG)
 error_log($SQL,0);
@@ -182,7 +201,6 @@ $category_id=lm_isset_int('category_id');
 
 if (isset($_GET['into_stock']) && isset($_SESSION['PUT_PRODUCT_INTO_STOCK']))
 {
-//include(INCLUDES_PATH."modals/modal_add_new_product_form.php");
 
 ?>
 <div id='for_ajaxcall'>
@@ -190,9 +208,7 @@ if (isset($_GET['into_stock']) && isset($_SESSION['PUT_PRODUCT_INTO_STOCK']))
 <div class="card">
     
         <?php
-        //if ($_GET["new"]=="category" && isset($_GET["parent_id"]) && ($_GET["parent_id"]>0)){
-        //$SQL="SELECT category_name_$lang FROM categories WHERE category_id='".$_GET["parent_id"]."'";
-
+       
             echo "<div class=\"row form-group\">";
             echo "<div class=\"col col-md-3\"><label for=\"category_id\" class=\"form-control-label\">".gettext(" Category:")."</label></div>";
 

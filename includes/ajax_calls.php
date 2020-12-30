@@ -840,7 +840,7 @@ echo "<form method='POST' id='into_stock_form' name='into_stock_form' action='in
 
 
 
-    $SQL="SELECT category_id, category_name_".$lang." FROM categories WHERE category_parent_id='".$_GET['param3']."'";
+    $SQL="SELECT category_id, category_name_".$lang." FROM categories WHERE category_parent_id='".(int) $_GET['param3']."'";
     if (LM_DEBUG)
     error_log($SQL,0);
     $result=$dba->Select($SQL);
@@ -932,21 +932,47 @@ echo "<form method='POST' id='into_stock_form' name='into_stock_form' action='in
         echo "<div class=\"col col-md-3\"><label for=\"partner_id\" class=\"form-control-label\">";
         echo gettext("Partner:")."</label></div>\n";
         echo "<div class=\"col col-md-2\">\n";
-        echo "<select id=\"partner_id\" name=\"partner_id\" class=\"form-control\" required>\n";
-
+        echo "<select id=\"partner_id\" name=\"partner_id\" class=\"form-control\"";
+        echo " onChange=\"if (this.value=='new'){\n";
+        echo " document.getElementById('new_partner').style.display='block';\n";
+        echo "document.getElementById('partner_name').value='';\n";
+        echo "document.getElementById('partner_address').value='';\n";
+        echo "}else{\n";
+        echo " document.getElementById('new_partner').style.display='none';\n";
+        echo "document.getElementById('partner_name').value='new name';\n";
+        echo "document.getElementById('partner_address').value='new address';\n";
+        echo "}";
+        echo "\"";
+        echo "required>\n";
+        echo "<option value=\"\">".gettext("Please select")."</option>\n";
+        echo "<option value='new'>".gettext("New")."</option>\n";
         $SQL="SELECT partner_name, partner_id FROM partners WHERE active=1 ORDER BY partner_name";
         $result=$dba->Select($SQL);
-        echo "<option value=\"\">".gettext("Please select")."</option>\n";
+        
         foreach ($result as $row1)
         echo "<option value=\"".$row1["partner_id"]."\">".$row1["partner_name"]."</option>\n";
         echo "</select>\n</div></div>\n";
+        
+        
+        echo "<div id='new_partner' style='display:none;'>\n";
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-3\"><label for=\"partner\" class=\"form-control-label\">".gettext("Partner name:")."</label></div>\n";
+        echo "<div class=\"col col-md-2\"><input type=\"text\" id=\"partner_name\" name=\"partner_name\" placeholder=\"".gettext("new partner")."\" class=\"form-control\" value=\"new partner\"><small class=\"form-text text-muted\">".gettext("new partner")."</small></div>\n";
+        echo "</div>\n";
+        
+        echo "<div class=\"row form-group\">";
+        echo "<div class=\"col col-md-3\"><label for=\"partner_address\" class=\" form-control-label\">".gettext("Partner address:")."</label></div>";
+        echo "<div class=\"col col-md-5\"><input type=\"text\" id=\"partner_address\" name=\"partner_address\" placeholder=\"".gettext("address")."\" class=\"form-control\" value=\"new address\"></div>\n";
+        echo "</div>";
+        
+        echo "</div>\n";
         
         
         echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-3\"><label for=\"stock_movement_time\" class=\"form-control-label\">";
         echo gettext("Date:")."</label></div>\n";
         echo "<div class=\"col col-md-2\">\n";
-         echo "<input type=\"date\" id=\"stock_movement_time\" name=\"stock_movement_time\" value=\"".date("Y-m-d")."\">\n";
+         echo "<input type=\"date\" id=\"stock_movement_time\" name=\"stock_movement_time\" value=\"".date($lang_date_format)."\">\n";
     
         echo "</div></div>\n";
         
@@ -1440,7 +1466,7 @@ $unit=get_quantity_unit_from_product_id($_GET['param2']);
     echo "</div></div>";
     
     echo "</td>";
-    echo "<td>".$row['stock_movement_time']."</td>\n";
+    echo "<td>".date($lang_date_format, strtotime($row['stock_movement_time']))."</td>\n";
     if ($row['to_partner_id']>0)
     echo "<td>".gettext("To partner").": ".get_partner_name_from_id($row['to_partner_id'])."</td>\n";
     else if ($row['from_partner_id']>0)
