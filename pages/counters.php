@@ -40,10 +40,6 @@ $row1=$dba->getRow($SQL);
 <form action="index.php" id="counter_form" method="post" enctype="multipart/form-data" class="form-horizontal">
 
 <?php
-//if ($_GET["new"]=="category" && isset($_GET["parent_id"]) && ($_GET["parent_id"]>0)){
-//$SQL="SELECT category_name_$lang FROM categories WHERE category_id='".$_GET["parent_id"]."'";
-
-
     echo "<div class=\"row form-group\">";
     echo "<div class=\"col col-md-3\"><label for=\"counter_id\" class=\" form-control-label\">".gettext("Counter:")."</label></div>";
 
@@ -91,14 +87,14 @@ echo "<input type=\"hidden\" name=\"page\" id=\"page\" value=\"counters\">";
 <i class="fa fa-ban"></i><?php echo gettext(" Reset ");?>
 </button>
 </div>
-<input type="hidden" name="page" id="page" value="counter_values">
+<input type="hidden" name="page" id="page" value="counters">
 </form>
 </div>
 <?php //card  
 echo "<script>\n";
 echo "$(\"#counter_form\").validate()\n";
 echo "</script>\n";
-}//if (isset($_GET["new"]))
+}//if (isset($_GET["new_value"]))
 if ((isset($_GET['only_last']) & $_GET['only_last']==1) || !isset($_GET['only_last']))
     $_SESSION['show_all_counter_value']=1;
 else if (isset($_GET['only_last']) & $_GET['only_last']==0)

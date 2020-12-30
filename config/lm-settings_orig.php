@@ -164,7 +164,6 @@ $pages = array
 
     array(
   gettext("Counters"),"counters","SEE_COUNTER",gettext('CN'),
-  gettext("Add new counter"),"index.php?new=1&page=counters","ADD_COUNTER",gettext('NCn'),
   gettext("Add new counter value"),"index.php?new_value=1&page=counters","ADD_COUNTER_VALUE",gettext('CV')),
     
    array(
