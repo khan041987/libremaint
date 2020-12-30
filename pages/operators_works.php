@@ -36,7 +36,7 @@ if ($row['operator_user_id']==$_SESSION['user_id'])
 
 if (isset($_POST['new']) && isset($_SESSION['RECORD_OPERATOR_WORK']) && is_it_valid_submit()){// add new work form 
 $date_now = new DateTime();
-$date_work=DateTime::createFromFormat('Y-m-d h:i',$_POST['operator_work_date']." ".$_POST['operator_work_time']);
+$date_work=DateTime::createFromFormat($lang_date_format.' h:i',$_POST['operator_work_date']." ".$_POST['operator_work_time']);
 
 $recorded=0;
 if ($date_work<=$date_now) //not the future
@@ -121,7 +121,7 @@ echo "<div class=\"card-body card-block\">";
         echo "<div class=\"col-12 col-md-5\">";
         
         echo "<input type=\"date\" id=\"operator_work_date\" name=\"operator_work_date\" value=\"";
-        echo date("Y-m-d");
+        echo date($lang_date_format);
         echo "\">\n";
         echo "<input type=\"time\" id=\"operator_work_time\" name=\"operator_work_time\" value=\"";
         echo date("h:i");
@@ -168,7 +168,7 @@ echo "</div>";
     foreach ($result as $row){
     echo "<INPUT TYPE='checkbox' name='workrequest_id[]' value='".$row['workrequest_id']."' onChange=\"add_to_array()\"> ".get_asset_name_from_id($row['asset_id'],$lang).": ".$row['workrequest_short'];
     if ($row['last_ready_user_id']>0)
-    echo " (".get_username_from_id($row['last_ready_user_id'])." / ".date("Y.m.d", strtotime($row['last_ready_date'])).")";
+    echo " (".get_username_from_id($row['last_ready_user_id'])." / ".date($lang_date_format, strtotime($row['last_ready_date'])).")";
     echo "<br/>";
     }
    // echo "</div>";
@@ -353,7 +353,7 @@ $allow_to_modify_date = new DateTime($row['operator_work_time']); // Y-m-d
     
                           
 echo "</div></td>";
-echo "<td>".date("Y.m.d h:i", strtotime($row['operator_work_time']))."</td>";
+echo "<td>".date($lang_date_format." h:i", strtotime($row['operator_work_time']))."</td>";
 
 if (!lm_isset_int('asset_id')>0 || (lm_isset_int('asset_id')>0 && isset($_POST['new'])))
     {

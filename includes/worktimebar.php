@@ -38,12 +38,12 @@ function getChart() {
            $row=$dba->getRow($SQL);
                  
           $start_time=$row['start'];
-           $shift_start_datetime=DateTime::createFromFormat('Y-m-d H:i:s', $workdate.' '.$start_time);
+           $shift_start_datetime=DateTime::createFromFormat($lang_date_format.' H:i:s', $workdate.' '.$start_time);
           //$end_time="14:00:00:00000";
           $end_time=$row['end'];
           if (LM_DEBUG)
             error_log($SQL." ".$start_time." ".$end_time,0); 
-          $shift_end_datetime=DateTime::createFromFormat('Y-m-d H:i:s', $workdate.' '.$end_time);
+          $shift_end_datetime=DateTime::createFromFormat($lang_date_format.' H:i:s', $workdate.' '.$end_time);
 
           $last_end_datetime="";
           if (!empty($res)){

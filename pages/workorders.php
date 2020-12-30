@@ -37,7 +37,7 @@ if (is_it_valid_worktime_period($_POST['workorder_work_start_date']." ".$_POST['
     $workorder_row=$dba->getRow($SQL);
 if (LM_DEBUG)
 error_log($SQL,0);
-    $SQL="INSERT INTO workorder_works (workorder_id,workorder_work_start_time,workorder_work_end_time,workorder_worktime,workorder_work,main_asset_id,asset_id,workorder_user_id,workorder_status";
+    $SQL="INSERT INTO workorder_works (workorder_id,workorder_work_start_time,workorder_work_end_time,workorder_worktime,workorder_work,main_asset_id,asset_id,workorder_user_id,workorder_status,unplanned_shutdown";
 
     if ($workorder_row['workorder_partner_id']>0)
     $SQL.=",workorder_partner_id";
@@ -60,7 +60,7 @@ error_log($SQL,0);
     else
     $SQL.=(int) $_SESSION['user_id'].",";
     $SQL.=(int) $_POST['workorder_status'];
-
+    $SQL.=(int) $_POST['unplanned_shutdown'];
     if ($workorder_row['workorder_partner_id']>0)
     $SQL.=",".(int) $_POST['workorder_partner_id'];
 

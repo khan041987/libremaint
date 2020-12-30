@@ -943,7 +943,7 @@ foreach ($result as $row)
     echo "</td>";
     echo "<td>";
     if (!empty($row['last_ready_date'])){
-    echo date("Y.m.d", strtotime($row['last_ready_date']));
+    echo date($lang_date_format, strtotime($row['last_ready_date']));
     $SQL="SELECT SEC_TO_TIME( SUM( TIME_TO_SEC( `workorder_worktime` ) ) ) as worktime FROM workorder_works LEFT JOIN workorders ON workorder_works.workorder_id=workorders.workorder_id WHERE workrequest_id=".$row['workrequest_id']." GROUP BY workorders.workorder_id ORDER BY workorders.workorder_id DESC LIMIT 0,4";
     
     $result2=$dba->Select($SQL);

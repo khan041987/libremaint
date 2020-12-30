@@ -75,7 +75,9 @@ if ($_SESSION['user_level']>2)
 $SQL.=",workorder_user_id=".$_SESSION['user_id'];
 else
 $SQL.=",workorder_user_id='".(int) $_POST['workorder_user_id']."'";
-$SQL.=",workorder_status='".(int) $_POST['workorder_status']."'";    
+$SQL.=",workorder_status='".(int) $_POST['workorder_status']."'";
+$SQL.=",unplanned_shutdown='".(int) $_POST['unplanned_shutdown']."'";
+
 if (isset($_POST['workorder_partner_id']))
 $SQL.=",workorder_partner_id='".$workorder_row['workorder_partner_id']."'";
 $SQL.=" WHERE workorder_work_id='". (int) $_POST['workorder_work_id']."'";
@@ -237,11 +239,11 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         if (isset($_GET['new'])){
         
                 
-        echo date("Y-m-d");
+        echo date($lang_date_format);
         
         }
         else if (isset($_GET['modify']))
-        echo date("Y-m-d", strtotime($row_mod['workorder_work_start_time']));
+        echo date($lang_date_format, strtotime($row_mod['workorder_work_start_time']));
         echo "\">\n";
         
         echo "<input type=\"time\" onChange=\"check_time_period();\" id=\"workorder_work_start_time\" name=\"workorder_work_start_time\" value=\"";
@@ -269,9 +271,9 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         echo "<input type=\"date\" onChange=\"check_time_period();\" id=\"workorder_work_end_date\" name=\"workorder_work_end_date\" value=\"";
         
         if (isset($_GET['new']))
-        echo date("Y-m-d");
+        echo date($lang_date_format);
         else if (isset($_GET['modify']))
-        echo date("Y-m-d", strtotime($row_mod['workorder_work_end_time']));
+        echo date($lang_date_format, strtotime($row_mod['workorder_work_end_time']));
         echo "\">";
         
         echo "<input type=\"time\" onChange=\"check_time_period();\" id=\"workorder_work_end_time\" name=\"workorder_work_end_time\" value=\"";
@@ -282,10 +284,30 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         echo "\">";
         echo "</div>\n</div>\n";
         
-        echo "<div class=\"row form-group\">\n";
-    echo "<div class=\"col col-md-1\">\n";
-        echo "<label for=\"workorder_status\" class=\" form-control-label\">".gettext("Status:")."</label>";
-    echo "</div>\n";
+    echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-1\">\n";
+            echo "<label for=\"workorder_status\" class=\" form-control-label\">".gettext("Unplanned shutdown").":</label>";
+        echo "</div>\n";
+
+    echo "<div class=\"col col-md-3\">\n";
+        echo "<select name=\"unplanned_shutdown\" id=\"unplanned_shutdown\" class=\"form-control\" >";
+    echo "<option value='0'";
+    if (isset($_GET['modify']) && $row_mod['unplanned_shutdown']==0)
+    echo " selected";
+    echo ">".gettext("No")."\n";
+    echo "<option value='1'";
+    if (isset($_GET['modify']) && $row_mod['unplanned_shutdown']==1)
+    echo " selected";
+    echo ">".gettext("Yes")."\n";
+    echo "</select>\n";    
+    echo "</div>\n</div>";
+    
+    
+    
+    echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-1\">\n";
+            echo "<label for=\"workorder_status\" class=\" form-control-label\">".gettext("Status:")."</label>";
+        echo "</div>\n";
 
     echo "<div class=\"col col-md-3\">\n";
         echo "<select name=\"workorder_status\" id=\"workorder_status\" class=\"form-control\" ";
@@ -298,18 +320,20 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         echo "};\n";
         echo "if (i>0) alert()";
         echo "\">\n";
-     foreach($workorder_statuses as $id => $status){ //$workorder_status from config/lm-settings.php
-     if ($id<5){ //the 5th is the "deleted"
-     echo "<option value=\"".++$id."\"";
-     if (isset($_GET['modify']) && $row_mod['workorder_status']==$id)
-     echo " selected";
-     echo ">".$status."</option>\n";
+     foreach($workorder_statuses as $id => $status)
+     { //$workorder_status from config/lm-settings.php
+        if ($id<5)
+        { //the 5th is the "deleted"
+        echo "<option value=\"".++$id."\"";
+        if (isset($_GET['modify']) && $row_mod['workorder_status']==$id)
+        echo " selected";
+        echo ">".$status."</option>\n";
+        }
      }
-     }
-        echo "</select>\n";
-    echo "</div>\n";
-    echo "<div id='worktext_lenght'></div>";
-    echo "</div>\n";
+            echo "</select>\n";
+            echo "</div>\n";
+        echo "<div id='worktext_lenght'></div>";
+    echo "</div>\n"; //row form-group
     
     
     echo "<div class=\"row form-group\">";
@@ -390,11 +414,11 @@ if ($dba->affectedRows()>0){
 echo "<strong>".gettext("Last 5 activities...")."</strong>";
 echo "<table class='table table-striped table-bordered'>\n";
 foreach($result as $row){
-echo "<tr><td>".date("Y.m.d H:i", strtotime($row['workorder_work_start_time']))." - ";
+echo "<tr><td>".date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))." - ";
 if (date("Y.m.d", strtotime($row['workorder_work_start_time']))==date("Y.m.d", strtotime($row['workorder_work_end_time'])))
 echo date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
 else
-echo date("Y.m.d H:i", strtotime($row['workorder_work_end_time']))."</td>";
+echo date($lang_date_format." H:i", strtotime($row['workorder_work_end_time']))."</td>";
 echo "<td> ".get_username_from_id($row['workorder_user_id'])."</td>";
 if ($row['workorder']!="")
 echo "<td title='".$row['workorder']."'>".$row['workorder_short'];
@@ -563,11 +587,11 @@ foreach ($result as $row){
          }              
              
 echo "</div></td>";
-echo "<td>".date("Y.m.d H:i", strtotime($row['workorder_work_start_time']))."</td>";
+echo "<td>".date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))."</td>";
 if (date("Y.m.d", strtotime($row['workorder_work_start_time']))==date("Y.m.d", strtotime($row['workorder_work_end_time'])))
 echo "<td>".date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
 else
-echo "<td>".date("Y.m.d H:i", strtotime($row['workorder_work_end_time']))."</td>";
+echo "<td>".date($lang_date_format." H:i", strtotime($row['workorder_work_end_time']))."</td>";
 if (!lm_isset_int('asset_id')>0 || (lm_isset_int('asset_id')>0 && isset($_POST['new'])))
     {
     echo "<td>";

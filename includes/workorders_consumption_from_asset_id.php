@@ -73,11 +73,11 @@ if (isset($this_is_a_main_asset)){
 
     echo "</td>";
     }
-echo "<td>".date("Y.m.d H:i", strtotime($row['workorder_work_start_time']))."</td>";
+echo "<td>".date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))."</td>";
 if (date("Y.m.d", strtotime($row['workorder_work_start_time']))==date("Y.m.d", strtotime($row['workorder_work_end_time'])))
 echo "<td>".date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
 else
-echo "<td>".date("Y.m.d H:i", strtotime($row['workorder_work_end_time']))."</td>";
+echo "<td>".date($lang_date_format." H:i", strtotime($row['workorder_work_end_time']))."</td>";
 if ($_SESSION['user_level']<3 || isset($_GET['user_id'])){
     echo "<td>".get_username_from_id($row["workorder_user_id"])."</td>"; 
     echo "<td>";
@@ -147,7 +147,7 @@ if ($dba->affectedRows()>0)
 
     echo "</td>";
     }
-    echo "<td>".$material_row['stock_movement_time']."</td>\n";
+    echo "<td>".date($lang_date_format, strtotime($material_row['stock_movement_time']))."</td>\n";
     echo "<td>".get_product_name_from_id($material_row['product_id'],$lang)."</td>\n";
     
     if ($material_row['to_partner_id']>0)

@@ -120,7 +120,7 @@ echo "</span>";
                         <h4 class="mb-0"><span class="count">
 <?php 
 if (file_exists(LAST_BACKUP))
-echo date("Y-m-d H:i", filemtime(LAST_BACKUP));
+echo date($lang_date_format." H:i", filemtime(LAST_BACKUP));
 ?></span>
                         </h4>
                         <p class="text-light"><?php echo gettext("last backup");?></p>

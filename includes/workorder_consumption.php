@@ -74,11 +74,11 @@ echo "<td>".$i++." ";
          echo "\" title=\"".gettext("alter work")."\"> <i class=\"fa fa-wrench\"></i></a> ";
          }                            
 echo "</td>";
-echo "<td>".date("Y.m.d H:i", strtotime($row['workorder_work_start_time']))."</td>";
+echo "<td>".date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))."</td>";
 if (date("Y.m.d", strtotime($row['workorder_work_start_time']))==date("Y.m.d", strtotime($row['workorder_work_end_time'])))
 echo "<td>".date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
 else
-echo "<td>".date("Y.m.d H:i", strtotime($row['workorder_work_end_time']))."</td>";
+echo "<td>".date($lang_date_format." H:i", strtotime($row['workorder_work_end_time']))."</td>";
 //if ($_SESSION['user_level']<3 || isset($_GET['user_id'])){
     echo "<td>".get_username_from_id($row["workorder_user_id"])."</td>"; 
     echo "<td>";
@@ -112,7 +112,7 @@ if ($dba->affectedRows()>0)
         foreach($result as $row){
     echo "<tr>\n";
     echo "<td>".$i++."</td>";
-    echo "<td>".$row['stock_movement_time']."</td>\n";
+    echo "<td>".date($lang_date_format." h:i", strtotime($row['stock_movement_time']))."</td>\n";
     echo "<td>".get_product_name_from_id($row['product_id'],$lang)." <mark>".Luhn($row['product_id'])."</mark></td>\n";
     
     if ($row['to_partner_id']>0)

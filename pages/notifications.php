@@ -639,10 +639,9 @@ foreach ($result as $row)
     echo "</td><td>\n";
     echo $notification_statuses[--$row["notification_status"]];
 echo "</td><td>";
-    if ($lang=="hu")
-    echo date("Y.m.d", strtotime($row["notification_time"]))."</td>\n";
-    else
-    echo date("m.d.y", strtotime($row["notification_time"]))."</td>\n";
+    
+    echo date($lang_date_format, strtotime($row["notification_time"]))."</td>\n";
+    
 echo "<td>".$notification_types[--$row["notification_type"]]."</td>";
 echo "<td>".get_username_from_id($row['user_id'])."</td>";    
     if ((!lm_isset_int('asset_id')>0 && !isset($_POST['valid'])) || isset($_POST["notification"]))
