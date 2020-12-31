@@ -166,7 +166,12 @@ echo "</div>";
     echo "<div class=\"col col-md-6\">";
     
     foreach ($result as $row){
-    echo "<INPUT TYPE='checkbox' name='workrequest_id[]' value='".$row['workrequest_id']."' onChange=\"add_to_array()\"> ".get_asset_name_from_id($row['asset_id'],$lang).": ".$row['workrequest_short'];
+    $SQL="SELECT asset_parent_id FROM assets WHERE asset_id=".$row['asset_id'];
+    $row1=$dba->getRow($SQL);
+    echo "<INPUT TYPE='checkbox' name='workrequest_id[]' value='".$row['workrequest_id']."' onChange=\"add_to_array()\"> ";
+    if ($row1['asset_parent_id']>0)
+    echo get_asset_name_from_id($row1['asset_parent_id'],$lang)." > ";
+    echo get_asset_name_from_id($row['asset_id'],$lang).": ".$row['workrequest_short'];
     if ($row['last_ready_user_id']>0)
     echo " (".get_username_from_id($row['last_ready_user_id'])." / ".date($lang_date_format, strtotime($row['last_ready_date'])).")";
     echo "<br/>";
