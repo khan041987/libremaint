@@ -298,7 +298,7 @@ else if (isset($_GET['set_as_main_part']) && isset($_GET["asset_id"])){
         else if ($_GET['set_as_main_part']==0){
         echo "<div class=\"card\">".gettext("The asset has unset as main part.")."</div>";
         
-        
+      
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $_GET['asset_id'],1)[0];
         }
         else

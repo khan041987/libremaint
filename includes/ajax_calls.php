@@ -213,6 +213,8 @@ if (LM_DEBUG)
         error_log($SQL,0);
         $result=$dba->Query($SQL);
         $asset_id=$_SESSION["moving_asset_id"];
+        $asset_tree_has_changed=array(get_whole_path("asset",$asset_id,1)[0]);
+      
 include(INCLUDES_PATH."asset_tree.php");
 unset($_SESSION["moving_asset_id"]);
 unset($_SESSION["copy_asset_id"]);
@@ -1656,8 +1658,12 @@ echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"doc
 echo "<span aria-hidden=\"true\">×</span>\n</button>";
 
 if ($_GET['param4']=="delete" && (int)$_GET['param2']>0 && strstr($_GET["param5"],"connection_id")){
-                if ($_GET['param3']=="assets")
+                if ($_GET['param3']=="assets"){
                 $SQL="UPDATE assets SET ".$_GET["param5"]."=NULL WHERE asset_id=".(int)$_GET["param2"];
+                $asset_id=(int)$_GET["param2"];
+                $asset_tree_has_changed=array(get_whole_path("asset",$asset_id,1)[0]);
+                include(INCLUDES_PATH."asset_tree.php");
+                }
                 else if ($_GET['param3']=="products")
                 $SQL="UPDATE products SET ".$_GET["param5"]."=NULL WHERE product_id=".(int)$_GET["param2"];
                 $result=$dba->Query($SQL);               
