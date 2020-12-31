@@ -67,9 +67,9 @@ while (isset($_POST['sensor_id'.$i])){
                 
                 
                 foreach ($users_to_message as $user){
-                $SQL="SELECT user_level FROM users WHERE user_id=".$user;
+                $SQL="SELECT user_level,telegram_chat_id FROM users WHERE user_id=".$user;
                 $row=$dba->getRow($SQL);
-                if ($row['user_level']<3){// we need to notify only the leaders
+                if ($row['user_level']<3 && !empty($row['telegram_chat_id'])){// we need to notify only the leaders
                 $SQL="INSERT INTO telegram_messages (user_id,sensor_id,received_message,sensor_value,notification_id) VALUES (".$user.",".(int) $_POST['sensor_id'.$i].",".(int) $_POST["received_message".$i].",".(float)$_POST['sensor_value'.$i].",0)";
                 $dba->Query($SQL);
                 if (LM_DEBUG)

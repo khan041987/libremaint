@@ -189,9 +189,9 @@ if ($dba->Query($SQL)){
                 $users_to_message=json_decode($row['assets_users'],true);
                 
                 foreach ($users_to_message as $user){
-                $SQL="SELECT user_level FROM users WHERE user_id=".$user;
+                $SQL="SELECT user_level,telegram_chat_id FROM users WHERE user_id=".$user;
                 $row=$dba->getRow($SQL);
-                if ($row['user_level']<3){// we need to notify only the managers
+                if ($row['user_level']<3 && !empty($row['telegram_chat_id'])){// we need to notify only the managers
                 $SQL="INSERT INTO telegram_messages (user_id,sensor_id,received_message,sensor_value,notification_id) VALUES (".$user.",0,0,0,".$notification_id.")";
                 $dba->Query($SQL);
                 if (LM_DEBUG)
