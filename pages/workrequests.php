@@ -95,7 +95,7 @@ if(!empty($_GET['employee_ids']))
        
         }
 $workrequest_ids= json_decode($_GET["workrequest_ids"],true);
-
+$saved_workorder=0;
 foreach ($workrequest_ids as $workrequest_id)
     {
         $SQL="SELECT * FROM workrequests WHERE workrequest_id=".$workrequest_id;
@@ -141,7 +141,7 @@ foreach ($workrequest_ids as $workrequest_id)
             if (isset($_GET['workorder_partner_supervisor_user_id']) && $_GET['workorder_partner_supervisor_user_id']>0)
             $SQL.=",".(int) $_GET['workorder_partner_supervisor_user_id'];
             
-            
+           
             foreach ($employee_ids as $key=>$value){
             $SQL.= ",".(int) $value;
             }
@@ -150,8 +150,8 @@ foreach ($workrequest_ids as $workrequest_id)
             error_log($SQL,0);
             if ($dba->Query($SQL)){
             $workorder_id=$dba->insertedId();
-                echo "<div class=\"card\">".gettext("The new workorder has been saved.")."</div>";
-     
+                $saved_workorder++;
+                     
                 if ($row['product_id_to_refurbish']>0 && (int) $_GET['workorder_partner_id']>0)
                 {//since this workorder is a refurbish need change the product location to the partner 
                     $SQL="SELECT stock_location_id FROM stock WHERE product_id=".$row['product_id_to_refurbish'];
@@ -192,7 +192,12 @@ foreach ($workrequest_ids as $workrequest_id)
             
   
     }
-}}
+}
+if ($saved_workorder==1)
+lm_info(gettext("A new workorder has been saved."));
+if ($saved_workorder>1)
+lm_info($saved_workorder." ".gettext("pcs new workorders have been saved."));
+}
 
 if (isset($_POST['page']) && isset($_POST["new_workrequest"]) && !isset($_POST["workrequest_id"]) && is_it_valid_submit()){ //it is from the new workrequest form
 //repetitive priority service_interval_date service_interval_hours workrequest_short 
