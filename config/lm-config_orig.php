@@ -28,8 +28,8 @@ define('OPERATOR_NOTIFICATIONS_SUPPORT',1);
 $req_classes=array("Imagick");
 $req_extensions=array("mysqli","gettext","gd");
 //for sql auth:
-define(DATABASE,'your_database_name');
-define(HOST,'your_database_host');
-define(USERNAME,'your_database_username');
-define(PASSWORD,'your_database_password');
+define('DATABASE','your_database_name');
+define('HOST','your_database_host');
+define('USERNAME','your_database_username');
+define('PASSWORD','your_database_password');
 
