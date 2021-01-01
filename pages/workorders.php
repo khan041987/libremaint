@@ -1012,7 +1012,7 @@ if (!empty($result)){
                                 $SQL2="SELECT finish_time FROM finished_workrequests WHERE workrequest_id=".$row1['workrequest_id']." ORDER BY finish_time DESC LIMIT 0,1";
                                 $row2=$dba->getRow($SQL2);
                                 if (!(empty($row2['finish_time'])))
-                                echo " <small style=\"color:red;\" title='".gettext("Last")."'>".date("Y.m.d", strtotime($row2['finish_time']))."</small>";
+                                echo " <small style=\"color:red;\" title='".gettext("Last")."'>".date($lang_date_format, strtotime($row2['finish_time']))."</small>";
                                 }
                                 
                                 if (5>$row1['workorder_status'])
