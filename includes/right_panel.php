@@ -23,10 +23,12 @@
                         </div>
   -->                      
 <?php 
-if ($_SESSION['user_level']<4 && IOT_SUPPORT){
 $SQL="SELECT users_assets FROM users WHERE user_id=".$_SESSION['user_id'];
 $row=$dba->getRow($SQL);
-$users_assets=json_decode($row['users_assets'], true);
+if (!empty($row['users_assets']))
+$users_assets=json_decode($row['users_assets'],true);
+
+if ($_SESSION['user_level']<4 && IOT_SUPPORT){
 if (!empty($users_assets))
 {
 $SQL="SELECT * FROM received_messages LEFT JOIN iot_sensors ON received_messages.sensor_id=iot_sensors.sensor_id WHERE 1=1";
@@ -44,17 +46,17 @@ $SQL.=")";
 $SQL.=" AND message_type>2";
 $SQL.=" AND user_id_who_checked=0";
 $result=$dba->Select($SQL);
-$not_number=$dba->affectedRows();
+$message_number=$dba->affectedRows();
 
                            
 
 ?>
                         
-                        <div class="dropdown for-notification">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="notification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div class="dropdown for-message">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="message" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-bell">
 <?php
-                                echo '<span class="count bg-danger">'.$not_number.'</span>';
+                                echo '<span class="count bg-danger">'.$message_number.'</span>';
 ?>
                                 </i>
                                 
@@ -62,13 +64,13 @@ $not_number=$dba->affectedRows();
 </button>
                             <div class="dropdown-menu" aria-labelledby="notification">
 <?php                               
-echo '<p class="red">'.gettext('You have ').$not_number.gettext(' notification').'</p>';
-if ($not_number>0){
+echo '<p class="red">'.gettext('You have ').$message_number." ".gettext(' message').'</p>';
+if ($message_number>0){
 foreach ($result as $row){
 $SQL="SELECT message_".$lang." FROM messages WHERE message_id=".(int) $row["received_message"];
     $row1=$dba->getRow($SQL);
 
-echo '<a class="dropdown-item media bg-flat-color-1" href="#">';
+echo '<a class="dropdown-item media bg-flat-color-1" href="index.php?page=messages">';
                                 echo '<i class="fa fa-check"></i><p>';
                                 $n="";
                 foreach (get_whole_path("asset",$row['asset_id'],1) as $k){
@@ -90,22 +92,40 @@ echo '<a class="dropdown-item media bg-flat-color-1" href="#">';
 }
 }
 
-if (OPERATOR_NOTIFICATIONS_SUPPORT && $_SESSION['user_level']<3){
-$SQL="SELECT count(notification_id) as count FROM notifications WHERE  notification_status=1";
-$row=$dba->getRow($SQL);
+if (OPERATOR_NOTIFICATIONS_SUPPORT && isset($users_assets) && $_SESSION['user_level']<3){
+$SQL="SELECT notification_short,main_asset_id FROM notifications WHERE  notification_status=1";
+$SQL.=" AND main_asset_id IN ('".join("','",$users_assets)."')";
 
+$result=$dba->Select($SQL);
+$not_number=$dba->affectedRows();
+if ($not_number>0){
 ?>
-                        <div class="dropdown for-message">
-                            <button class="btn btn-secondary dropdown-toggle" type="button"
-                                id="message"
+                        <div class="dropdown for-notification">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="notification"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="ti-email"></i>
-                                <span class="count bg-primary"><?php echo $row['count']; ?></span>
+                                <span class="count bg-primary"><?php echo $not_number; ?></span>
                             </button>
-                            
+ <div class="dropdown-menu" aria-labelledby="notification">
+<?php                               
+echo '<p class="red">'.gettext('You have ').$not_number." ".gettext(' notification').'</p>';
+
+foreach ($result as $row){
+
+echo '<a class="dropdown-item media bg-flat-color-1" href="index.php?page=notifications">';
+                                echo '<i class="fa fa-check"></i><p>';
+                          
+                echo get_asset_name_from_id($row['main_asset_id'],$lang).': '.$row['notification_short'];
+                                
+                                echo '</p></a>';
+
+}
+
+?>                           </div>                           
                         </div>
                     
  <?php
+ }
  }
 if ($req_page=="stock"){
 echo "<script src=\"".INCLUDES_LOC."luhn.js\"></script>\n";
