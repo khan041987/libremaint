@@ -93,7 +93,8 @@ foreach( $result as $row) {
 		
 		$resp.=" onClick=\"";
         if ($req_page=="notifications")
-         $resp.="alert('".$row['asset_id']."');document.notification_form.asset_id.value=".$row['asset_id'];
+         $resp.="ajax_call('show_asset_with_its_parents','".$row['asset_id']."','','','','".URL."index.php','asset_name');document.notification_form.asset_id.value=".$row['asset_id'];
+        
         else
         //2020.12.06->$resp.="ajax_call('show_asset_tree_menu','".$row['asset_id']."','','','','".URL."index.php','for_ajaxcall',".$row['grouped_asset'].")";
         $resp.="ajax_call('show_asset_tree_menu','".$row['asset_id']."','','','','".URL."index.php','for_ajaxcall')";

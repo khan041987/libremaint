@@ -68,8 +68,13 @@ location.href=address;
 }
 </script>
 <?php
-//$notification_statuses=array(gettext("New"),gettext("Confirmed"),gettext("Work in progress"),gettext("Resolved"),gettext("Closed"),gettext("Deleted"));
-  
+$SQL="SELECT users_assets FROM users WHERE user_id=".$_SESSION['user_id'];
+$row=$dba->getRow($SQL);
+if (!empty($row['users_assets']))
+$users_assets=json_decode($row['users_assets'],true);
+else
+lm_die(gettext("There is no asset belong to you."));
+ 
 if(isset($_GET['set_notification_status']) && $_GET['set_notification_status']>0 && $_GET['notification_id']>0 && is_it_valid_submit()){
 $SQL="UPDATE notifications SET notification_status=".(int) $_GET['set_notification_status']." WHERE notification_id=".(int) $_GET['notification_id'];
 if ($dba->Query($SQL))
@@ -245,10 +250,7 @@ else if (isset($_GET["modify"]))
     echo gettext("Modify notification ");
 ?></strong>
 </div><?php //card header 
-$SQL="SELECT users_assets FROM users WHERE user_id=".$_SESSION['user_id'];
-$row=$dba->getRow($SQL);
-if (!empty($row['users_assets']))
-$users_assets=json_decode($row['users_assets'],true);
+
 //we need to extend the assets e.g. if the main asset is 'air system' it's better to add its children e.g. 'air compressor 1', 'air_compressor 2', 'buffer'...
 /*
 $i=0;
@@ -305,16 +307,30 @@ echo "<div class=\"row form-group\">";
         echo "<label for=\"asset_id\" class=\" form-control-label\">".gettext("Asset:")."</label>";
     echo "</div>\n";
 
-echo "<div id=\"tree\">\n";
+echo "<div id=\"tree\" class=\"col col-md-3\">\n";
 echo "<ul id=\"treeData\" style=\"display: none;\">\n";
 $resp="";
 include(INCLUDES_PATH."asset_tree_func.php");
 echo tree_construct($notification_row['main_asset_id'],0);    
 echo "</ul></div>";
-echo "</div>";
-}else
-echo "<input type='hidden' name='asset_id' id='asset_id'>";
+if (isset($_GET['modify']) && $notification_row['asset_id']>0){
+echo "<div id=\"asset_name\">";
+$n="";
+foreach (get_whole_path("asset",$notification_row['asset_id'],1) as $k){
+if ($n=="") // the first element is the main asset_id -> ignore it
+$n=" ";
+else
+$n.=$k."-><wbr>";}
 
+if ($n!="")
+echo substr($n,0,-7);
+echo "</div>";
+}
+else
+echo "<div id=\"asset_name\"></div>";
+echo "</div>";
+}
+echo "<input type='hidden' name='asset_id' id='asset_id'>";
 
 
 
@@ -436,7 +452,7 @@ echo "</script>\n";
 <div class="card-header">
 <?php 
 echo "<h2 style='display:inline;'>".gettext("Notifications")." </h2>";
-
+$SQL="";
 $main_asset_id=lm_isset_int('main_asset_id');
 if ($main_asset_id>0){
 $_SESSION['main_asset_id']=$main_asset_id;
@@ -532,7 +548,10 @@ echo "<th>".gettext("User")."</th>";
     if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
         echo " STYLE=\"background-color:orange\"";
     echo ">".gettext("Asset");
-    $SQL="SELECT distinct(main_asset_id), asset_name_".$lang." FROM notifications LEFT JOIN assets on assets.asset_id=notifications.main_asset_id ORDER BY asset_name_".$lang;
+    $SQL="SELECT distinct(main_asset_id), asset_name_".$lang." FROM notifications LEFT JOIN assets on assets.asset_id=notifications.main_asset_id";
+    $SQL.=" AND main_asset_id IN ('".join("','",$users_assets)."')";
+
+    $SQL.=" ORDER BY asset_name_".$lang;
     $result=$dba->Select($SQL);
     echo " <select name=\"main_asset_id\" id=\"main_asset_id\" class=\"form-control\"";
             echo " onChange=\"location.href='index.php?page=notifications&main_asset_id='+this.value\"";
@@ -560,7 +579,9 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 
-$SQL="SELECT user_id,notification_time,asset_id,main_asset_id,notification_short,notification_type,notification_id,notification_status FROM notifications WHERE 1=1";
+$SQL="SELECT user_id,notification_time,asset_id,main_asset_id,notification_short,notification_type,notification_id,notification_status FROM notifications WHERE ";
+$SQL.="main_asset_id IN ('".join("','",$users_assets)."')";
+
 if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
 $SQL.=" AND main_asset_id='".$_SESSION['main_asset_id']."'";
 if (isset($_SESSION['notification_status']) && $_SESSION['notification_status']>0)

@@ -2824,5 +2824,22 @@ if ($_GET['param4']!="modify")
 
 }        
 }
+else if (isset($_GET['param1']) && $_GET['param1']=="show_asset_with_its_parents")
+{
+if ($_GET['param2']>0){
 
+
+$n="";
+foreach (get_whole_path("asset",$_GET['param2'],1) as $k){
+if ($n=="") // the first element is the main asset_id -> ignore it
+$n=" ";
+else
+$n.=$k."-><wbr>";}
+
+if ($n!="")
+echo substr($n,0,-7);
+
+}
+
+}
 ?>
