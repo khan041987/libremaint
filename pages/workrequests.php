@@ -186,7 +186,7 @@ foreach ($workrequest_ids as $workrequest_id)
                 if (LM_DEBUG)
                     error_log($SQL,0);
             }else
-                echo "<div class=\"card\">".gettext("Failed to save new workorder ").$SQL." ".$dba->err_msg."</div>";
+                lm_error(gettext("Failed to save new workorder ").$SQL." ".$dba->err_msg);
             if (LM_DEBUG)
             error_log($SQL,0);
             
@@ -225,9 +225,9 @@ $SQL.="'".(int) $_POST["replace_to_product_id"]."',";
 $SQL.="'".(int) $_POST["product_id_to_refurbish"]."'";
 $SQL.=")";
 if ($dba->Query($SQL))
-        echo "<div class=\"card\">".gettext("The new workrequest has been saved.")."</div>";
+        lm_info(gettext("The new workrequest has been saved."));
         else
-        echo "<div class=\"card\">".gettext("Failed to save new workrequest ").$SQL." ".$dba->err_msg."</div>";
+        lm_error(gettext("Failed to save new workrequest ").$SQL." ".$dba->err_msg);
 if (LM_DEBUG)
 error_log($SQL,0);
 
@@ -247,9 +247,9 @@ $SQL.="replace_to_product_id='".(int) $_POST["replace_to_product_id"]."',";
 $SQL.="product_id_to_refurbish='".(int) $_POST["product_id_to_refurbish"]."'";
 $SQL.=" WHERE workrequest_id='".$_POST['workrequest_id']."'";
 if ($dba->Query($SQL))
-        echo "<div class=\"card\">".gettext("The workrequest has been modified.")."</div>";
+        lm_info(gettext("The workrequest has been modified."));
         else
-        echo "<div class=\"card\">".gettext("Failed to modify workrequest ").$SQL." ".$dba->err_msg."</div>";
+        lm_error(gettext("Failed to modify workrequest ").$SQL." ".$dba->err_msg);
 if (LM_DEBUG)
 error_log($SQL,0);
 
@@ -261,7 +261,37 @@ $SQL="SELECT * FROM workrequests WHERE workrequest_id='".(int)$_GET['workrequest
 $workrequest_row=$dba->getRow($SQL);}
 echo "<div id=\"workrequest_form\" class=\"card\">\n";
 echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('workrequest_form').innerHTML=''\">\n";
-echo "<span aria-hidden=\"true\">×</span>\n</button>";?>
+echo "<span aria-hidden=\"true\">×</span>\n</button>";
+
+if (isset($_GET['asset_id']) && $_GET['asset_id']>0)
+{
+$SQL="SELECT workrequest_short,asset_id FROM workrequests WHERE asset_id=".(int) $_GET['asset_id']." AND (workrequest_status<3 OR repetitive>0)";
+    $result=$dba->Select($SQL);
+    if ($dba->affectedRows()){
+        echo "<div class=\"card\">\n<div class=\"card-header\">\n";
+        echo "<strong>".gettext("Workrequests for this asset")."</strong>";
+        echo "</div>\n";
+
+        foreach ($result as $row){
+        echo '<li> ';
+        $n="";
+        foreach (get_whole_path("asset",$row['asset_id'],1) as $k){
+        if ($n=="") // the first element is the main asset_id -> ignore it
+        $n=" ";
+        else
+        $n.=$k."-><wbr>";}
+
+        if ($n!="")
+        echo substr($n,0,-7);
+
+
+        echo ' '.$row['workrequest_short'].'</li>';
+
+        }
+        echo '</ul></div>';
+}
+}
+?>
 
 <div class="card-header">
 <strong><?php 
@@ -437,7 +467,7 @@ echo "<input type='hidden' name='replace_to_product_id' id='replace_to_product_i
 echo "<INPUT TYPE=\"hidden\" name=\"priority\" id=\"priority\" VALUE=\"3\">";
 
 
-if ((isset($_GET['repetitive']) && $_GET['repetitive']>0) || ($_GET['modify'] && $workrequest_row['repetitive']>0)) 
+if ((isset($_GET['repetitive']) && $_GET['repetitive']>0) || (isset($_GET['modify']) && $workrequest_row['repetitive']>0)) 
 {
 echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"for_operators\" class=\"form-control-label\">".gettext("For operators:")."</label></div>\n";
