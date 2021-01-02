@@ -134,14 +134,7 @@ echo "<div class=\"card\">";
             if (LM_DEBUG)
             error_log($SQL,0);
         }
-        if (isset($_GET["workorder_id"]) && (int) $_GET["workorder_id"]>0){
-            $SQL="SELECT workorder_partner_id FROM workorders WHERE workorder_id='".(int) $_GET["workorder_id"]."'";
-            $row=$dba->getRow($SQL);
-            if ($row['workorder_partner_id']>0 && $_SESSION['user_level']<3){
-            echo "<INPUT TYPE='checkbox' name='workorder_partner_id' id='workorder_partner_id' value='".$row['workorder_partner_id']."'>";
-            echo "<span>".get_partner_name_from_id($row['workorder_partner_id'])."</span>";
-            }
-        }
+       
         echo "<p>".gettext("Task(s):")."</p><ul>";
       
         echo "<li>";
@@ -191,7 +184,7 @@ echo "<div class=\"card\">";
 echo "<div class=\"card-body card-block\">";
    if ($_SESSION['user_level']<3) {// the boss can administrate other user's work        
     echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-1\"><label for=\"workorder_user_id\" class=\" form-control-label\">".gettext("Employee:")."</label></div>";
+    echo "<div class=\"col col-md-2\"><label for=\"workorder_user_id\" class=\" form-control-label\">".gettext("Employee:")."</label></div>";
 
     echo "<div class=\"col-12 col-md-3\">";
     echo "<select name=\"workorder_user_id\" id=\"workorder_user_id\" class=\"form-control\" required onChange=\"check_time_period()\">\n";
@@ -220,9 +213,21 @@ echo "<div class=\"card-body card-block\">";
   }else
   echo "<input type='hidden' name='workorder_user_id' id='workorder_user_id' value='".$_SESSION['user_id']."'>\n";
 
+   if (isset($_GET["workorder_id"]) && (int) $_GET["workorder_id"]>0){
+            $SQL="SELECT workorder_partner_id FROM workorders WHERE workorder_id='".(int) $_GET["workorder_id"]."'";
+            $row=$dba->getRow($SQL);
+            if ($row['workorder_partner_id']>0 && $_SESSION['user_level']<3){
+    echo "<div class=\"row form-group\">\n";
+    echo "<div class=\"col col-md-2\"><label for=\"workorder_partner_id\" class=\"form-control-label\">".gettext("Work with partner:")."</label></div>\n";
+        echo "<div class=\"col-12 col-md-3\">\n";
+        
+            echo "<INPUT TYPE='checkbox' name='workorder_partner_id' id='workorder_partner_id' value='".$row['workorder_partner_id']."'>";
+            echo "<span> ".get_partner_name_from_id($row['workorder_partner_id'])."</span>\n</div></div>\n";
+            }
+        }
         echo "<div class=\"row form-group\">\n";
         
-        echo "<div class=\"col col-md-1\"><label for=\"workorder_work_start_date\" class=\"form-control-label\">".gettext("Start time:")."</label></div>\n";
+        echo "<div class=\"col col-md-2\"><label for=\"workorder_work_start_date\" class=\"form-control-label\">".gettext("Start time:")."</label></div>\n";
         echo "<div class=\"col-12 col-md-3\">";
         
         echo "<input type=\"date\" id=\"workorder_work_start_date\" name=\"workorder_work_start_date\" onChange=\"
@@ -239,7 +244,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         if (isset($_GET['new'])){
         
                 
-        echo date($lang_date_format);
+        echo date(str_replace('.', '-',$lang_date_format));
         
         }
         else if (isset($_GET['modify']))
@@ -266,12 +271,12 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
 
         
         //echo "<div class=\"row form-group\">\n";
-        echo "<div class=\"col col-md-1\"><label for=\"workorder_work_end_date\" class=\"form-control-label\">".gettext("End time:")."</label></div>\n";
+        echo "<div class=\"col col-md-2\"><label for=\"workorder_work_end_date\" class=\"form-control-label\">".gettext("End time:")."</label></div>\n";
         echo "<div class=\"col-12 col-md-3\">\n";
         echo "<input type=\"date\" onChange=\"check_time_period();\" id=\"workorder_work_end_date\" name=\"workorder_work_end_date\" value=\"";
         
         if (isset($_GET['new']))
-        echo date($lang_date_format);
+        echo date(str_replace('.', '-',$lang_date_format));
         else if (isset($_GET['modify']))
         echo date($lang_date_format, strtotime($row_mod['workorder_work_end_time']));
         echo "\">";
@@ -285,7 +290,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         echo "</div>\n</div>\n";
         
     echo "<div class=\"row form-group\">\n";
-        echo "<div class=\"col col-md-1\">\n";
+        echo "<div class=\"col col-md-2\">\n";
             echo "<label for=\"workorder_status\" class=\" form-control-label\">".gettext("Unplanned shutdown").":</label>";
         echo "</div>\n";
 
@@ -305,7 +310,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
     
     
     echo "<div class=\"row form-group\">\n";
-        echo "<div class=\"col col-md-1\">\n";
+        echo "<div class=\"col col-md-2\">\n";
             echo "<label for=\"workorder_status\" class=\" form-control-label\">".gettext("Status:")."</label>";
         echo "</div>\n";
 
@@ -337,7 +342,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
     
     
     echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-1\"><label for=\"workorder_work\" class=\" form-control-label\">".gettext("Activity:")." </label></div>";
+    echo "<div class=\"col col-md-2\"><label for=\"workorder_work\" class=\" form-control-label\">".gettext("Activity:")." </label></div>";
     echo "<div class=\"col col-md-7\">\n";
     
     echo " <textarea name=\"workorder_work\" id=\"workorder_work\" rows=\"4\""; 
