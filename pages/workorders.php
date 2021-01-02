@@ -59,7 +59,7 @@ error_log($SQL,0);
     $SQL.=(int) $_POST['workorder_user_id'].",";
     else
     $SQL.=(int) $_SESSION['user_id'].",";
-    $SQL.=(int) $_POST['workorder_status'];
+    $SQL.=(int) $_POST['workorder_status'].",";
     $SQL.=(int) $_POST['unplanned_shutdown'];
     if ($workorder_row['workorder_partner_id']>0)
     $SQL.=",".(int) $_POST['workorder_partner_id'];
