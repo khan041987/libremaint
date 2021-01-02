@@ -8,8 +8,8 @@ $SQL.="'".$dba->escapeStr($_POST['partner_address'])."',";
 $SQL.="'".(int) $_POST['contact1_title']."',";
 $SQL.="'".$dba->escapeStr($_POST['contact1_firstname'])."',";
 $SQL.="'".$dba->escapeStr($_POST['contact1_surname'])."',";
-$SQL.="'".$_POST['contact1_phone']."',";
-$SQL.="'".$_POST['contact1_email']."',";
+$SQL.="'".$dba->escapeStr($_POST['contact1_phone'])."',";
+$SQL.="'".$dba->escapeStr($_POST['contact1_email'])."',";
 $SQL.="'".$dba->escapeStr($_POST['contact1_position'])."',";
 $SQL.="NOW())";
 
@@ -24,7 +24,10 @@ error_log($SQL,0);
 
 else if (isset($_POST['partner_id']) && $_POST['partner_id']>0 && $_SESSION['user_level']<3)
 {
-$SQL="UPDATE partners SET partner_address='".$dba->escapeStr($_POST['partner_address'])."',";
+$SQL="UPDATE partners SET ";
+$SQL.="partner_name='".$dba->escapeStr($_POST['partner_name'])."',";
+
+$SQL.="partner_address='".$dba->escapeStr($_POST['partner_address'])."',";
 $i=1;
 while (isset($_POST['contact'.$i.'_title']))
 {
@@ -38,9 +41,9 @@ $i++;
 }
 $SQL.=" WHERE partner_id='".(int) $_POST['partner_id']."'";
 if ($dba->Query($SQL))
-        echo "<div class=\"card\">".gettext("The new partner has been modified.")."</div>";
+        lm_info(gettext("The new partner has been modified."));
         else
-        echo "<div class=\"card\">".gettext("Failed to modify new partner ").$dba->err_msg." ".$SQL."</div>";
+        lm_error(gettext("Failed to modify new partner ").$dba->err_msg." ".$SQL);
 if (LM_DEBUG)
 error_log($SQL,0);
 
@@ -117,7 +120,7 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 $from=1;
-$SQL="SELECT partner_id,partner_name,contact1_firstname,contact1_surname,contact1_firstname_is_first,contact1_email,contact1_phone FROM partners";
+$SQL="SELECT partner_id,partner_name,contact1_firstname,contact1_surname,contact1_firstname_is_first,contact1_email,contact1_phone FROM partners ORDER BY partner_name";
 $result_all=$dba->Select($SQL);
 $number_all=$dba->affectedRows();
 $from=($pagenumber-1)*ROWS_PER_PAGE;

@@ -1994,20 +1994,31 @@ echo "</div>\n";
 else if(isset($_GET['param1']) && $_GET['param1']=="show_partner_detail"){
 if (!$_SESSION['SEE_PARTNER_DETAIL'])
 lm_die(gettext("You have no permission!"));
-$SQL="SELECT * FROM partners WHERE partner_id='".$_GET['param2']."'";
+$SQL="SELECT * FROM partners WHERE partner_id='".(int) $_GET['param2']."'";
 $row=$dba->getRow($SQL);
 echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\">";
 echo "<span aria-hidden=\"true\">×</span></button>";
+echo "<form class=\"form-horizontal\" method=\"POST\">\n";
+
 echo "<div class=\"card\">";
     echo "<div class=\"card-header\">\n";
            if (isset($_GET['param3']) && $_GET['param3']=='modify')
            echo "<strong>".gettext("Modify partner details...")." ".$row['partner_name']."</strong>\n";
-            else
-           echo "<strong>".gettext("Show partner details...")." ".$row['partner_name']."</strong>\n";
+    
     echo "</div>\n";
-    echo "<form class=\"form-horizontal\" method=\"POST\">\n";
-
+    
     echo "<div class=\"card-body card-block\">\n";
+        
+        
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"partner_name\" class=\"form-control-label\">".gettext("Partner name:")."</label></div>\n";
+        echo "<div class=\"col col-md-3\">";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+        echo "<input type='text' name='partner_name' id='partner_name' value='".$row["partner_name"]."'>";
+        else
+        echo $row["partner_name"];
+        echo "</div></div>\n";
+        
         
         echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"partner_address\" class=\"form-control-label\">".gettext("Address:")."</label></div>\n";
