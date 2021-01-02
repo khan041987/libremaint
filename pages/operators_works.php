@@ -11,6 +11,17 @@ checkboxes.forEach(e => {
  })
 document.getElementById("workrequest_ids").value=JSON.stringify(workrequest_ids);
  }
+ 
+function is_any_work_checked(){
+
+if (Object.keys(document.getElementById("workrequest_ids").value).length>0)
+return true;
+else
+{
+alert('<?php echo (gettext("There is no any work checked!"));?>');
+return false;
+}
+} 
 </script>
 <?php 
 $SQL="SELECT users_assets FROM users WHERE user_id=".$_SESSION['user_id'];
@@ -100,7 +111,7 @@ if((isset($_GET['new']) && isset($_SESSION['RECORD_OPERATOR_WORK']))){
 echo "<div class=\"card\">";
 
 
-         echo "<form action=\"index.php\" method=\"post\" enctype=\"multipart/form-data\" class=\"form-horizontal\" id=\"work_form\" name=\"work_form\">";
+         echo "<form action=\"index.php\" method=\"post\" enctype=\"multipart/form-data\" class=\"form-horizontal\" id=\"work_form\" name=\"work_form\" onSubmit=\"return is_any_work_checked()\">";
 
     echo "<div class=\"card-header\">\n";
              
