@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Libremaint\n"
-"POT-Creation-Date: 2021-01-02 09:13+0100\n"
-"PO-Revision-Date: 2021-01-02 09:17+0100\n"
+"POT-Creation-Date: 2021-01-02 13:24+0100\n"
+"PO-Revision-Date: 2021-01-02 13:28+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu_HU\n"
@@ -43,7 +43,7 @@ msgid "Low"
 msgstr "Alacsony"
 
 #: config/lm-settings.php:122 config/lm-settings_orig.php:122
-#: pages/workrequests.php:710
+#: pages/workrequests.php:740
 msgid "Workrequests"
 msgstr "Munkaigények"
 
@@ -95,7 +95,7 @@ msgid "NN"
 msgstr "ÚB"
 
 #: config/lm-settings.php:132 config/lm-settings_orig.php:132
-#: pages/operators_works.php:241
+#: pages/operators_works.php:252
 msgid "Operator works"
 msgstr "Kezelői munkák"
 
@@ -343,7 +343,7 @@ msgid "Waiting for decision"
 msgstr "Döntésre vár"
 
 #: config/lm-settings.php:181 config/lm-settings_orig.php:181
-#: pages/workrequests.php:807
+#: pages/workrequests.php:837
 msgid "Ready"
 msgstr "Kész"
 
@@ -354,7 +354,7 @@ msgid "Deleted"
 msgstr "Törölt"
 
 #: config/lm-settings.php:183 config/lm-settings_orig.php:183
-#: pages/notifications.php:510 pages/operators_works.php:296
+#: pages/notifications.php:510 pages/operators_works.php:307
 #: pages/stock.php:264 pages/workorders.php:787 pages/works.php:514
 msgid "All"
 msgstr "Összes"
@@ -421,7 +421,7 @@ msgstr "Nem sikerült csatlakozni az adatbázishoz"
 #: includes/ajax_calls.php:10 includes/ajax_calls.php:1013
 #: includes/ajax_calls.php:2095 includes/ajax_calls.php:2319
 #: includes/ajax_calls.php:2475 includes/ajax_calls.php:2569
-#: pages/operators_works.php:218 pages/settings.php:52 pages/users.php:341
+#: pages/operators_works.php:229 pages/settings.php:52 pages/users.php:341
 #: pages/works.php:389
 msgid "Submit"
 msgstr "Ment"
@@ -462,8 +462,8 @@ msgstr "Termékfajta hozzáadása"
 #: pages/counters.php:52 pages/locations.php:89 pages/partners.php:76
 #: pages/products.php:239 pages/products.php:293 pages/products.php:424
 #: pages/stock.php:222 pages/users.php:236 pages/users.php:263
-#: pages/users.php:308 pages/workorders.php:428 pages/workrequests.php:463
-#: pages/workrequests.php:494 pages/works.php:196
+#: pages/users.php:308 pages/workorders.php:428 pages/workrequests.php:493
+#: pages/workrequests.php:524 pages/works.php:196
 msgid "Please select"
 msgstr "Válassz"
 
@@ -555,8 +555,8 @@ msgstr "Bizalmas:"
 #: includes/ajax_calls.php:362
 #: includes/modals/modal_add_new_product_form.php:199 pages/assets.php:476
 #: pages/notifications.php:713 pages/products.php:410 pages/workorders.php:562
-#: pages/workrequests.php:323 pages/workrequests.php:417
-#: pages/workrequests.php:985 pages/works.php:302
+#: pages/workrequests.php:353 pages/workrequests.php:447
+#: pages/workrequests.php:1015 pages/works.php:302
 msgid "No"
 msgstr "Nem"
 
@@ -630,7 +630,7 @@ msgid "Add workrequest to"
 msgstr "Munkaigény hozzáadása"
 
 #: includes/ajax_calls.php:716 includes/ajax_calls.php:1568
-#: pages/workrequests.php:658
+#: pages/workrequests.php:688
 msgid "Workrequest:"
 msgstr "Munkaigény:"
 
@@ -712,7 +712,7 @@ msgstr "Alaphelyzet"
 #: includes/workorders_consumption_from_asset_id.php:184
 #: pages/connection_types.php:30 pages/connection_types.php:98
 #: pages/connections.php:34 pages/connections.php:170 pages/messages.php:331
-#: pages/operators_works.php:394 pages/users.php:28 pages/users.php:84
+#: pages/operators_works.php:405 pages/users.php:28 pages/users.php:84
 #: pages/users.php:116 pages/users.php:156 pages/users.php:225
 #: pages/users.php:428 pages/works.php:662
 msgid "You have no permission!"
@@ -779,7 +779,7 @@ msgid "Workorder:"
 msgstr "Munkautasítás:"
 
 #: includes/ajax_calls.php:1393 pages/workorders.php:557
-#: pages/workrequests.php:412
+#: pages/workrequests.php:442
 msgid "Replace to:"
 msgstr "Csere:"
 
@@ -798,9 +798,9 @@ msgstr "Típus:"
 
 #: includes/ajax_calls.php:1445 includes/workorder_consumption.php:108
 #: includes/workorders_consumption_from_asset_id.php:128
-#: pages/notifications.php:529 pages/operators_works.php:250
+#: pages/notifications.php:529 pages/operators_works.php:261
 #: pages/stock_movements.php:30 pages/workorders.php:804
-#: pages/workrequests.php:781
+#: pages/workrequests.php:811
 msgid "Date"
 msgstr "Dátum"
 
@@ -862,7 +862,7 @@ msgstr "Munkaigény(rövid):"
 
 #: includes/ajax_calls.php:1584 includes/ajax_calls.php:1647
 #: pages/notifications.php:360 pages/workorders.php:329
-#: pages/workrequests.php:353 pages/workrequests.php:579
+#: pages/workrequests.php:383 pages/workrequests.php:609
 msgid "Priority:"
 msgstr "Fontosság:"
 
@@ -895,22 +895,22 @@ msgstr "Csatlakozások"
 #: includes/ajax_calls.php:1704 pages/connection_types.php:39
 #: pages/connections.php:37
 msgid "Connection category:"
-msgstr "Ehhez kapcsolódik:"
+msgstr "Csatlakozásfajta:"
 
 #: includes/ajax_calls.php:1726
 msgid "Connection:"
-msgstr "Ehhez kapcsolódik:"
+msgstr "Csatlakozás:"
 
 #: includes/ajax_calls.php:1746 pages/connections.php:66
 msgid "Connection type:"
-msgstr "Ehhez kapcsolódik:"
+msgstr "Csatlakozás jellege:"
 
 #: includes/ajax_calls.php:1797
 msgid "You are about to delete a connection. Are you sure?"
 msgstr "Törölsz egy csatlakozást. Biztos?"
 
 #: includes/ajax_calls.php:1800 includes/ajax_calls.php:1862
-#: pages/workrequests.php:885
+#: pages/workrequests.php:915
 msgid "Delete"
 msgstr "Töröl"
 
@@ -945,7 +945,7 @@ msgid "New counter value"
 msgstr "Új számlálóérték"
 
 #: includes/ajax_calls.php:1956 pages/counters.php:44
-#: pages/workrequests.php:454
+#: pages/workrequests.php:484
 msgid "Counter:"
 msgstr "Számláló:"
 
@@ -1005,8 +1005,8 @@ msgstr "Vagyontárgy ezzel:"
 
 #: includes/ajax_calls.php:2131 includes/ajax_calls.php:2195
 #: includes/workorders_consumption_from_asset_id.php:29
-#: pages/notifications.php:550 pages/operators_works.php:263
-#: pages/workorders.php:809 pages/workrequests.php:786 pages/works.php:476
+#: pages/notifications.php:550 pages/operators_works.php:274
+#: pages/workorders.php:809 pages/workrequests.php:816 pages/works.php:476
 msgid "Asset"
 msgstr "Vagyontárgy"
 
@@ -1236,23 +1236,23 @@ msgstr "nincs adat"
 msgid "Error encountered."
 msgstr "Hiba történt."
 
-#: includes/functions.php:614 pages/workrequests.php:947
+#: includes/functions.php:614 pages/workrequests.php:977
 msgid "No interval"
 msgstr "Nincs időköz"
 
-#: includes/functions.php:616 pages/workrequests.php:499
+#: includes/functions.php:616 pages/workrequests.php:529
 msgid "Daily"
 msgstr "Naponta"
 
-#: includes/functions.php:618 pages/workrequests.php:504
+#: includes/functions.php:618 pages/workrequests.php:534
 msgid "Weekly"
 msgstr "Hetente"
 
-#: includes/functions.php:620 pages/workrequests.php:509
+#: includes/functions.php:620 pages/workrequests.php:539
 msgid "Fortnigtly"
 msgstr "Kéthetente"
 
-#: includes/functions.php:622 pages/workrequests.php:514
+#: includes/functions.php:622 pages/workrequests.php:544
 msgid "Monthly"
 msgstr "Havonta"
 
@@ -1268,7 +1268,7 @@ msgstr "3 havonta"
 msgid "6 monthly"
 msgstr "6 havonta"
 
-#: includes/functions.php:630 pages/workrequests.php:534
+#: includes/functions.php:630 pages/workrequests.php:564
 msgid "Yearly"
 msgstr "Évente"
 
@@ -1455,7 +1455,7 @@ msgstr "Összesen:"
 #: includes/work_stat_query.php:81 includes/work_stat_query.php:93
 #: includes/work_stat_query.php:176 includes/work_stat_query.php:188
 #: includes/work_stat_query.php:197 includes/work_stat_query.php:209
-#: pages/workrequests.php:935 pages/workrequests.php:942 pages/works.php:126
+#: pages/workrequests.php:965 pages/workrequests.php:972 pages/works.php:126
 msgid "hours"
 msgstr "óra"
 
@@ -1501,7 +1501,7 @@ msgstr "Jelszó változtatása"
 #: includes/show_assets_tree_menu_ajax.php:67
 #: includes/show_categories_tree_menu.php:14
 #: includes/show_locations_tree_menu.php:14 pages/notifications.php:629
-#: pages/workrequests.php:864
+#: pages/workrequests.php:894
 msgid "Show info file(s)"
 msgstr "Fájlok mutatása"
 
@@ -1627,7 +1627,7 @@ msgid "Connections:"
 msgstr "Csatlakozások"
 
 #: includes/workorder_consumption.php:33 includes/workorder_consumption.php:36
-#: pages/workrequests.php:553
+#: pages/workrequests.php:583
 msgid "h"
 msgstr "óra"
 
@@ -2328,11 +2328,11 @@ msgid "Modify notification "
 msgstr "Bejelentés módosítása"
 
 #: pages/notifications.php:284 pages/notifications.php:307
-#: pages/operators_works.php:133
+#: pages/operators_works.php:144
 msgid "Asset:"
 msgstr "Vagyontárgy"
 
-#: pages/notifications.php:289 pages/operators_works.php:140
+#: pages/notifications.php:289 pages/operators_works.php:151
 msgid "Select an asset!"
 msgstr "Válassz vagyontárgyat!"
 
@@ -2352,7 +2352,7 @@ msgstr "bejelentés"
 msgid "Characters left: "
 msgstr "Ennyi karakter lehet:"
 
-#: pages/notifications.php:502 pages/stock.php:257 pages/workrequests.php:759
+#: pages/notifications.php:502 pages/stock.php:257 pages/workrequests.php:789
 msgid "S"
 msgstr "Áll."
 
@@ -2364,8 +2364,8 @@ msgstr "Minden típus"
 msgid "User"
 msgstr "Felhasználó"
 
-#: pages/notifications.php:559 pages/operators_works.php:273
-#: pages/workorders.php:816 pages/workrequests.php:792 pages/works.php:487
+#: pages/notifications.php:559 pages/operators_works.php:284
+#: pages/workorders.php:816 pages/workrequests.php:822 pages/works.php:487
 msgid "All assets"
 msgstr "Minden vagyontárgy"
 
@@ -2374,12 +2374,12 @@ msgid "Notification"
 msgstr "Bejelentés"
 
 #: pages/notifications.php:624 pages/partners.php:154 pages/workorders.php:1043
-#: pages/workrequests.php:859
+#: pages/workrequests.php:889
 msgid "Show details"
 msgstr "Részletek"
 
 #: pages/notifications.php:635 pages/partners.php:158
-#: pages/workrequests.php:870
+#: pages/workrequests.php:900
 msgid "Modify"
 msgstr "Módosítás"
 
@@ -2391,62 +2391,66 @@ msgstr "Megerősítve"
 msgid "Set it deleted"
 msgstr "Töröl"
 
-#: pages/notifications.php:700 pages/workrequests.php:972
+#: pages/notifications.php:700 pages/workrequests.php:1002
 msgid "Create workorder"
 msgstr "Munkautasítás készítése"
 
 #: pages/notifications.php:705 pages/workorders.php:416
-#: pages/workrequests.php:977
+#: pages/workrequests.php:1007
 msgid "Partner involved in this workorder:"
 msgstr "Résztvevő partner:"
 
 #: pages/notifications.php:722 pages/workorders.php:443
-#: pages/workrequests.php:994
+#: pages/workrequests.php:1024
 msgid "Partner supervisor:"
 msgstr "Partner felügyelője:"
 
 #: pages/notifications.php:728 pages/workorders.php:449
-#: pages/workrequests.php:1000
+#: pages/workrequests.php:1030
 msgid "Select"
 msgstr "Választ"
 
-#: pages/notifications.php:738 pages/workrequests.php:1010
+#: pages/notifications.php:738 pages/workrequests.php:1040
 msgid "Employee(s):"
 msgstr "Dolgozó(k):"
 
-#: pages/operators_works.php:77
+#: pages/operators_works.php:21
+msgid "There is no any work checked!"
+msgstr "Nincs  munka bejelölve!"
+
+#: pages/operators_works.php:88
 msgid "Failed to record activity."
 msgstr "Nem sikerült menteni a tevékenységet."
 
-#: pages/operators_works.php:81
+#: pages/operators_works.php:92
 msgid "Failed to record activity (the time you given is in the future)"
 msgstr "Nem sikerült menteni a munkát. (a megadott idő a jövő)"
 
-#: pages/operators_works.php:84
+#: pages/operators_works.php:95
 msgid "activity has been recorded."
-msgstr "Az munka elmentve."
+msgstr "munka elmentve."
 
-#: pages/operators_works.php:107 pages/works.php:121
+#: pages/operators_works.php:118 pages/works.php:121
 msgid "Add activity"
 msgstr "Munka hozzáadása"
 
-#: pages/operators_works.php:120
+#: pages/operators_works.php:131
 msgid "Finished time"
 msgstr "Befejezés ideje"
 
-#: pages/operators_works.php:163
+#: pages/operators_works.php:174
 msgid "Tasks"
 msgstr "Feladatok"
 
-#: pages/operators_works.php:183
+#: pages/operators_works.php:194
 msgid "There is no task for this asset."
 msgstr "Nincs feladat ehhez a vagyontárgyhoz jelenleg."
 
-#: pages/operators_works.php:315
+#: pages/operators_works.php:326
 msgid "Note"
 msgstr "Megjegyzés"
 
-#: pages/operators_works.php:353 pages/works.php:588
+#: pages/operators_works.php:364 pages/works.php:588
 msgid "You are about to delete a work. Are you sure?"
 msgstr "Törölsz egy tevékenységet. Biztos?"
 
@@ -2613,8 +2617,8 @@ msgid "ALL location"
 msgstr "Minden hely"
 
 #: pages/stock.php:453 pages/workorders.php:823 pages/workorders.php:859
-#: pages/workorders.php:1009 pages/workrequests.php:799
-#: pages/workrequests.php:927 pages/works.php:494
+#: pages/workorders.php:1009 pages/workrequests.php:829
+#: pages/workrequests.php:957 pages/works.php:494
 msgid "Refurbish"
 msgstr "Felújítás"
 
@@ -2750,11 +2754,11 @@ msgstr "Dolgozó:"
 msgid "Workorder (max."
 msgstr "Feladat (max."
 
-#: pages/workorders.php:472 pages/workrequests.php:635
+#: pages/workorders.php:472 pages/workrequests.php:665
 msgid "Activity type:"
 msgstr "Feladattípus:"
 
-#: pages/workorders.php:510 pages/workrequests.php:384
+#: pages/workorders.php:510 pages/workrequests.php:414
 msgid "The part built in:"
 msgstr "A beépített alkatrész:"
 
@@ -2796,7 +2800,7 @@ msgstr "nincs adat"
 
 #: pages/workrequests.php:40
 msgid "There is no work checked!"
-msgstr "Nincs  munkaigény bejelöve!"
+msgstr "Nincs  munkaigény bejelölve!"
 
 #: pages/workrequests.php:74
 msgid "This workrequest has set as inactive."
@@ -2834,115 +2838,119 @@ msgstr "A munkaigény módosítása sikerült."
 msgid "Failed to modify workrequest "
 msgstr "Nem sikerült a munkaigény módosítása."
 
-#: pages/workrequests.php:269
+#: pages/workrequests.php:272
+msgid "Workrequests for this asset"
+msgstr "Munkák ehhez a vagyontárgyhoz"
+
+#: pages/workrequests.php:299
 msgid "New workrequest "
 msgstr "Munkaigény"
 
-#: pages/workrequests.php:271
+#: pages/workrequests.php:301
 msgid "Modify workrequest "
 msgstr "Munkaigény módosítása"
 
-#: pages/workrequests.php:274 pages/workrequests.php:285
+#: pages/workrequests.php:304 pages/workrequests.php:315
 msgid " to "
 msgstr " "
 
-#: pages/workrequests.php:296 pages/workrequests.php:300
+#: pages/workrequests.php:326 pages/workrequests.php:330
 msgid " (refurbish) "
 msgstr "(felújítás)"
 
-#: pages/workrequests.php:315
+#: pages/workrequests.php:345
 msgid "Repetitive:"
 msgstr "Ismétlődő:"
 
-#: pages/workrequests.php:327
+#: pages/workrequests.php:357
 msgid "Periodic"
 msgstr "Ciklikus"
 
-#: pages/workrequests.php:331
+#: pages/workrequests.php:361
 msgid "By workhours"
 msgstr "Üzemóra szerint"
 
-#: pages/workrequests.php:335
+#: pages/workrequests.php:365
 msgid "By date or workhours"
 msgstr "Dátum és üzemóra szerint"
 
-#: pages/workrequests.php:339
+#: pages/workrequests.php:369
 msgid "By mileage"
 msgstr "futásteljesítmény szerint"
 
-#: pages/workrequests.php:343
+#: pages/workrequests.php:373
 msgid "By date or mileage"
 msgstr "idő vagy futásteljesítmény szerint"
 
-#: pages/workrequests.php:443
+#: pages/workrequests.php:473
 msgid "For operators:"
 msgstr "Gépkezelőknek:"
 
-#: pages/workrequests.php:465
+#: pages/workrequests.php:495
 msgid "There is no counter here"
 msgstr "Nincs számláló"
 
-#: pages/workrequests.php:483
+#: pages/workrequests.php:513
 msgid "Service interval:"
 msgstr "Gyakoriság:"
 
-#: pages/workrequests.php:519
+#: pages/workrequests.php:549
 msgid "2 Monthly"
 msgstr "2 havonta"
 
-#: pages/workrequests.php:524
+#: pages/workrequests.php:554
 msgid "3 Monthly"
 msgstr "3 havonta"
 
-#: pages/workrequests.php:529
+#: pages/workrequests.php:559
 msgid "6 Monthly"
 msgstr "félévente"
 
-#: pages/workrequests.php:539
+#: pages/workrequests.php:569
 msgid "2 Yearly"
 msgstr "kétévente"
 
-#: pages/workrequests.php:543
+#: pages/workrequests.php:573
 msgid " OR"
 msgstr "VAGY"
 
-#: pages/workrequests.php:553 pages/workrequests.php:566
+#: pages/workrequests.php:583 pages/workrequests.php:596
 msgid "Service interval"
 msgstr "Gyakoriság"
 
-#: pages/workrequests.php:566 pages/workrequests.php:945
+#: pages/workrequests.php:596 pages/workrequests.php:975
 msgid "km"
 msgstr "km"
 
-#: pages/workrequests.php:622
+#: pages/workrequests.php:652
 msgid "Workrequest (max.30):"
 msgstr "Munkaigény(max.30):"
 
-#: pages/workrequests.php:659
+#: pages/workrequests.php:689
 msgid "workrequest"
 msgstr "Munkaigény"
 
-#: pages/workrequests.php:725
+#: pages/workrequests.php:755
 msgid "Create task list (pdf)"
 msgstr "Feladatlista készítése (pdf)"
 
-#: pages/workrequests.php:806
+#: pages/workrequests.php:836
 msgid "Interval"
 msgstr "Gyakoriság"
 
-#: pages/workrequests.php:808
+#: pages/workrequests.php:838
 msgid "Norm"
 msgstr "Norma"
 
-#: pages/workrequests.php:809
+#: pages/workrequests.php:839
 msgid "Workrequest"
 msgstr "Munkaigény"
 
-#: pages/workrequests.php:874
+#: pages/workrequests.php:904
 msgid "Set it inactive"
 msgstr "Inaktívvá állítás"
 
-#: pages/workrequests.php:878 pages/workrequests.php:889
+#: pages/workrequests.php:908 pages/workrequests.php:919
 msgid "Set it active"
 msgstr "Aktívvá állítás"
 
