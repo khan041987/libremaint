@@ -2,19 +2,25 @@
 function add_to_array(){
 var checkboxes = document.querySelectorAll('input[name="workrequest_id[]"]');
 var workrequest_ids=[];
-var i=0;
+
 checkboxes.forEach(e => { 
     if (e.checked){
     workrequest_ids.push(e.value);
-    i++;
-    }
+     }
  })
 document.getElementById("workrequest_ids").value=JSON.stringify(workrequest_ids);
+
  }
  
 function is_any_work_checked(){
-
-if (Object.keys(document.getElementById("workrequest_ids").value).length>0)
+var checkboxes = document.querySelectorAll('input[name="workrequest_id[]"]');
+var i=0;
+checkboxes.forEach(e => { 
+    if (e.checked){
+    i++;
+    }
+ })
+if (i>0)
 return true;
 else
 {
@@ -149,14 +155,19 @@ echo "<div class=\"card-body card-block\">";
         echo " onChange=\"location.href='index.php?page=operators_works&new=1&valid=".$_SESSION['tit_id']."&main_asset_id='+this.value\"";
         echo ">\n";
         echo "<option value=''>".gettext("Select an asset!")."</option>\n";
-        foreach($users_assets as $asset_id) 
+        $SQL="SELECT DISTINCT main_asset_id FROM workrequests WHERE for_operators=1";
+        $SQL.=" AND main_asset_id IN ('".join("','",$users_assets)."')";
+        $result=$dba->Select($SQL);
+        if (LM_DEBUG)
+            error_log($SQL,0);
+        foreach($result as $row) 
         {
        
-        echo "<option value=\"".$asset_id."\"";
-        if (isset($main_asset_id) && $asset_id==$main_asset_id )
+        echo "<option value=\"".$row['main_asset_id']."\"";
+        if (isset($main_asset_id) && $row['main_asset_id']==$main_asset_id )
         echo " selected";
         
-        echo ">".get_asset_name_from_id($asset_id,$lang)."</option>\n";
+        echo ">".get_asset_name_from_id($row['main_asset_id'],$lang)."</option>\n";
         }
         echo "</select>\n";
     echo "</div>";
