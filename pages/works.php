@@ -76,7 +76,7 @@ $SQL.=",workorder_user_id=".$_SESSION['user_id'];
 else
 $SQL.=",workorder_user_id='".(int) $_POST['workorder_user_id']."'";
 $SQL.=",workorder_status='".(int) $_POST['workorder_status']."'";
-$SQL.=",unplanned_shutdown='".(int) $_POST['unplanned_shutdown']."'";
+$SQL.=",unplanned_shutdown=".(int) $_POST['unplanned_shutdown'];
 
 if (isset($_POST['workorder_partner_id']))
 $SQL.=",workorder_partner_id='".$workorder_row['workorder_partner_id']."'";

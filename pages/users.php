@@ -10,7 +10,7 @@ $SQL.=" user_email='".$dba->escapeStr($_POST['user_email'])."',";
 $SQL.=" user_level=".(int) $_POST['user_level'].",";
 $SQL.=" user_parent_id=".(int) $_POST['user_parent_id'].",";
 $SQL.=" lang='".$dba->escapeStr($_POST['user_lang'])."',";
-$SQL.=" user_created=NOW();";
+$SQL.=" user_created=NOW()";
 $SQL.=" WHERE user_id=".$_SESSION['user_id'];
 
 
