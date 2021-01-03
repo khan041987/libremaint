@@ -2,7 +2,7 @@
 <?php
 if (isset($_POST['modify']) && is_it_valid_submit() && isset($_SESSION['MODIFY_USER'])){
 $SQL="UPDATE users SET";
-$SQL.=" username='".$dba->escapeStr($_POST['username'])."',";
+//$SQL.=" username='".$dba->escapeStr($_POST['username'])."',";
 $SQL.=" firstname='".$dba->escapeStr($_POST['firstname'])."',";
 $SQL.=" surname='".$dba->escapeStr($_POST['surname'])."',";
 $SQL.=" user_phone='".$dba->escapeStr($_POST['user_phone'])."',";
@@ -15,7 +15,8 @@ $SQL.=" user_created=NOW();";
 
 if ($dba->Query($SQL)){
 lm_info(gettext("The user's data has been modified."));
-}
+}else
+lm_error(gettext("Failed to modified user's data.")." ".$dba->err_msg." ".$SQL);
 
 }
 
@@ -292,7 +293,7 @@ echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"username\" class=\"form-control-label\">".gettext("Username:")."</label></div>\n";
 echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"username\" name=\"username\" placeholder=\"".gettext("Username")."\" class=\"form-control\"";
 if (isset($_GET['modify']))
-echo " VALUE=\"".$row_mod["username"]."\"";
+echo " disabled VALUE=\"".$row_mod["username"]."\"";
 echo " required></div>\n";
 echo "</div>";
 
