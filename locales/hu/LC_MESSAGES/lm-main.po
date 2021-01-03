@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Libremaint\n"
-"POT-Creation-Date: 2021-01-03 12:55+0100\n"
-"PO-Revision-Date: 2021-01-03 12:55+0100\n"
+"POT-Creation-Date: 2021-01-03 12:56+0100\n"
+"PO-Revision-Date: 2021-01-03 14:44+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu_HU\n"
@@ -2591,7 +2591,7 @@ msgstr "Régi jelszó:"
 
 #: pages/settings.php:31
 msgid "New password:"
-msgstr "j Új Jelszó"
+msgstr "Új Jelszó:"
 
 #: pages/settings.php:41
 msgid "Repeat new password:"

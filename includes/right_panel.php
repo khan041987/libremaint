@@ -177,12 +177,13 @@ alert ('".gettext("Wrong number! Check it!")."');
                             else
                             echo gettext("Logged as:")." ".$_SESSION['username'];?>
                         </a>
-
                         <div class="user-menu dropdown-menu">
+<?php 
+if (isset($_SESSION['MODIFY_USER'])){
+?>
+                        
                             <a class="nav-link" href="index.php?page=users&modify=1"><i class="fa fa-user"></i> My Profile</a>
-
-                            <a class="nav-link" href="#"><i class="fa fa-user"></i> Notifications <span class="count">13</span></a>
-
+<?php } ?>
                             <a class="nav-link" href="index.php?page=settings"><i class="fa fa-cog"></i> <?php echo gettext("Change password");?></a>
 
                             <?php echo "<a class=\"nav-link\" href=\"".URL."index.php?logout\"><i class=\"fa fa-power-off\"></i> Logout</a>";?>
