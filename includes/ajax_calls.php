@@ -2086,6 +2086,16 @@ echo "<div class=\"card\">";
         echo "</div></div>\n";
         
         
+         echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"contact".$i."_phone\" class=\"form-control-label\">".gettext("Phone").":</label></div>\n";
+        echo "<div class=\"col col-md-3\">";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+         echo "<input type='text' class=\"form-control\" name=\"contact".$i."_phone\" name=\"contact".$i."_phone\" value=\"".$row["contact".$i."_phone"]."\">";   
+        else
+        echo $row["contact".$i."_phone"];
+        echo "</div></div>\n";
+        
+        
            echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"contact".$i."_email\" class=\"form-control-label\">".gettext("Email").":</label></div>\n";
         echo "<div class=\"col col-md-3\">";
@@ -2098,6 +2108,19 @@ echo "<div class=\"card\">";
         
        $i++;
         }
+        
+        
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"partner_tags\" class=\"form-control-label\">".gettext("Partner tags:")."</label></div>\n";
+        echo "<div class=\"col col-md-3\">";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify'){
+        echo "<textarea name='partner_tags' id='partner_tags'>";
+        echo $row["partner_tags"];
+        echo "</textarea>\n";}
+        else
+        echo $row["partner_tags"];     
+        echo "</div></div>\n";
+        
  if (isset($_GET['param3']) && $_GET['param3']=='modify' && $_SESSION['user_level']<3)
     {
     if (!$_SESSION['MODIFY_PARTNER'])
@@ -2107,7 +2130,7 @@ lm_die(gettext("You have no permission!"));
     echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i>".gettext("Reset")."</button></div>\n";
     echo "<input type='hidden' name='page' id='page' value='partners'>";
     echo "<input type='hidden' name='partner_id' id='partner_id' value='".$_GET['param2']."'>";
-    
+    echo "<input type='hidden' name='valid' id='valid' value='".$_SESSION['tit_id']."'>";
     }
     echo "</form></div>\n";
 echo "</div></div>\n";

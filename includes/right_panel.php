@@ -13,16 +13,31 @@
                 <div class="col-sm-7">
                     <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
                     <div class="header-left">
-               <!--          <button class="search-trigger"><i class="fa fa-search"></i></button>
+               <?php 
+               if ($req_page=="partners"){
+               ?>
+                         <button class="search-trigger"><i class="fa fa-search"></i></button>
                         
                           <div class="form-inline">
-                           <form class="search-form">
-                                <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search" name="search">
+            <form class="search-form">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search" id="search" name="search" onfocus="this.value = this.value;" onkeydown="
+            this.onkeydown=function(e){
+    if(e.keyCode==13){
+    event.preventDefault();
+if (this.value.length>3)
+location.href='index.php?page=partners&partner_tag='+(this.value);
+}}
+            " value="<?php 
+            if (isset($_GET['partner_tag']))
+            echo $_GET['partner_tag'];
+            ?>">
                                 <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
                             </form>
                         </div>
-  -->                      
-<?php 
+                    
+<?php
+
+}
 $SQL="SELECT users_assets FROM users WHERE user_id=".$_SESSION['user_id'];
 $row=$dba->getRow($SQL);
 if (!empty($row['users_assets']))

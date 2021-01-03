@@ -1,10 +1,11 @@
 <div id='for_ajaxcall'>
 </div>
 <?php
-if (isset($_POST['partner_name']) && is_it_valid_submit()){           
-$SQL="INSERT INTO partners (partner_name,partner_address,contact1_title,contact1_firstname,contact1_surname,contact1_phone,contact1_email,contact1_position,partner_created) VALUES";
+if (isset($_POST['partner_name']) && isset($_POST['new']) &&  is_it_valid_submit()){           
+$SQL="INSERT INTO partners (partner_name,partner_address,partner_tags,contact1_title,contact1_firstname,contact1_surname,contact1_phone,contact1_email,contact1_position,partner_created) VALUES";
 $SQL.="('".$dba->escapeStr($_POST['partner_name'])."',";
 $SQL.="'".$dba->escapeStr($_POST['partner_address'])."',";
+$SQL.="'".$dba->escapeStr($_POST['partner_tags'])."',";
 $SQL.="'".(int) $_POST['contact1_title']."',";
 $SQL.="'".$dba->escapeStr($_POST['contact1_firstname'])."',";
 $SQL.="'".$dba->escapeStr($_POST['contact1_surname'])."',";
@@ -15,19 +16,20 @@ $SQL.="NOW())";
 
 
 if ($dba->Query($SQL))
-        echo "<div class=\"card\">".gettext("The new partner has been saved.")."</div>";
+        lm_info(gettext("The new partner has been saved."));
         else
-        echo "<div class=\"card\">".gettext("Failed to save new partner ").$dba->err_msg." ".$SQL."</div>";
+        echo lm_error(gettext("Failed to save new partner."));
 if (LM_DEBUG)
 error_log($SQL,0);
 }
 
-else if (isset($_POST['partner_id']) && $_POST['partner_id']>0 && $_SESSION['user_level']<3)
+else if (isset($_POST['partner_id']) && $_POST['partner_id']>0 && $_SESSION['user_level']<3 && is_it_valid_submit())
 {
 $SQL="UPDATE partners SET ";
 $SQL.="partner_name='".$dba->escapeStr($_POST['partner_name'])."',";
 
 $SQL.="partner_address='".$dba->escapeStr($_POST['partner_address'])."',";
+$SQL.="partner_tags='".$dba->escapeStr($_POST['partner_tags'])."',";
 $i=1;
 while (isset($_POST['contact'.$i.'_title']))
 {
@@ -104,12 +106,19 @@ echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"contact1_phone\" class=\"form-control-label\">".gettext("Phone:")."</label></div>\n";
 echo "<div class=\"col-8 col-md-6\"><input type=\"text\" id=\"contact1_phone\" name=\"contact1_phone\" placeholder=\"".gettext("Phone")."\" class=\"form-control\"></div>\n";
 echo "</div>";
+
+echo "<div class=\"row form-group\">";
+echo "<div class=\"col col-md-2\"><label for=\"partner tags\" class=\"form-control-label\">".gettext("Partner tags:")."</label></div>\n";
+echo "<div class=\"col-8 col-md-6\"><textarea id=\"partner_tags\" name=\"partner_tags\" placeholder=\"".gettext("Partner tags")."\" class=\"form-control\"></textarea></div>\n";
+echo "</div>";
+
 echo "<INPUT TYPE=\"hidden\" name=\"page\" id=\"page\" value=\"partners\">";
+echo "<INPUT TYPE=\"hidden\" name=\"new\" id=\"new\" value=\"1\">";
 echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
 
 echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button></div>\n";
+echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
 echo "</form></div>";
 echo "<script>\n";
 echo "$(\"#partner_form\").validate()\n";
@@ -120,7 +129,14 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 $from=1;
-$SQL="SELECT partner_id,partner_name,contact1_firstname,contact1_surname,contact1_firstname_is_first,contact1_email,contact1_phone FROM partners ORDER BY partner_name";
+if (isset($_GET['partner_tag']))
+$_SESSION['partner_tag']=$dba->escapeStr($_GET['partner_tag']);
+if (isset($_GET['del_search_tag']))
+unset($_SESSION['partner_tag']);
+$SQL="SELECT partner_id,partner_name,contact1_firstname,contact1_surname,contact1_firstname_is_first,contact1_email,contact1_phone,partner_tags FROM partners";
+if (isset($_SESSION['partner_tag']))
+$SQL.=" WHERE partner_tags LIKE '%".$_SESSION['partner_tag']."%'";
+$SQL.=" ORDER BY partner_name";
 $result_all=$dba->Select($SQL);
 $number_all=$dba->affectedRows();
 $from=($pagenumber-1)*ROWS_PER_PAGE;
@@ -136,7 +152,11 @@ error_log("page:".$pagenumber." ".$SQL,0);
 <thead>
 <tr>
 <th></th>
-<?php echo "<th>".gettext("Partner")."</th><th>".gettext("Contact")."</th><th>".gettext("Email")."</th><th>".gettext("Phone")."</th></tr>";
+<?php echo "<th>".gettext("Partner");
+if (isset($_SESSION['partner_tag']))
+echo " <button type=\"button\" class=\"btn btn-danger btn-sm\" onClick=\"location.href='index.php?page=partners&del_search_tag=1'\">".$_SESSION['partner_tag']." x</button>";
+
+echo "</th><th>".gettext("Contact")."</th><th>".gettext("Email")."</th><th>".gettext("Phone")."</th><th>".gettext("Partner tags")."</th></tr>";
 ?>
 </thead>
 <tbody>
@@ -172,6 +192,7 @@ echo "<td>".$row['contact1_surname']." ".$row['contact1_firstname']."</td>\n";
 
 echo "<td>".$row['contact1_email']."</td>\n";
 echo "<td>".$row['contact1_phone']."</td>\n";
+echo "<td>".$row['partner_tags']."</td>\n";
 echo "</tr>\n";
 
 
