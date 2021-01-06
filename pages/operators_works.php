@@ -176,7 +176,7 @@ echo "</div>";
   
   if (isset($_GET['main_asset_id']) && in_array($_GET['main_asset_id'], $users_assets))
   {
-  $SQL="SELECT asset_id,workrequest_short,workrequest,workrequest_id,last_ready_date,last_ready_user_id FROM workrequests WHERE for_operators=1 AND main_asset_id=".$main_asset_id." ORDER BY workrequest_short";
+  $SQL="SELECT asset_id,workrequest_short_".$lang.",workrequest_".$lang.",workrequest_id,last_ready_date,last_ready_user_id FROM workrequests WHERE for_operators=1 AND main_asset_id=".$main_asset_id." ORDER BY workrequest_short_".$lang;
   $result=$dba->Select($SQL);
   
   if ($dba->affectedRows()>0){
@@ -193,7 +193,7 @@ echo "</div>";
     echo "<INPUT TYPE='checkbox' name='workrequest_id[]' value='".$row['workrequest_id']."' onChange=\"add_to_array()\"> ";
     if ($row1['asset_parent_id']>0)
     echo get_asset_name_from_id($row1['asset_parent_id'],$lang)." > ";
-    echo get_asset_name_from_id($row['asset_id'],$lang).": ".$row['workrequest_short'];
+    echo get_asset_name_from_id($row['asset_id'],$lang).": ".$row['workrequest_short_'.$lang];
     if ($row['last_ready_user_id']>0)
     echo " (".get_username_from_id($row['last_ready_user_id'])." / ".date($lang_date_format, strtotime($row['last_ready_date'])).")";
     echo "<br/>";
@@ -339,7 +339,7 @@ echo "<th>".gettext("Note")."</th></tr>";
 echo "</thead>";
 echo "<tbody>";
 
-$SQL="SELECT operator_works.workrequest_id, operator_work_id,operator_works.main_asset_id,operator_works.asset_id,operator_work_time,operator_works.operator_user_id,workrequest_short FROM operator_works LEFT JOIN workrequests ON workrequests.workrequest_id=operator_works.workrequest_id WHERE deleted<>1";
+$SQL="SELECT operator_works.workrequest_id, operator_work_id,operator_works.main_asset_id,operator_works.asset_id,operator_work_time,operator_works.operator_user_id,workrequest_short_".$lang." FROM operator_works LEFT JOIN workrequests ON workrequests.workrequest_id=operator_works.workrequest_id WHERE deleted<>1";
 
 if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>=0)
 $SQL.=" AND operator_works.main_asset_id='".$_SESSION['main_asset_id']."'";
@@ -403,7 +403,7 @@ if (!lm_isset_int('asset_id')>0 || (lm_isset_int('asset_id')>0 && isset($_POST['
     
     echo "<td>".get_username_from_id($row["operator_user_id"])."</td>"; 
     
- echo "<td>".$row['operator_work']."</td>";
+ echo "<td>".$row['operator_work_'.$lang]."</td>";
  echo "</tr>\n";
 }}
 echo "</tbody></table>";

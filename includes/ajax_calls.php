@@ -314,14 +314,14 @@ echo "<span aria-hidden=\"true\">×</span>\n</button>";
     echo "<strong>".gettext("Add file to")." ".get_username_from_id($_GET["param2"])."</strong>\n";
     
     else if ($_GET['param3']=='workrequests' && isset($_SESSION['ADD_FILE_TO_WORKREQUEST'])){
-    $SQL="SELECT workrequest_short FROM workrequests WHERE workrequest_id='".(int) $_GET["param2"]."'";
+    $SQL="SELECT workrequest_short_".$lang." FROM workrequests WHERE workrequest_id='".(int) $_GET["param2"]."'";
     $row=$dba->getRow($SQL);
-    echo "<strong>".gettext("Add file to")." ".$row['workrequest_short']."</strong>\n";
+    echo "<strong>".gettext("Add file to")." ".$row['workrequest_short_'.$lang]."</strong>\n";
    }
     else if ($_GET['param3']=='workorders' && isset($_SESSION['ADD_FILE_TO_WORKORDER'])){
-    $SQL="SELECT workorder_short FROM workorders WHERE workorder_id='".(int) $_GET["param2"]."'";
+    $SQL="SELECT workorder_short_".$lang." FROM workorders WHERE workorder_id='".(int) $_GET["param2"]."'";
     $row=$dba->getRow($SQL);
-    echo "<strong>".gettext("Add file to")." ".$row['workorder_short']."</strong>\n";
+    echo "<strong>".gettext("Add file to")." ".$row['workorder_short_'.$lang]."</strong>\n";
    }
     else if ($_GET['param3']=='stock_movements' && isset($_SESSION['ADD_FILE_TO_PRODUCT_MOVING']))
     echo "<strong>".gettext("Add file to")." ".get_product_name_from_id($_GET["param4"],$lang)." </strong>\n";
@@ -1405,8 +1405,8 @@ echo "<div class=\"card\">";
             echo "<div class=\"col-12 col-md-3\">".get_partner_name_from_id($row["workorder_partner_id"])."</div></div>\n";
         }
         echo "<div class=\"row form-group\">\n";
-        echo "<div class=\"col col-md-2\"><label for=\"workorder_short\" class=\"form-control-label\">".gettext("Workorder(short):")."</label></div>\n";
-        echo "<div class=\"col-12 col-md-3\">".$row["workorder_short"]."</div></div>\n";
+        echo "<div class=\"col col-md-2\"><label for=\"workorder_short_".$lang."\" class=\"form-control-label\">".gettext("Workorder(short):")."</label></div>\n";
+        echo "<div class=\"col-12 col-md-3\">".$row["workorder_short_".$lang]."</div></div>\n";
         
         echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"request_type\" class=\"form-control-label\">".gettext("Type:")."</label></div>\n";
@@ -1531,7 +1531,7 @@ $unit=get_quantity_unit_from_product_id($_GET['param2']);
 else if(isset($_GET['param1']) && $_GET['param1']=="show_workrequest_detail"){
 if (!$_SESSION['SEE_WORKREQUEST_DETAIL'])
 lm_die(gettext("You have no permission!"));
-$SQL="SELECT user_id,asset_id,workrequest,workrequest_short,workrequest_time,request_type,priority FROM workrequests WHERE workrequest_id='".(int) $_GET['param2']."'";
+$SQL="SELECT user_id,asset_id,workrequest_".$lang.",workrequest_short_".$lang.",workrequest_time,request_type,priority FROM workrequests WHERE workrequest_id='".(int) $_GET['param2']."'";
 if (LM_DEBUG)
         error_log("Workrequest detail: ".$SQL,0);
 $row=$dba->getRow($SQL);
@@ -1565,12 +1565,12 @@ echo "<div class=\"card\">";
         echo "<div class=\"col-12 col-md-3\">".$row["workrequest_time"]."</div></div>\n";
         
         echo "<div class=\"row form-group\">\n";
-        echo "<div class=\"col col-md-2\"><label for=\"workrequest\" class=\"form-control-label\">".gettext("Workrequest:")."</label></div>\n";
-        echo "<div class=\"col-12 col-md-3\">".$row["workrequest"]."</div></div>\n";
+        echo "<div class=\"col col-md-2\"><label for=\"workrequest_".$lang."\" class=\"form-control-label\">".gettext("Workrequest:")."</label></div>\n";
+        echo "<div class=\"col-12 col-md-3\">".$row["workrequest_".$lang]."</div></div>\n";
         
         echo "<div class=\"row form-group\">\n";
-        echo "<div class=\"col col-md-2\"><label for=\"workrequest_short\" class=\"form-control-label\">".gettext("Workrequest(short):")."</label></div>\n";
-        echo "<div class=\"col-12 col-md-3\">".$row["workrequest_short"]."</div></div>\n";
+        echo "<div class=\"col col-md-2\"><label for=\"workrequest_short_".$lang."\" class=\"form-control-label\">".gettext("Workrequest(short):")."</label></div>\n";
+        echo "<div class=\"col-12 col-md-3\">".$row["workrequest_short".$lang]."</div></div>\n";
         
 
         echo "<div class=\"row form-group\">\n";
@@ -1594,7 +1594,7 @@ echo "</div>\n";
 else if(isset($_GET['param1']) && $_GET['param1']=="show_notification_detail"){
 if (!$_SESSION['SEE_NOTIFICATION_DETAILS'])
 lm_die(gettext("You have no permission!"));
-$SQL="SELECT user_id,asset_id,notification,notification_short,notification_time,notification_type,priority FROM notifications WHERE notification_id='".(int) $_GET['param2']."'";
+$SQL="SELECT user_id,asset_id,notification,notification_short_".$lang.",notification_time,notification_type,priority FROM notifications WHERE notification_id='".(int) $_GET['param2']."'";
 if (LM_DEBUG)
         error_log("Notification detail: ".$SQL,0);
 $row=$dba->getRow($SQL);
@@ -1628,12 +1628,12 @@ echo "<div class=\"card\">";
         echo "<div class=\"col-12 col-md-3\">".$row["notification_time"]."</div></div>\n";
         
         echo "<div class=\"row form-group\">\n";
-        echo "<div class=\"col col-md-2\"><label for=\"notification_short\" class=\"form-control-label\">".gettext("Notification(short):")."</label></div>\n";
-        echo "<div class=\"col-12 col-md-3\">".$row["notification_short"]."</div></div>\n";
+        echo "<div class=\"col col-md-2\"><label for=\"notification_short_".$lang."\" class=\"form-control-label\">".gettext("Notification(short):")."</label></div>\n";
+        echo "<div class=\"col-12 col-md-3\">".$row["notification_short_".$lang]."</div></div>\n";
         
         echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"notification\" class=\"form-control-label\">".gettext("Notification:")."</label></div>\n";
-        echo "<div class=\"col-12 col-md-3\">".$row["notification"]."</div></div>\n";
+        echo "<div class=\"col-12 col-md-3\">".$row["notification_".$lang]."</div></div>\n";
         
             
 

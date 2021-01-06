@@ -675,10 +675,10 @@ return $loc;
 }
 
 function get_task_from_id($where,$id):string{
-global $dba;
+global $dba,$lang;
 if ($where!="workorder" && $where!="workrequest")
 lm_die("wrong parameter in get_task_from_id at line ".__line__);
-$SQL="SELECT ".$where."_short,replace_to_product_id FROM ".$where."s WHERE ".$where."_id='".$id."'";
+$SQL="SELECT ".$where."_short_".$lang.",replace_to_product_id FROM ".$where."s WHERE ".$where."_id='".$id."'";
 if (LM_DEBUG)
 error_log("get_task_from_id".$SQL,0);
 
@@ -686,7 +686,7 @@ $row=$dba->getRow($SQL);
 if (empty($row[$where]) && $row['replace_to_product_id']>0)
 return gettext("replace");
 else
-return $row[$where.'_short'];
+return $row[$where.'_short_'.$lang];
 }
 
 
@@ -1285,10 +1285,10 @@ if ($dba->affectedRows()>0)
 {
         foreach ($result as $row){
         if ($row['notification_id']>0){
-        $SQL="SELECT main_asset_id,notification_short,user_id FROM notifications WHERE notification_id=".$row['notification_id'];
+        $SQL="SELECT main_asset_id,notification_short_".$lang.",user_id FROM notifications WHERE notification_id=".$row['notification_id'];
         $row1=$dba->getRow($SQL);
         $sender=get_asset_name_from_id($row1['main_asset_id'],$lang)." (".get_username_from_id($row1['user_id']).")";
-        $message=$row1['notification_short'];
+        $message=$row1['notification_short_'.$lang];
         }
         else if ($row['sensor_id']>0){
         $SQL="SELECT asset_id FROM iot_sensors WHERE sensor_id=".$row['sensor_id'];

@@ -20,7 +20,7 @@ function visibility(divClass)
 </div>
 
 <?php
-if (isset($_POST['page']) && isset($_POST['new']) && isset($_POST["workorder_work"]) && isset($_SESSION['ADD_WORK']) && is_it_valid_submit()){// add new work form 
+if (isset($_POST['page']) && isset($_POST['new']) && isset($_POST["workorder_work_".$lang]) && isset($_SESSION['ADD_WORK']) && is_it_valid_submit()){// add new work form 
 
 $start_time=new DateTime($dba->escapeStr($_POST['workorder_work_start_date'])." ".$dba->escapeStr($_POST['workorder_work_start_time']));
 $end_time=new DateTime($dba->escapeStr($_POST['workorder_work_end_date'])." ".$dba->escapeStr($_POST['workorder_work_end_time']));
@@ -37,7 +37,9 @@ if (is_it_valid_worktime_period($_POST['workorder_work_start_date']." ".$_POST['
     $workorder_row=$dba->getRow($SQL);
 if (LM_DEBUG)
 error_log($SQL,0);
-    $SQL="INSERT INTO workorder_works (workorder_id,workorder_work_start_time,workorder_work_end_time,workorder_worktime,workorder_work,main_asset_id,asset_id,workorder_user_id,workorder_status,unplanned_shutdown";
+    $SQL="INSERT INTO workorder_works (workorder_id,workorder_work_start_time,workorder_work_end_time,workorder_worktime,workorder_work_".$lang.",main_asset_id,asset_id,workorder_user_id,workorder_status,unplanned_shutdown";
+    if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH'])
+    $SQL.=",workorder_work_en";
 
     if ($workorder_row['workorder_partner_id']>0)
     $SQL.=",workorder_partner_id";
@@ -51,7 +53,7 @@ error_log($SQL,0);
     $interval=date_diff($start_time,$end_time);
 
     $SQL.="'".$interval->format('%h:%i:%s')."',";
-    $SQL.="'".$dba->escapeStr($_POST['workorder_work'])."',";
+    $SQL.="'".$dba->escapeStr($_POST['workorder_work_'.$lang])."',";
     $SQL.=$workorder_row['main_asset_id'].",";
     $SQL.=$workorder_row['asset_id'].",";
     
@@ -61,6 +63,8 @@ error_log($SQL,0);
     $SQL.=(int) $_SESSION['user_id'].",";
     $SQL.=(int) $_POST['workorder_status'].",";
     $SQL.=(int) $_POST['unplanned_shutdown'];
+    if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH'])
+    $SQL.=",'".$dba->escapeStr($_POST['workorder_work_en'])."'";
     if ($workorder_row['workorder_partner_id']>0)
     $SQL.=",".(int) $_POST['workorder_partner_id'];
 
@@ -72,18 +76,18 @@ error_log($SQL,0);
             {
             $SQL="UPDATE workorders SET workorder_status=".(int) $_POST['workorder_status']." WHERE workorder_id=".$workorder_row['workorder_id'];
             $dba->Query($SQL);
-            echo "<div class=\"card\">".gettext("The activity has been attached to the workorder.")."</div>";
+            lm_info(gettext("The activity has been attached to the workorder."));
                 if (5==(int) $_POST['workorder_status'])//the workorder is ready for this employee we need check the others whether we can close the workorder
                 //check_workorder_to_close($workorder_row['workorder_id'],$_POST['workorder_work_end_date']." ".$_POST['workorder_work_end_time']);
             check_workorder_to_close($workorder_row['workorder_id']);
             
             }
             else
-            echo "<div class=\"card\">".gettext("Failed to attach activity to the workorder ").$SQL." ".$dba->err_msg."</div>";
+            lm_error(gettext("Failed to attach activity to the workorder ").$SQL." ".$dba->err_msg);
         
             }
             else
-            echo "<div class=\"card\">".gettext("Failed to attach activity to the workorder (wrong time period)")."</div>";
+            lm_error(gettext("Failed to attach activity to the workorder (wrong time period)"));
         
 }
 else if (isset($_POST['product_to_workorder']) && is_it_valid_submit())
@@ -115,7 +119,7 @@ error_log($SQL,0);
         
         
         
-if (isset($_POST['page']) && isset($_POST["workorder"]) && is_it_valid_submit() && !empty($_POST['employee_ids'])){ //it is from the new workorder form
+if (isset($_POST['page']) && isset($_POST["workorder_".$lang]) && is_it_valid_submit() && !empty($_POST['employee_ids'])){ //it is from the new workorder form
 
     if (isset($_POST['modify_workorder']) && isset($_SESSION['MODIFY_WORKORDER']))
     {
@@ -127,8 +131,14 @@ if (isset($_POST['page']) && isset($_POST["workorder"]) && is_it_valid_submit() 
     else
     $SQL.=" workorder_deadline=null,";
     
-    $SQL.=" workorder_short='".$dba->escapeStr($_POST["workorder_short"])."',";
-    $SQL.=" workorder='".$dba->escapeStr($_POST["workorder"])."',";
+    $SQL.=" workorder_short_".$lang."='".$dba->escapeStr($_POST["workorder_short_".$lang])."',";
+    $SQL.=" workorder_".$lang."='".$dba->escapeStr($_POST["workorder_".$lang])."',";
+    
+    if (ENGLISH_AS_SECOND_LANG){
+    $SQL.=" workorder_short_en='".$dba->escapeStr($_POST["workorder_short_en"])."',";
+    $SQL.=" workorder_en='".$dba->escapeStr($_POST["workorder_en"])."',";
+    }
+    
     $SQL.=" workorder_partner_id=".(int) $_POST['workorder_partner_id'].",";
     if ($_POST['workorder_partner_id']>0)
     $SQL.=" workorder_partner_supervisor_user_id=".(int) $_POST['workorder_partner_supervisor_user_id'].",";
@@ -160,9 +170,9 @@ if (isset($_POST['page']) && isset($_POST["workorder"]) && is_it_valid_submit() 
     error_log($SQL,0);
     
     if ($dba->Query($SQL))
-            echo "<div class=\"card\">".gettext("The new workorder has been modified.")."</div>";
+            lm_info(gettext("The new workorder has been modified."));
             else
-            echo "<div class=\"card\">".gettext("Failed to modify workorder ").$SQL." ".$dba->err_msg."</div>";
+            lm_error(gettext("Failed to modify workorder ").$SQL." ".$dba->err_msg);
     check_workorder_to_close((int) $_POST['workorder_id']);
     if ($_POST['product_id_to_refurbish']>0 && (int) $_POST["workorder_partner_id"]>0)
     {
@@ -186,7 +196,9 @@ if (isset($_POST['page']) && isset($_POST["workorder"]) && is_it_valid_submit() 
 else if (isset($_POST['new_workorder']) && isset($_SESSION['ADD_WORKORDER']) && isset($_POST['asset_id']) && isset($_POST['request_type']))
     {
     
-    $SQL="INSERT INTO workorders (asset_id,workrequest_id,notification_id,main_asset_id,priority,workorder_deadline,workorder_short,workorder,user_id,workorder_time,request_type,replace_to_product_id,workorder_partner_id,workorder_partner_supervisor_user_id,work_details_required";
+    $SQL="INSERT INTO workorders (asset_id,workrequest_id,notification_id,main_asset_id,priority,workorder_deadline,workorder_short_".$lang.",workorder_".$lang.",user_id,workorder_time,request_type,replace_to_product_id,workorder_partner_id,workorder_partner_supervisor_user_id,work_details_required";
+    if (ENGLISH_AS_SECOND_LANG)
+    $SQL.=",workorder_short_en,workorder_en";
     if(!empty($_POST['employee_ids']))
         {
        
@@ -214,8 +226,8 @@ else if (isset($_POST['new_workorder']) && isset($_SESSION['ADD_WORKORDER']) && 
     $SQL.="'".$_POST["workorder_deadline"]."',";
     else
     $SQL.="NULL,";
-    $SQL.="'".$dba->escapeStr($_POST["workorder_short"])."',";
-    $SQL.="'".$dba->escapeStr($_POST["workorder"])."',";
+    $SQL.="'".$dba->escapeStr($_POST["workorder_short_".$lang])."',";
+    $SQL.="'".$dba->escapeStr($_POST["workorder_".$lang])."',";
     $SQL.=(int) $_SESSION["user_id"].",";
     $SQL.="now(),";
     $SQL.=(int) $_POST["request_type"].",";
@@ -223,6 +235,12 @@ else if (isset($_POST['new_workorder']) && isset($_SESSION['ADD_WORKORDER']) && 
     $SQL.=(int) $_POST["workorder_partner_id"].",";
     $SQL.=(int) $_POST["workorder_partner_supervisor_user_id"].",";
     $SQL.=(int) $_POST["work_details_required"];
+    if (ENGLISH_AS_SECOND_LANG){
+    $SQL.=",'".$dba->escapeStr($_POST["workorder_short_en"])."',";
+    $SQL.="'".$dba->escapeStr($_POST["workorder_en"])."'";
+    
+    }
+    
     if(!empty($_POST['employee_ids']))
         {
        
@@ -242,9 +260,9 @@ else if (isset($_POST['new_workorder']) && isset($_SESSION['ADD_WORKORDER']) && 
         }
     $SQL.=")";
     if ($dba->Query($SQL))
-            echo "<div class=\"card\">".gettext("The new workorder has been saved.")."</div>";
+            lm_info(gettext("The new workorder has been saved."));
             else
-            echo "<div class=\"card\">".gettext("Failed to save new workorder ").$SQL." ".$dba->err_msg."</div>";
+            lm_error(gettext("Failed to save new workorder ").$SQL." ".$dba->err_msg);
     if (LM_DEBUG)
     error_log($SQL,0);
 }
@@ -258,7 +276,7 @@ $asset_id=$_GET['asset_id'];
 
 <?php 
 
-$SQL="SELECT workorder_short,asset_id,workorder_id FROM workorders WHERE main_asset_id=".get_whole_path_ids('asset',$asset_id,1)[0]." AND workorder_status<5";
+$SQL="SELECT workorder_short_".$lang.",asset_id,workorder_id FROM workorders WHERE main_asset_id=".get_whole_path_ids('asset',$asset_id,1)[0]." AND workorder_status<5";
 $result=$dba->Select($SQL);
 if ($dba->affectedRows()){
         echo "<div class=\"card\">\n<div class=\"card-header\">\n";
@@ -283,7 +301,7 @@ if ($dba->affectedRows()){
         echo substr($n,0,-7);
 
 
-        echo ' '.$row['workorder_short'].'</li>';
+        echo ' '.$row['workorder_short_'.$lang].'</li>';
 
         }
         echo '</ul></div>';
@@ -363,7 +381,7 @@ echo "</div>";
         if (isset($_GET['new']))
         echo "";
         else if (isset($_GET['modify']) && isset($row['workorder_deadline']))
-        echo date("Y-m-d", strtotime($row['workorder_deadline']));
+        echo date($lang_date_format, strtotime($row['workorder_deadline']));
         echo "\"";
         if (isset($_GET['new']))
         echo " STYLE=\"visibility:hidden\"";
@@ -459,12 +477,24 @@ echo "<div class=\"col-5 col-md-2\"><label for=\"workorder_partner_supervisor_us
 echo "</div>\n";
         
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col-5 col-md-2\"><label for=\"workorder_short\" class=\"form-control-label\">".gettext("Workorder (max.".$dba->get_max_fieldlength('workorders','workorder_short')."):")."</label></div>\n";
-echo "<div class=\"col-5 col-md-3\"><input type=\"text\" id=\"workorder_short\" name=\"workorder_short\" class=\"form-control\" ";
+echo "<div class=\"col-5 col-md-2\"><label for=\"workorder_short_".$lang."\" class=\"form-control-label\">".gettext("Workorder (max.".$dba->get_max_fieldlength('workorders','workorder_short_'.$lang)."):")."</label></div>\n";
+echo "<div class=\"col-5 col-md-3\"><input type=\"text\" id=\"workorder_short_".$lang."\" name=\"workorder_short_".$lang."\" class=\"form-control\" ";
 if (isset($_GET['modify']))
-echo "VALUE='".$row['workorder_short']."'";
+echo "VALUE='".$row['workorder_short_'.$lang]."'";
 echo " required></div>\n";
 echo "</div>";   
+ 
+if (ENGLISH_AS_SECOND_LANG){
+echo "<div class=\"row form-group\">";
+echo "<div class=\"col-5 col-md-2\"><label for=\"workorder_short_en\" class=\"form-control-label\">".gettext("Workorder (En, max.".$dba->get_max_fieldlength('workorders','workorder_short_en')."):")."</label></div>\n";
+echo "<div class=\"col-5 col-md-3\"><input type=\"text\" id=\"workorder_short_en\" name=\"workorder_short_en\" class=\"form-control\" ";
+if (isset($_GET['modify']))
+echo "VALUE='".$row['workorder_short_en']."'";
+echo " required></div>\n";
+echo "</div>";
+
+
+}
  
  
 echo "<div class=\"row form-group\">";
@@ -585,13 +615,23 @@ else
 echo "<INPUT TYPE=\"hidden\" name=\"replace_to_product_id\" id=\"replace_to_product_id\" VALUE=\"0\">";
 
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"workorder\" class=\" form-control-label\">".gettext("Workorder:")."</label></div>";
-echo "<div class=\"col-12 col-md-9\"><textarea name=\"workorder\" id=\"workorder\" rows=\"9\" placeholder=\"".gettext("workorder")."\" class=\"form-control\">";
+echo "<div class=\"col col-md-2\"><label for=\"workorder_".$lang."\" class=\" form-control-label\">".gettext("Workorder:")."</label></div>";
+echo "<div class=\"col-12 col-md-9\"><textarea name=\"workorder_".$lang."\" id=\"workorder_".$lang."\" rows=\"9\" placeholder=\"".gettext("workorder")."\" class=\"form-control\">";
 if (isset($_GET['modify']))
-echo $row['workorder'];
+echo $row['workorder_'.$lang];
 echo "</textarea></div>\n";
 echo "</div>\n";
 
+if (ENGLISH_AS_SECOND_LANG){
+echo "<div class=\"row form-group\">";
+echo "<div class=\"col col-md-2\"><label for=\"workorder_en\" class=\" form-control-label\">".gettext("Workorder (En):")."</label></div>";
+echo "<div class=\"col-12 col-md-9\"><textarea name=\"workorder_en\" id=\"workorder_en\" rows=\"9\" placeholder=\"".gettext("workorder")."\" class=\"form-control\">";
+if (isset($_GET['modify']))
+echo $row['workorder_en'];
+echo "</textarea></div>\n";
+echo "</div>\n";
+
+}
 //echo "<input type=\"file\" accept=\"image/*\" capture=\"camera\" />";
 
 echo "<INPUT TYPE=\"hidden\" name=\"page\" id=\"page\" VALUE=\"workorders\">";
@@ -631,14 +671,23 @@ employees_to_json();
 
 echo "$(\"#workorder_form\").validate({
   rules: {
-    workorder_short: {
+    workorder_short_".$lang.": {
       required: true,
-      maxlength: ".$dba->get_max_fieldlength('workorders','workorder_short')."
+      maxlength: ".$dba->get_max_fieldlength('workorders','workorder_short_'.$lang)."
     },
-    workorder: {
-      maxlength: ".$dba->get_max_fieldlength('workorders','workorder')."
+    workorder_".$lang.": {
+      maxlength: ".$dba->get_max_fieldlength('workorders','workorder_'.$lang)."
+    }";
+ if (ENGLISH_AS_SECOND_LANG)  { 
+  echo ",workorder_short_en: {
+      required: true,
+      maxlength: ".$dba->get_max_fieldlength('workorders','workorder_short_en')."
+    },
+    workorder_en: {
+      maxlength: ".$dba->get_max_fieldlength('workorders','workorder_en')."
+    }";
     }
-  }
+ echo " }
 })\n";
 echo "</script>\n";
 }
@@ -875,7 +924,7 @@ if (!empty($result)){
             echo "</td></tr>\n";
              }
              //list of child workorders
-                        $SQL="SELECT workorder_id,main_asset_id,asset_id,main_location_id,location_id,workorder_short,workorder_time,workorder_status,request_type,workrequest_id,workorder_partner_id,product_id_to_refurbish,priority";
+    $SQL="SELECT workorder_id,main_asset_id,asset_id,main_location_id,location_id,workorder_short_".$lang.",workorder_time,workorder_status,request_type,workrequest_id,workorder_partner_id,product_id_to_refurbish,priority";
                         $SQL1="SELECT COLUMN_NAME as info FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name ='workorders'
                         AND table_schema = '".DATABASE."' AND column_name LIKE 'info_id%'";
                         $result1=$dba->Select($SQL1);
@@ -984,10 +1033,9 @@ if (!empty($result)){
                     
                         //echo " onClick=\"visibility('workorder_".$row1['main_asset_id']."')\"";
                         echo ">\n";
-                        if ($lang=="hu")
-                        echo date("Y.m.d", strtotime($row1["workorder_time"]))."</td>\n";
-                        else
-                            echo date("m.d.y", strtotime($row1["workorder_time"]))."</td>\n";
+                        
+                        echo date($lang_date_format, strtotime($row1["workorder_time"]))."</td>\n";
+                       
                             if (!lm_isset_int('asset_id')>0 || isset($_POST["workorder_work"])|| isset($_POST['modify_workorder']))
                             {
                                 echo "<td>";
@@ -1040,15 +1088,15 @@ if (!empty($result)){
                         echo "</td>";
                             echo "<td>";
                              if (isset($_SESSION['SEE_WORKORDER_DETAIL']))
-                        echo "<a href=\"javascript:ajax_call('show_workorder_detail','".$row1["workorder_id"]."','".$row1['asset_id']."','','','".URL."index.php','for_ajaxcall')\" title=\"".gettext("Show details")."\"><i class='fa fa-info-circle'></i> ".$row1['workorder_short']."</a></td></tr> ";
+                        echo "<a href=\"javascript:ajax_call('show_workorder_detail','".$row1["workorder_id"]."','".$row1['asset_id']."','','','".URL."index.php','for_ajaxcall')\" title=\"".gettext("Show details")."\"><i class='fa fa-info-circle'></i> ".$row1['workorder_short_'.$lang]."</a></td></tr> ";
                         else
-                            echo $row1['workorder_short']."</td></tr>\n";
+                            echo $row1['workorder_short_'.$lang]."</td></tr>\n";
                     
                   }     
                         
     }
 }else
-echo "<tr><td colspan=5>".gettext("No data")."</td></tr>";
+echo "<tr><td colspan=5>".gettext("No match")."</td></tr>";
 echo "</tbody>\n</table>\n</div>\n";
 
 

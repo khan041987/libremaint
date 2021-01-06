@@ -12,12 +12,12 @@ $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
 
 $SQL="INSERT INTO counters (main_asset_id,asset_id,counter_unit) VALUES ('".get_whole_path('asset',(int) $_POST['asset_id'],1)[0]."','".(int) $_POST['asset_id']."','".(int) $_POST['counter_unit']."')";
 if ($dba->Query($SQL)){
-            echo "<div class=\"card\">".gettext("The counter has been attached to the asset.")."</div>";
+            lm_info(gettext("The counter has been attached to the asset."));
             $has_written=true;
             //$asset_tree_has_changed=true;
             }
             else
-            echo "<div class=\"card\">".gettext("Failed to attach counter to the asset ").$dba->err_msg."</div>";
+            lm_error(gettext("Failed to attach counter to the asset ").$dba->err_msg);
        
 
 
@@ -65,14 +65,14 @@ foreach($row as $key=>$value)
         if (LM_DEBUG)
             error_log($SQL,0); 
         if ($dba->Query($SQL)){
-            echo "<div class=\"card\">".gettext("The connection has been attached to the asset.")."</div>";
+            lm_info(gettext("The connection has been attached to the asset."));
             $has_written=true;
             //$asset_tree_has_changed=true;
             
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
             }
             else
-            echo "<div class=\"card\">".gettext("Failed to attach connection to the asset ").$SQL."</div>";
+            lm_error(gettext("Failed to attach connection to the asset ").$SQL);
         }}
     }
 }
@@ -112,14 +112,16 @@ lm_info(gettext("The new manufacturer has been added."));
 $manufacturer_id=$dba->insertedId();
 }
 else
-lm_info(gettext("Failed to save new manufacturer.")." ".$dba->err_msg);
+lm_error(gettext("Failed to save new manufacturer.")." ".$dba->err_msg);
 }
 
     $SQL="INSERT INTO products (category_id,subcategory_id,product_type_en,product_type_".$lang.",product_properties_en,product_properties_".$lang." ,manufacturer_id,product_stockable,quantity_unit,display) VALUES (";
     $SQL.=(int) $_POST['modal_category_id'].",";
     $SQL.=(int) $_POST['modal_subcategory_id'].",";
+    if (ENGLISH_AS_SECOND_LANG)
     $SQL.="'".$dba->escapeStr($_POST['modal_product_type_en'])."',";
     $SQL.="'".$dba->escapeStr($_POST['modal_product_type_'.$lang])."',";
+    if (ENGLISH_AS_SECOND_LANG)
     $SQL.="'".$dba->escapeStr($_POST['modal_product_properties_en'])."',";
     $SQL.="'".$dba->escapeStr($_POST['modal_product_properties_'.$lang])."',";
     if (!empty($_POST['modal_new_manufacturer']))
@@ -150,19 +152,16 @@ lm_info(gettext("Failed to save new manufacturer.")." ".$dba->err_msg);
             error_log($SQL,0); 
           
             if ($dba->Query($SQL)){
-            echo "<div class=\"card\">".gettext("The product has been attached to the asset.")."</div>";
+            lm_info(gettext("The product has been attached to the asset."));
             
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['modal_asset_id'],1)[0];
             }
             else
-            echo "<div class=\"card\">".gettext("Failed to attach product to the asset ").$SQL."</div>";  
+            lm_error(gettext("Failed to attach product to the asset ").$SQL);  
             
-            
-            
-            echo "<div class=\"card\">".gettext("The new product has been saved.")."</div>";
             }
             else
-            echo "<div class=\"card\">".gettext("Failed to save new product ").$SQL."</div>";
+            lm_error(gettext("Failed to save new product ").$SQL);
 
 
             
@@ -183,12 +182,12 @@ if (LM_DEBUG)
         $SQL="UPDATE stock SET stock_location_asset_id=".(int) $_POST['asset_id'].", stock_location_id=0,stock_location_partner_id=0 WHERE product_id=".(int) $_POST['product_id'];
         $dba->Query($SQL);
         }
-        echo "<div class=\"card\">".gettext("The product has been attached to the asset.")."</div>";
+        lm_info(gettext("The product has been attached to the asset."));
         
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
         }
         else
-        echo "<div class=\"card\">".gettext("Failed to attach product to the asset ").$SQL."</div>";
+        lm_error(gettext("Failed to attach product to the asset ").$SQL);
 
 }
 
@@ -197,10 +196,10 @@ $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
 
 else if (isset($_POST['new']) && isset($_POST["asset_name_".$lang])  && is_it_valid_submit() && isset($_SESSION['ADD_ASSET'])){ //it is from the new asset form
     $SQL="INSERT INTO assets (asset_name_en,main_asset_category_id,grouped_asset,grouped_asset_id,entry_point,asset_importance,";
-    if ($lang!="en")
+    if (ENGLISH_AS_SECOND_LANG)
     $SQL.="asset_name_".$lang.",";
     $SQL.="main_part,asset_parent_id,asset_location,asset_article,asset_note,asset_note_conf) VALUES ('".$dba->escapeStr($_POST["asset_name_en"])."',".(int) $_POST['main_asset_category_id'].",".(int) $_POST['grouped_asset'].",".(int) $_POST['grouped_asset_id'].",".(int)$_POST['entry_point'].",".(int)$_POST['asset_importance'].",";
-    if ($lang!="en")
+    if (ENGLISH_AS_SECOND_LANG)
     $SQL.="'".$dba->escapeStr($_POST["asset_name_".$lang])."',";
     $SQL.=(int) $_POST["main_part"].",".(int) $_POST["parent_id"].",".(int) $_POST["asset_location"].",'".$dba->escapeStr($_POST['asset_article']);
     $SQL.="','".$dba->escapeStr($_POST['asset_note']);
@@ -210,7 +209,7 @@ else if (isset($_POST['new']) && isset($_POST["asset_name_".$lang])  && is_it_va
         error_log($SQL,0); 
     if ($dba->Query($SQL)){
         $asset_id=$dba->insertedId();//the $asset_id necessary for opening the required nodes in asset_tree.php
-        echo "<div class=\"card\">".gettext("The new asset has been saved.")."</div>";
+        lm_info(gettext("The new asset has been saved."));
         
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $asset_id,1)[0];
         }
@@ -225,7 +224,7 @@ $row=$dba->getRow($SQL);
 }
 
 $SQL="UPDATE assets SET ";
-if (ENGLISH_AS_SECOND_LANG && $lang!="en")
+if (ENGLISH_AS_SECOND_LANG)
 $SQL.="asset_name_en='".$dba->escapeStr($_POST["asset_name_en"])."',";
 
 $SQL.="asset_name_".$lang."='".$dba->escapeStr($_POST["asset_name_".$lang])."',";
@@ -249,12 +248,12 @@ $SQL.=" WHERE asset_id=".(int) $_POST["asset_id"];
         }
         if (LM_DEBUG)
         error_log($SQL,0); 
-        echo "<div class=\"card\">".gettext("The asset has been modified.")."</div>";
+        lm_info(gettext("The asset has been modified."));
         
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
         }
         else
-        echo "<div class=\"card\">".gettext("Failed to modify asset.").$dba->err_msg."</div>";
+        lm_error(gettext("Failed to modify asset.").$dba->err_msg);
 }
 
 
@@ -267,12 +266,12 @@ else if (isset($_POST['page']) && isset($_POST["new_name_".$lang]) && !empty($_P
     if (LM_DEBUG)
         error_log($SQL,0); 
     if ($dba->Query($SQL)){
-        echo "<div class=\"card\">".gettext("The asset has been renamed.")."</div>";
+        lm_info(gettext("The asset has been renamed."));
         
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
         }
         else
-        echo "<div class=\"card\">".gettext("Failed to rename asset ").$dba->err_msg."</div>";
+        lm_error(gettext("Failed to rename asset ").$dba->err_msg);
 }
 
 else if (isset($_POST['page']) && isset($_POST["category"]) && is_it_valid_submit() && isset($_SESSION['MODIFY_ASSET'])){ //it is from the add category form
@@ -283,30 +282,30 @@ else if (isset($_POST['page']) && isset($_POST["category"]) && is_it_valid_submi
     if (LM_DEBUG)
         error_log($SQL,0); 
     if ($dba->Query($SQL)){
-        echo "<div class=\"card\">".gettext("A new category has been added to the asset.")."</div>";
+        lm_info(gettext("A new category has been added to the asset."));
         
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
         }
         else
-        echo "<div class=\"card\">".gettext("Failed to add new category. ").$dba->err_msg."</div>";
+        lm_error(gettext("Failed to add new category. ").$dba->err_msg);
 }
 else if (isset($_GET['set_as_main_part']) && isset($_GET["asset_id"])){ 
  $SQL="UPDATE assets SET main_part=".(int) $_GET['set_as_main_part']." WHERE asset_id='".(int) $_GET['asset_id']."'";
  if ($dba->Query($SQL)){
         if ($_GET['set_as_main_part']==1)
-        echo "<div class=\"card\">".gettext("The asset has set as main part.")."</div>";
+        lm_info(gettext("The asset has set as main part."));
         else if ($_GET['set_as_main_part']==0){
-        echo "<div class=\"card\">".gettext("The asset has unset as main part.")."</div>";
+        lm_error(gettext("The asset has unset as main part."));
         
       
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $_GET['asset_id'],1)[0];
         }
         else
-        echo "<div class=\"card\">".gettext("Failed to set as main part ").$dba->err_msg."</div>";
+        lm_info(gettext("Failed to set as main part ").$dba->err_msg);
 
         }
   else
-        echo "<div class=\"card\">".gettext("Failed to set as main part ").$dba->err_msg."</div>";
+        lm_error(gettext("Failed to set as main part ").$dba->err_msg);
 
  }
 
@@ -439,7 +438,7 @@ echo ">".$row["main_asset_category_".$lang]."</option>\n";
 </div>
 <?php
 }
-if (ENGLISH_AS_SECOND_LANG && $lang!="en"){
+if (ENGLISH_AS_SECOND_LANG){
 echo "<div class=\"row form-group\">\n";
 echo "<div class=\"col col-md-3\"><label for=\"asset_name_en\" class=\"form-control-label\">\n";
 echo gettext("Name (en)").":";

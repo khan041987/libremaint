@@ -13,7 +13,7 @@ $SQL="select ";
 if (!empty($sum_field) && $sum_field=='workhour' && ($group_by_field=='priority' || $group_by_field=='request_type'))
     $SQL.="sum(TIME_TO_SEC(workorder_worktime)/3600) as ".$sum_field." ";
     else
-    $SQL.="workorder,workorder_user_id,workorder_short,workorder_work_end_time,workorder_work_start_time,workorder_worktime, priority,workorder_work,workorders.main_asset_id,workorders.asset_id";
+    $SQL.="workorder_".$lang.",workorder_user_id,workorder_short_".$lang.",workorder_work_end_time,workorder_work_start_time,workorder_worktime, priority,workorder_work_".$lang.",workorders.main_asset_id,workorders.asset_id";
 if ($asset_vs_product==1)
     $SQL.=", asset_name_".$lang;
 else
@@ -116,7 +116,7 @@ $i++;
         
         
         
-        if ($s_asset_id!=$row['asset_id'] || $s_workorder_short!=$row['workorder_short'] ){
+        if ($s_asset_id!=$row['asset_id'] || $s_workorder_short!=$row['workorder_short_'.$lang] ){
         $s_asset_id=$row['asset_id'];
        
         
@@ -136,13 +136,13 @@ $i++;
         else if ($row['main_asset_id']==$row['asset_id'] || $asset_vs_product==0)
         $html.="<strong>".$main_asset_name.": </strong>";
         
-        $s_workorder_short=$row['workorder_short'];
+        $s_workorder_short=$row['workorder_short_'.$lang];
          
            
         
-        $html.=$row['workorder_short'];
+        $html.=$row['workorder_short_'.$lang];
         if ($row['workorder']!='')
-        $html.=": ".$row['workorder']; 
+        $html.=": ".$row['workorder_'.$lang]; 
         $html.="<br/><table>"; 
         }
      

@@ -106,7 +106,9 @@ foreach ($notification_ids as $notification_id)
     if (sizeof($notification_ids)>=1 ) 
             
     {
-    $SQL="INSERT INTO workorders (asset_id,main_asset_id,location_id,main_location_id,priority,workorder_short,workorder,user_id,workorder_time,notification_id,workrequest_id,request_type,replace_to_product_id,product_id_to_refurbish";
+    $SQL="INSERT INTO workorders (asset_id,main_asset_id,location_id,main_location_id,priority,workorder_short_".$lang.",workorder_".$lang.",user_id,workorder_time,notification_id,workrequest_id,request_type,replace_to_product_id,product_id_to_refurbish";
+    if (ENGLISH_AS_SECOND_LANG)
+    $SQL.=",workorder_short_en,workorder_en";
             if (isset($_GET['workorder_partner_id']) && $_GET['workorder_partner_id']>0)
             $SQL.=",workorder_partner_id";
             
@@ -124,8 +126,8 @@ foreach ($notification_ids as $notification_id)
             $SQL.="'".(int) $row['location_id']."',";
             $SQL.="'".(int) $row['main_location_id']."',";
             $SQL.="'".(int) $row["priority"]."',";
-            $SQL.="'".$dba->escapeStr($row["notification_short"])."',";
-            $SQL.="'".$dba->escapeStr($row["notification"])."',";
+            $SQL.="'".$dba->escapeStr($row["notification_short_".$lang])."',";
+            $SQL.="'".$dba->escapeStr($row["notification_".$lang])."',";
             $SQL.="'".(int) $_SESSION["user_id"]."',";
            
             $SQL.="now(),";
@@ -134,6 +136,10 @@ foreach ($notification_ids as $notification_id)
             $SQL.=(int) $row['notification_type'].",";
             $SQL.=(int) $row['replace_to_product_id'].",";
             $SQL.=(int) $row['product_id_to_refurbish'];
+            if (ENGLISH_AS_SECOND_LANG ){
+            $SQL.=",'".$dba->escapeStr($row["notification_short_en"])."',";
+            $SQL.="'".$dba->escapeStr($row["notification_en"])."'";
+            }
             if (isset($_GET['workorder_partner_id']) && $_GET['workorder_partner_id']>0)
             $SQL.=",".(int) $_GET['workorder_partner_id'];
             
@@ -149,7 +155,7 @@ foreach ($notification_ids as $notification_id)
             error_log($SQL,0);
             if ($dba->Query($SQL)){
             $workorder_id=$dba->insertedId();
-                echo "<div class=\"card\">".gettext("The new workorder has been saved.")."</div>";
+                lm_info(gettext("The new workorder has been saved."));
      
             
                 $SQL="UPDATE notifications SET notification_status=3 WHERE notification_id='".$notification_id."'";
@@ -157,7 +163,7 @@ foreach ($notification_ids as $notification_id)
                 if (LM_DEBUG)
                     error_log($SQL,0);
             }else
-                echo "<div class=\"card\">".gettext("Failed to save new workorder ").$SQL." ".$dba->err_msg."</div>";
+                lm_error(gettext("Failed to save new workorder ").$SQL." ".$dba->err_msg);
             if (LM_DEBUG)
             error_log($SQL,0);
             
@@ -167,23 +173,30 @@ foreach ($notification_ids as $notification_id)
 
 if (isset($_POST['page']) && isset($_POST["new_notification"]) && !isset($_POST["notification_id"]) && is_it_valid_submit() && isset($_SESSION['ADD_NOTIFICATION'])){ //it is from the new notification form
 //repetitive priority service_interval_date service_interval_hours notification_short 
-$SQL="INSERT INTO notifications (asset_id,main_asset_id,priority,notification_short,notification,user_id,notification_time,notification_type)";
+$SQL="INSERT INTO notifications (asset_id,main_asset_id,priority,notification_short_".$lang.",notification_".$lang.",user_id,notification_time,notification_type";
+if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH'])
+$SQL.=",notification_short_en,notification_en";
+$SQL.=")";
 $SQL.=" VALUES ";
 $SQL.="(". (int) $_POST["main_asset_id"].",";
 $SQL.=(int) $_POST["main_asset_id"].",";
 
 $SQL.=(int) $_POST["priority"].",";
 
-$SQL.="'".$dba->escapeStr($_POST["notification_short"])."',";
-$SQL.="'".$dba->escapeStr($_POST["notification"])."',";
+$SQL.="'".$dba->escapeStr($_POST["notification_short_".$lang])."',";
+$SQL.="'".$dba->escapeStr($_POST["notification_".$lang])."',";
 $SQL.=$_SESSION["user_id"].",";
 $SQL.="now(),";
 $SQL.=(int) $_POST["notification_type"];
-
+if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH'])
+{
+$SQL.="'".$dba->escapeStr($_POST["notification_short_en"])."',";
+$SQL.="'".$dba->escapeStr($_POST["notification_en"])."',";
+}
 $SQL.=")";
 if ($dba->Query($SQL)){
     $notification_id=$dba->insertedId();
-        echo "<div class=\"card\">".gettext("The new notification has been saved.")."</div>";
+        lm_info(gettext("The new notification has been saved."));
     if ((int)$_POST['priority']==1){
       $SQL="SELECT assets_users FROM assets where asset_id=".get_whole_path_ids('asset',(int) $_POST["main_asset_id"],1)[0];
                 if (LM_DEBUG)
@@ -206,13 +219,10 @@ if ($dba->Query($SQL)){
                 send_telegram_messages();
                 }
                 }
-                
-        
-        
-        }
+       }
         }
         else
-        echo "<div class=\"card\">".gettext("Failed to save new notification ").$SQL." ".$dba->err_msg."</div>";
+        lm_error(gettext("Failed to save new notification ").$SQL." ".$dba->err_msg);
 if (LM_DEBUG)
 error_log($SQL,0);
 
@@ -221,16 +231,47 @@ error_log($SQL,0);
 $SQL="UPDATE notifications SET ";
 $SQL.="asset_id='".(int) $_POST['asset_id']."',";
 $SQL.="priority='".(int) $_POST["priority"]."',";
-$SQL.="notification_short='".$dba->escapeStr($_POST["notification_short"])."',";
-$SQL.="notification='".$dba->escapeStr($_POST["notification"])."',";
+$SQL.="notification_short_".$lang."='".$dba->escapeStr($_POST["notification_short_".$lang])."',";
+$SQL.="notification_".$lang."='".$dba->escapeStr($_POST["notification_".$lang])."',";
+if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH']){
+$SQL.="notification_short_en='".$dba->escapeStr($_POST["notification_short_en"])."',";
+$SQL.="notification_en='".$dba->escapeStr($_POST["notification_en"])."',";
+}
 $SQL.="notification_type='".(int) $_POST["notification_type"]."'";
-$SQL.=" WHERE notification_id='".$_POST['notification_id']."'";
+$SQL.=" WHERE notification_id='".(int) $_POST['notification_id']."'";
 if ($dba->Query($SQL))
-        echo "<div class=\"card\">".gettext("The notification has been modified.")."</div>";
+        lm_info(gettext("The notification has been modified."));
         else
-        echo "<div class=\"card\">".gettext("Failed to modify notification ").$SQL." ".$dba->err_msg."</div>";
+        lm_error(gettext("Failed to modify notification ").$SQL." ".$dba->err_msg);
 if (LM_DEBUG)
 error_log($SQL,0);
+ if ((int)$_POST['priority']==1){
+ $SQL="SELECT notification_id FROM telegram_messages WHERE notification_id=".(int) $_POST['notification_id'];
+ $result=$dba->Select($SQL);
+ if (empty($result)){
+      $SQL="SELECT assets_users FROM assets where asset_id=".get_whole_path_ids('asset',(int) $_POST["main_asset_id"],1)[0];
+                if (LM_DEBUG)
+                error_log($SQL,0); 
+                $row=$dba->getRow($SQL);
+                if(!empty($row))
+                {
+                $users_to_message=json_decode($row['assets_users'],true);
+                
+                foreach ($users_to_message as $user){
+                $SQL="SELECT user_level,telegram_chat_id FROM users WHERE user_id=".$user;
+                $row=$dba->getRow($SQL);
+                if ($row['user_level']<3 && !empty($row['telegram_chat_id'])){// we need to notify only the managers
+                $SQL="INSERT INTO telegram_messages (user_id,sensor_id,received_message,sensor_value,notification_id) VALUES (".$user.",0,0,0,".$notification_id.")";
+                $dba->Query($SQL);
+                if (LM_DEBUG)
+                error_log($SQL,0); 
+                }
+                if(is_user_working($user))
+                send_telegram_messages();
+                }
+                }
+                }
+       }
 
 }
 
@@ -379,11 +420,11 @@ echo "</div>";
  
  
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"notification_short\" class=\"form-control-label\">".gettext("Notification short (max.30):")."</label></div>\n";
-echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"notification_short\" name=\"notification_short\" maxlength='30' class=\"form-control\"";
+echo "<div class=\"col col-md-2\"><label for=\"notification_short_".$lang."\" class=\"form-control-label\">".gettext("Notification short (max.30):")."</label></div>\n";
+echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"notification_short_".$lang."\" name=\"notification_short_".$lang."\" maxlength='30' class=\"form-control\"";
 
 if (isset($_GET["modify"]))
-echo " value=\"".$notification_row['notification_short']."\"";
+echo " value=\"".$notification_row['notification_short_'.$lang]."\"";
 
 echo " required></div>\n";
 echo "</div>";   
@@ -394,12 +435,35 @@ echo "</div>";
  
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"notification\" class=\" form-control-label\">".gettext("Notification:")."</label></div>";
-echo "<div class=\"col-12 col-md-9\"><div id='worktext_lenght'></div><textarea name=\"notification\" id=\"notification\" rows=\"9\" placeholder=\"".gettext("notification")."\" class=\"form-control\" onKeyup=\"document.getElementById('worktext_lenght').innerHTML='".gettext('Characters left: ')."'+(".get_max_allowed_string_lenght('notifications','notification')."-this.value.length)\">";
+echo "<div class=\"col-12 col-md-9\"><div id='worktext_lenght'></div><textarea name=\"notification_".$lang."\" id=\"notification_".$lang."\" rows=\"9\" placeholder=\"".gettext("notification")."\" class=\"form-control\" onKeyup=\"document.getElementById('worktext_lenght').innerHTML='".gettext('Characters left: ')."'+(".get_max_allowed_string_lenght('notifications','notification_'.$lang)."-this.value.length)\">";
 if (isset($_GET["modify"]))
-echo $notification_row['notification'];
+echo $notification_row['notification_'.$lang];
 
 echo "</textarea></div>\n";
 echo "</div>\n";
+
+if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH']){
+echo "<div class=\"row form-group\">";
+echo "<div class=\"col col-md-2\"><label for=\"notification_short_en\" class=\"form-control-label\">".gettext("Notification short (En, max.30):")."</label></div>\n";
+echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"notification_short_en\" name=\"notification_short_en\" maxlength='30' class=\"form-control\"";
+
+if (isset($_GET["modify"]))
+echo " value=\"".$notification_row['notification_short_en']."\"";
+
+echo " required></div>\n";
+echo "</div>";
+
+
+echo "<div class=\"row form-group\">";
+echo "<div class=\"col col-md-2\"><label for=\"notification_en\" class=\" form-control-label\">".gettext("Notification (En):")."</label></div>";
+echo "<div class=\"col-12 col-md-9\"><div id='worktext_en_lenght'></div><textarea name=\"notification_en\" id=\"notification_en\" rows=\"9\" placeholder=\"".gettext("notification en")."\" class=\"form-control\" onKeyup=\"document.getElementById('worktext_en_lenght').innerHTML='".gettext('Characters left: ')."'+(".get_max_allowed_string_lenght('notifications','notification_en')."-this.value.length)\">";
+if (isset($_GET["modify"]))
+echo $notification_row['notification_en'];
+
+echo "</textarea></div>\n";
+echo "</div>\n";
+}
+
 if (isset($_GET["modify"])){
 echo "<INPUT TYPE=\"hidden\" name=\"notification_id\" id=\"notification_id\" VALUE=\"".$_GET['notification_id']."\">";
 echo "<input type='hidden' name='modify_notification' id='modify_notification' value='1'>\n";}
@@ -432,14 +496,24 @@ echo "$(\"#notification_form\").validate({
         notification_type:{
         required:true
         },
-        notification_short: {
+        notification_short_".$lang.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('notifications','notification_short')."
+        maxlength: ".$dba->get_max_fieldlength('notifications','notification_short_'.$lang)."
+        },
+        notification_".$lang.": {
+        maxlength: ".$dba->get_max_fieldlength('notifications','notification_'.$lang)."
+        }";
+        if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH']){
+        echo ",notification_short_en: {
+        required: true,
+        maxlength: ".$dba->get_max_fieldlength('notifications','notification_short_en')."
         },
         notification: {
-        maxlength: ".$dba->get_max_fieldlength('notifications','notification')."
+        maxlength: ".$dba->get_max_fieldlength('notifications','notification_en')."
+        }";
         }
-        }
+        
+      echo " }
 })\n";
 echo "</script>\n";
 
@@ -530,6 +604,8 @@ echo "<th>".gettext("Date")."</th>";
 echo "<th>";
  echo "<select name=\"notification_type\" id=\"notification_type\" class=\"form-control\" required";
  echo " onChange=\"location.href='index.php?page=notifications&notification_type='+this.value\"";
+ if(isset($_SESSION["notification_type"]) && $_SESSION['notification_type']>0)
+ echo " style=\"background-color:orange;\"";
  echo ">";
         echo "<option value=''>".gettext("All type")."\n";
   //$notification_types from lm-settings.php
@@ -537,7 +613,7 @@ echo "<th>";
         {
         echo "<option value=\"".++$id."\"";
         if (isset($_SESSION["notification_type"]) && $_SESSION['notification_type']==$id)
-        echo " selected";
+        echo " selected=''";
         echo ">".$notification_type."</option>\n";
         
         }
@@ -559,8 +635,11 @@ echo "<th>".gettext("User")."</th>";
     echo "<option value='all'>".gettext("All assets");
     foreach($result as $row){
     echo "<option value='".$row['main_asset_id']."'";
-    if (isset($_SESSION['main_asset_id']) && $row['main_asset_id']==$_SESSION['main_asset_id'])
-    echo " selected";
+    $has=false;
+    if (isset($_SESSION['main_asset_id']) && $row['main_asset_id']==$_SESSION['main_asset_id']){
+    echo " selected=1";
+    $has=true;
+    }
     echo ">";
      echo $row['asset_name_'.$lang]."\n";
     }
@@ -579,15 +658,18 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 
-$SQL="SELECT user_id,notification_time,asset_id,main_asset_id,notification_short,notification_type,notification_id,notification_status FROM notifications WHERE ";
+$SQL="SELECT user_id,notification_time,asset_id,main_asset_id,notification_short_".$lang.",notification_type,notification_id,notification_status FROM notifications WHERE ";
 $SQL.="main_asset_id IN ('".join("','",$users_assets)."')";
 
-if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
+if ($has==true && isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
 $SQL.=" AND main_asset_id='".$_SESSION['main_asset_id']."'";
+
 if (isset($_SESSION['notification_status']) && $_SESSION['notification_status']>0)
 $SQL.=" AND notification_status='".$_SESSION['notification_status']."'";
+
 if (isset($_SESSION['notification_type']) && $_SESSION['notification_type']>0)
 $SQL.=" AND notification_type='".$_SESSION['notification_type']."'";
+
 $SQL.=" ORDER BY notification_time DESC";
 
 $result_all=$dba->Select($SQL);
@@ -688,7 +770,7 @@ echo "<td>".get_username_from_id($row['user_id'])."</td>";
     }
   
     
-    echo "<td>".$row['notification_short']."</td></tr>\n";
+    echo "<td>".$row['notification_short_'.$lang]."</td></tr>\n";
 
 
 }

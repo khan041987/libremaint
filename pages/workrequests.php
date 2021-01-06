@@ -107,7 +107,9 @@ foreach ($workrequest_ids as $workrequest_id)
     if (sizeof($workrequest_ids)>=1 ) 
             
     {
-    $SQL="INSERT INTO workorders (asset_id,main_asset_id,location_id,main_location_id,priority,workorder_short,workorder,user_id,workorder_time,workrequest_id,notification_id,request_type,replace_to_product_id,product_id_to_refurbish";
+    $SQL="INSERT INTO workorders (asset_id,main_asset_id,location_id,main_location_id,priority,workorder_short_".$lang.",workorder_".$lang.",user_id,workorder_time,workrequest_id,notification_id,request_type,replace_to_product_id,product_id_to_refurbish";
+    if (ENGLISH_AS_SECOND_LANG)
+    $SQL.=",workrequest_en,workrequest_short_en";
             if (isset($_GET['workorder_partner_id']) && $_GET['workorder_partner_id']>0)
             $SQL.=",workorder_partner_id";
             
@@ -125,8 +127,8 @@ foreach ($workrequest_ids as $workrequest_id)
             $SQL.="'".(int) $row['location_id']."',";
             $SQL.="'".(int) $row['main_location_id']."',";
             $SQL.="'".(int) $row["priority"]."',";
-            $SQL.="'".$dba->escapeStr($row["workrequest_short"])."',";
-            $SQL.="'".$dba->escapeStr($row["workrequest"])."',";
+            $SQL.="'".$dba->escapeStr($row["workrequest_short_".$lang])."',";
+            $SQL.="'".$dba->escapeStr($row["workrequest_".$lang])."',";
             $SQL.="'".(int) $_SESSION["user_id"]."',";
            
             $SQL.="now(),";
@@ -135,6 +137,12 @@ foreach ($workrequest_ids as $workrequest_id)
             $SQL.=(int) $row['request_type'].",";
             $SQL.=(int) $row['replace_to_product_id'].",";
             $SQL.=(int) $row['product_id_to_refurbish'];
+            if (ENGLISH_AS_SECOND_LANG)
+            {
+            $SQL.=",'".$dba->escapeStr($row["workrequest_short_en"])."',";
+            $SQL.="'".$dba->escapeStr($row["workrequest_en"])."'";
+            
+            }
             if (isset($_GET['workorder_partner_id']) && $_GET['workorder_partner_id']>0)
             $SQL.=",".(int) $_GET['workorder_partner_id'];
             
@@ -201,7 +209,10 @@ lm_info($saved_workorder." ".gettext("pcs new workorders have been saved."));
 
 if (isset($_POST['page']) && isset($_POST["new_workrequest"]) && !isset($_POST["workrequest_id"]) && is_it_valid_submit()){ //it is from the new workrequest form
 //repetitive priority service_interval_date service_interval_hours workrequest_short 
-$SQL="INSERT INTO workrequests (asset_id,main_asset_id,repetitive,priority,service_interval_date,service_interval_hours,counter_id,service_interval_mileage,workrequest_short,workrequest,user_id,workrequest_time,for_operators,request_type,replace_to_product_id,product_id_to_refurbish)";
+$SQL="INSERT INTO workrequests (asset_id,main_asset_id,repetitive,priority,service_interval_date,service_interval_hours,counter_id,service_interval_mileage,workrequest_short_".$lang.",workrequest_".$lang.",user_id,workrequest_time,for_operators,request_type,replace_to_product_id,product_id_to_refurbish";
+if (ENGLISH_AS_SECOND_LANG)
+$SQL.=",workrequest_en,workrequest_short_en";
+$SQL.=")";
 $SQL.=" VALUES ";
 $SQL.="('". (int) $_POST["asset_id"]."',";
 $SQL.="'".(int) get_whole_path("asset",$_POST['asset_id'],1)[0]."',";
@@ -214,8 +225,8 @@ $SQL.="'".(int) $_POST["service_interval_date"]."',";
 $SQL.="'".(int) $_POST["service_interval_hours"]."',";
 $SQL.="'".(int) $_POST['counter_id']."',";
 $SQL.="'".(int) $_POST["service_interval_mileage"]."',";
-$SQL.="'".$dba->escapeStr($_POST["workrequest_short"])."',";
-$SQL.="'".$dba->escapeStr($_POST["workrequest"])."',";
+$SQL.="'".$dba->escapeStr($_POST["workrequest_short_".$lang])."',";
+$SQL.="'".$dba->escapeStr($_POST["workrequest_".$lang])."',";
 $SQL.="'".$_SESSION["user_id"]."',";
 $SQL.="now(),";
 $SQL.=(int) $_POST["for_operators"].",";
@@ -223,6 +234,11 @@ $SQL.="'".(int) $_POST["request_type"]."',";
 
 $SQL.="'".(int) $_POST["replace_to_product_id"]."',";
 $SQL.="'".(int) $_POST["product_id_to_refurbish"]."'";
+if (ENGLISH_AS_SECOND_LANG)
+{
+$SQL.=",'".$dba->escapeStr($_POST["workrequest_short_en"])."',";
+$SQL.="'".$dba->escapeStr($_POST["workrequest_en"])."'";
+}
 $SQL.=")";
 if ($dba->Query($SQL))
         lm_info(gettext("The new workrequest has been saved."));
@@ -239,8 +255,14 @@ $SQL.="priority='".(int) $_POST["priority"]."',";
 $SQL.="service_interval_date='".(int) $_POST["service_interval_date"]."',";
 $SQL.="service_interval_hours='".(int) $_POST["service_interval_hours"]."',";
 $SQL.="service_interval_mileage='".(int) $_POST["service_interval_mileage"]."',";
-$SQL.="workrequest_short='".$dba->escapeStr($_POST["workrequest_short"])."',";
-$SQL.="workrequest='".$dba->escapeStr($_POST["workrequest"])."',";
+$SQL.="workrequest_short_".$lang."='".$dba->escapeStr($_POST["workrequest_short_".$lang])."',";
+$SQL.="workrequest_".$lang."='".$dba->escapeStr($_POST["workrequest_".$lang])."',";
+if (ENGLISH_AS_SECOND_LANG)
+{
+$SQL.="workrequest_short_en='".$dba->escapeStr($_POST["workrequest_short_en"])."',";
+$SQL.="workrequest_en='".$dba->escapeStr($_POST["workrequest_en"])."',";
+
+}
 $SQL.="for_operators=".(int) $_POST["for_operators"].",";
 $SQL.="request_type='".(int) $_POST["request_type"]."',";
 $SQL.="replace_to_product_id='".(int) $_POST["replace_to_product_id"]."',";
@@ -265,7 +287,7 @@ echo "<span aria-hidden=\"true\">×</span>\n</button>";
 
 if (isset($_GET['asset_id']) && $_GET['asset_id']>0)
 {
-$SQL="SELECT workrequest_short,asset_id FROM workrequests WHERE asset_id=".(int) $_GET['asset_id']." AND (workrequest_status<3 OR repetitive>0)";
+$SQL="SELECT workrequest_short_".$lang.",asset_id FROM workrequests WHERE asset_id=".(int) $_GET['asset_id']." AND (workrequest_status<3 OR repetitive>0)";
     $result=$dba->Select($SQL);
     if ($dba->affectedRows()){
         echo "<div class=\"card\">\n<div class=\"card-header\">\n";
@@ -285,7 +307,7 @@ $SQL="SELECT workrequest_short,asset_id FROM workrequests WHERE asset_id=".(int)
         echo substr($n,0,-7);
 
 
-        echo ' '.$row['workrequest_short'].'</li>';
+        echo ' '.$row['workrequest_short'.$lang].'</li>';
 
         }
         echo '</ul></div>';
@@ -650,14 +672,25 @@ echo "</div>";
  
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"workrequest_short\" class=\"form-control-label\">".gettext("Workrequest (max.30):")."</label></div>\n";
-echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"workrequest_short\" name=\"workrequest_short\" class=\"form-control\"";
+echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"workrequest_short_".$lang."\" name=\"workrequest_short_".$lang."\" class=\"form-control\"";
 
 if (isset($_GET["modify"]))
-echo " value=\"".$workrequest_row['workrequest_short']."\"";
+echo " value=\"".$workrequest_row['workrequest_short_'.$lang]."\"";
 
 echo " required></div>\n";
 echo "</div>";   
  
+if (ENGLISH_AS_SECOND_LANG){
+echo "<div class=\"row form-group\">";
+echo "<div class=\"col col-md-2\"><label for=\"workrequest_short\" class=\"form-control-label\">".gettext("Workrequest (En, max.30):")."</label></div>\n";
+echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"workrequest_short_en\" name=\"workrequest_short_en\" class=\"form-control\"";
+
+if (isset($_GET["modify"]))
+echo " value=\"".$workrequest_row['workrequest_short_en']."\"";
+
+echo " required></div>\n";
+echo "</div>"; 
+}
  
  
 echo "<div class=\"row form-group\">";
@@ -685,19 +718,36 @@ echo "</div>";
  
  
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"workrequest\" class=\" form-control-label\">".gettext("Workrequest:")."</label></div>";
-echo "<div class=\"col-12 col-md-9\"><textarea name=\"workrequest\" id=\"workrequest\" rows=\"9\" placeholder=\"".gettext("workrequest")."\" class=\"form-control\">";
+echo "<div class=\"col col-md-2\"><label for=\"workrequest_".$lang."\" class=\" form-control-label\">".gettext("Workrequest:")."</label></div>";
+echo "<div class=\"col-12 col-md-9\"><textarea name=\"workrequest_".$lang."\" id=\"workrequest_".$lang."\" rows=\"9\" placeholder=\"".gettext("workrequest")."\" class=\"form-control\">";
 if (isset($_GET["modify"]))
-echo $workrequest_row['workrequest'];
+echo $workrequest_row['workrequest_'.$lang];
 
 echo "</textarea></div>\n";
 echo "</div>\n";
+
+
+if (ENGLISH_AS_SECOND_LANG){        
+echo "<div class=\"row form-group\">";
+echo "<div class=\"col col-md-2\"><label for=\"workrequest_en\" class=\" form-control-label\">".gettext("Workrequest (EN):")."</label></div>";
+echo "<div class=\"col-12 col-md-9\"><textarea name=\"workrequest_en\" id=\"workrequest_en\" rows=\"9\" placeholder=\"".gettext("workrequest")."\" class=\"form-control\">";
+if (isset($_GET["modify"]))
+echo $workrequest_row['workrequest_en'];
+
+echo "</textarea></div>\n";
+echo "</div>\n"; 
+
+}
+
+
 if (isset($_GET["modify"])){
 echo "<INPUT TYPE=\"hidden\" name=\"workrequest_id\" id=\"workrequest_id\" VALUE=\"".$_GET['workrequest_id']."\">";
 echo "<input type='hidden' name='modify_workrequest' id='modify_workrequest' value='1'>\n";}
     else if (isset($_GET['new']))
         echo "<input type='hidden' name='new_workrequest' id='new_workrequest' value='1'>\n";
-
+        
+       
+        
 echo "<INPUT TYPE=\"hidden\" name=\"page\" id=\"page\" VALUE=\"workrequests\">";
 echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
 
@@ -718,14 +768,24 @@ echo "<script>\n";
 
 echo "$(\"#workrequest_form\").validate({
   rules: {
-    workrequest_short: {
+    workrequest_short_".$lang.": {
       required: true,
-      maxlength: ".$dba->get_max_fieldlength('workrequests','workrequest_short')."
+      maxlength: ".$dba->get_max_fieldlength('workrequests','workrequest_short_'.$lang)."
     },
-    workrequest: {
-      maxlength: ".$dba->get_max_fieldlength('workrequests','workrequest')."
-    }
+    workrequest_".$lang.": {
+      maxlength: ".$dba->get_max_fieldlength('workrequests','workrequest_'.$lang)."
+    }";
+  if (ENGLISH_AS_SECOND_LANG){
+  echo ",workrequest_short_en: {
+       required: true,
+       maxlength: ".$dba->get_max_fieldlength('workrequests','workrequest_short_en')."
+    },
+    workrequest_en: {
+      maxlength: ".$dba->get_max_fieldlength('workrequests','workrequest_en')."
+    }";
   }
+    
+echo "  }
 })\n";
 echo "</script>\n";
 
@@ -846,7 +906,7 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 
-$SQL="SELECT user_id,workrequest_time,asset_id,main_asset_id,workrequest_short,service_interval_date,service_interval_hours,repetitive,service_interval_mileage,last_ready_date,workrequest_id,workrequest_status,for_operators,product_id_to_refurbish,labour_norm FROM workrequests WHERE 1=1";
+$SQL="SELECT user_id,workrequest_time,asset_id,main_asset_id,workrequest_short_".$lang.",service_interval_date,service_interval_hours,repetitive,service_interval_mileage,last_ready_date,workrequest_id,workrequest_status,for_operators,product_id_to_refurbish,labour_norm FROM workrequests WHERE 1=1";
 if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
 $SQL.=" AND main_asset_id='".$_SESSION['main_asset_id']."'";
 else if (isset($_GET['main_asset_id']) && $_GET["main_asset_id"]!='all')
@@ -862,7 +922,7 @@ $SQL.=" limit $from,".ROWS_PER_PAGE;
 $result=$dba->Select($SQL);
 if (LM_DEBUG)
 error_log($SQL,0);
-
+if ($number_all>0){
 foreach ($result as $row)
 {
     $from++;
@@ -931,12 +991,11 @@ foreach ($result as $row)
     }
     echo "</td><td>\n";
 
-    if ($lang=="hu")
-    echo date("Y.m.d", strtotime($row["workrequest_time"]))."</td>\n";
-    else
-    echo date("m.d.y", strtotime($row["workrequest_time"]))."</td>\n";
-    if ((!lm_isset_int('asset_id')>0 && !isset($_POST['valid'])) || isset($_POST["workrequest"]))
-    {
+    
+    echo date($lang_date_format, strtotime($row["workrequest_time"]))."</td>\n";
+    
+  /*  if ((!lm_isset_int('asset_id')>0 && !isset($_POST['valid'])) || isset($_POST["workrequest_".$lang]))
+    {*/
         echo "<td>";
         
         if ($row['asset_id']>0)
@@ -956,9 +1015,9 @@ foreach ($result as $row)
         else if ($row['product_id_to_refurbish']>0){
         echo gettext("Refurbish").": ".get_product_name_from_id($row['product_id_to_refurbish'],$lang);
         }
-     
+     //}
         echo "</td>\n";
-    }
+    
     echo "<td>";
     if ($row['repetitive']==3){
     echo get_service_interval_date($row["service_interval_date"]);
@@ -990,10 +1049,12 @@ foreach ($result as $row)
    if ($row['repetitive']>0)
     echo date("H:i", strtotime($row['labour_norm']));
     echo "</td>";
-    echo "<td>".$row['workrequest_short']."</td></tr>\n";
+    echo "<td>".$row['workrequest_short_'.$lang]."</td></tr>\n";
 
 
 }
+}else
+echo "<tr><td colspan='7'>".gettext("No match.")."</td></tr>";
 
 echo "</tbody></table>";
 
