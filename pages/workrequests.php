@@ -211,7 +211,7 @@ if (isset($_POST['page']) && isset($_POST["new_workrequest"]) && !isset($_POST["
 //repetitive priority service_interval_date service_interval_hours workrequest_short 
 $SQL="INSERT INTO workrequests (asset_id,main_asset_id,repetitive,priority,service_interval_date,service_interval_hours,counter_id,service_interval_mileage,workrequest_short_".$lang.",workrequest_".$lang.",user_id,workrequest_time,for_operators,request_type,replace_to_product_id,product_id_to_refurbish";
 if (ENGLISH_AS_SECOND_LANG)
-$SQL.=",workrequest_en,workrequest_short_en";
+$SQL.=",workrequest_short_en,workrequest_en";
 $SQL.=")";
 $SQL.=" VALUES ";
 $SQL.="('". (int) $_POST["asset_id"]."',";
@@ -682,7 +682,7 @@ echo "</div>";
  
 if (ENGLISH_AS_SECOND_LANG){
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"workrequest_short\" class=\"form-control-label\">".gettext("Workrequest (En, max.30):")."</label></div>\n";
+echo "<div class=\"col col-md-2\"><label for=\"workrequest_short_en\" class=\"form-control-label\">".gettext("Workrequest (En, max.30):")."</label></div>\n";
 echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"workrequest_short_en\" name=\"workrequest_short_en\" class=\"form-control\"";
 
 if (isset($_GET["modify"]))
