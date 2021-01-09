@@ -658,8 +658,8 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 
-$SQL="SELECT user_id,notification_time,asset_id,main_asset_id,notification_short_".$lang.",notification_short_en,notification_type,notification_id,notification_status FROM notifications WHERE ";
-$SQL.="main_asset_id IN ('".join("','",$users_assets)."')";
+$SQL="SELECT user_id,notification_time,asset_id,main_asset_id,notification_short_".$lang.",notification_short_en,notification_type,notification_id,notification_status FROM notifications WHERE notification_status<6 AND";
+$SQL.=" main_asset_id IN ('".join("','",$users_assets)."')";
 
 if ($has==true && isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
 $SQL.=" AND main_asset_id='".$_SESSION['main_asset_id']."'";
@@ -722,7 +722,7 @@ foreach ($result as $row)
                              echo gettext("Set it confirmed")."</a>";
                              }
                              if (isset($_SESSION["DELETE_NOTIFICATION"]) && $row['user_id']==$_SESSION['user_id'] || $_SESSION['user_level']<3){
-                             echo "<a class=\"nav-link\" href=\"index.php?set_notification_status=5&page=notifications&notification_id=".$row['notification_id']."&valid=".$_SESSION["tit_id"]."\"><i class=\"fa fa-user\"></i> ";
+                             echo "<a class=\"nav-link\" href=\"index.php?set_notification_status=6&page=notifications&notification_id=".$row['notification_id']."&valid=".$_SESSION["tit_id"]."\"><i class=\"fa fa-user\"></i> ";
                              echo gettext("Set it deleted")."</a>";
                              
                              
