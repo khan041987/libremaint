@@ -109,7 +109,7 @@ foreach ($workrequest_ids as $workrequest_id)
     {
     $SQL="INSERT INTO workorders (asset_id,main_asset_id,location_id,main_location_id,priority,workorder_short_".$lang.",workorder_".$lang.",user_id,workorder_time,workrequest_id,notification_id,request_type,replace_to_product_id,product_id_to_refurbish";
     if (ENGLISH_AS_SECOND_LANG)
-    $SQL.=",workrequest_en,workrequest_short_en";
+    $SQL.=",workorder_short_en,workorder_en";
             if (isset($_GET['workorder_partner_id']) && $_GET['workorder_partner_id']>0)
             $SQL.=",workorder_partner_id";
             

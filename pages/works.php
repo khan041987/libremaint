@@ -191,7 +191,7 @@ echo "<div class=\"card-body card-block\">";
 
     echo "<div class=\"col-12 col-md-3\">";
     echo "<select name=\"workorder_user_id\" id=\"workorder_user_id\" class=\"form-control\" required onChange=\"check_time_period()\">\n";
-    $SQL="SELECT user_id,firstname,surname FROM users WHERE active=1";
+    $SQL="SELECT user_id,firstname,surname FROM users WHERE active=1 AND user_level<4";
     $SQL.=" ORDER BY surname";
     if (LM_DEBUG)
     error_log($SQL,0);
@@ -224,7 +224,10 @@ echo "<div class=\"card-body card-block\">";
     echo "<div class=\"col col-md-2\"><label for=\"workorder_partner_id\" class=\"form-control-label\">".gettext("Work with partner:")."</label></div>\n";
         echo "<div class=\"col-12 col-md-3\">\n";
         
-            echo "<INPUT TYPE='checkbox' name='workorder_partner_id' id='workorder_partner_id' value='".$row['workorder_partner_id']."'>";
+            echo "<INPUT TYPE='checkbox' name='workorder_partner_id' id='workorder_partner_id' value='".$row['workorder_partner_id']."'";
+            if (isset($_GET['modify']) && $row_mod['workorder_partner_id']>0)
+            echo " checked='true'";
+            echo ">";
             echo "<span> ".get_partner_name_from_id($row['workorder_partner_id'])."</span>\n</div></div>\n";
             }
         }
@@ -455,15 +458,15 @@ else
 echo date($lang_date_format." H:i", strtotime($row['workorder_work_end_time']))."</td>";
 echo "<td> ".get_username_from_id($row['workorder_user_id'])."</td>";
 if ($row['workorder']!="")
-echo "<td title='".$row['workorder']."'>".$row['workorder_short'];
+echo "<td title='".$row['workorder_'.$lang]."'>".$row['workorder_short_'.$lang];
 else
-echo "<td>".$row['workorder_short'];
+echo "<td>".$row['workorder_short_'.$lang];
 
 echo "</td>";
-if ($row['workorder_work']==mb_substr($row['workorder_work'],0,30))
-echo "<td>".$row['workorder_work'];
+if ($row['workorder_work_'.$lang]==mb_substr($row['workorder_work_'.$lang],0,30))
+echo "<td>".$row['workorder_work_'.$lang];
 else
-echo "<td title='".$row['workorder_work']."'>".mb_substr($row['workorder_work'],0,30)."...";
+echo "<td title='".$row['workorder_work_'.$lang]."'>".mb_substr($row['workorder_work_'.$lang],0,30)."...";
 echo "</td></tr>\n";
 }
 echo "</table>\n";
@@ -491,13 +494,14 @@ echo "<h2 style='display:inline;'>".gettext("Works")." </h2>";
 <?php 
 echo "<th></th><th>".gettext("Start")."</th>";
 echo "<th>".gettext("End")."</th>";
-
+if (isset($_GET["main_asset_id"])){
 $main_asset_id=lm_isset_int('main_asset_id');
         if ($main_asset_id>0)
     $_SESSION['main_asset_id']=$main_asset_id;
     else if (isset($_GET["main_asset_id"]) && $_GET["main_asset_id"]=='all')
     unset($_SESSION['main_asset_id']);
-    
+}
+
 if (!lm_isset_int('asset_id')>0 || (lm_isset_int('asset_id')>0 && isset($_POST['new']))){
         echo "<th";
         if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)

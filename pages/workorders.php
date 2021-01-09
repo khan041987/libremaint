@@ -712,7 +712,7 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 
-if (!isset($_POST["workorder_work"]))
+if (!isset($_POST["workorder_user_id"]))
 {
 $main_asset_id=lm_isset_int('main_asset_id');
  if (isset($_GET["main_asset_id"]) && $_GET["main_asset_id"]=='all')
@@ -724,8 +724,10 @@ $main_asset_id=lm_isset_int('main_asset_id');
     else if(isset($_POST['asset_id'])){
     $_SESSION['main_asset_id']=get_whole_path("asset",$_POST['asset_id'],1)[0];}
    
+}else if (isset($_SESSION['main_asset_id'])){
+unset($_SESSION['main_asset_id']);
+    
 }
-
 $SQL="SELECT";
 //if (!isset($_SESSION['main_asset_id']))
 $SQL.=" DISTINCT";
@@ -742,25 +744,29 @@ $i=1;
     }
 $SQL.=" FROM workorders LEFT JOIN assets ON workorders.main_asset_id=assets.asset_id";
 $SQL.=" WHERE 1=1";
-
-$asset_id=lm_isset_int('asset_id');
-if ($asset_id>=0)
-$_SESSION['asset_id']=$asset_id;
-
-if ($_SESSION['asset_id']>0 && !isset($_GET['new']) && !isset($_POST['modify_workorder']) && !isset($_POST['new_workorder']) && !isset($_POST["workorder_work"])){
-$SQL.=" AND workorders.asset_id=".$_SESSION['asset_id'];}
+if (!isset($_POST['workorder_user_id']))
+    {
+    $asset_id=lm_isset_int('asset_id');
+    if ($asset_id>=0)
+    $_SESSION['asset_id']=$asset_id;
+    }
+if ($_SESSION['asset_id']>0 && !isset($_GET['new']) && !isset($_POST['modify_workorder']) && !isset($_POST['new_workorder']) && !isset($_POST["workorder_work_".$lang]))
+    {
+    $SQL.=" AND workorders.asset_id=".$_SESSION['asset_id'];
+    }
 
 if (!isset($_SESSION['workorder_status']))
-$_SESSION['workorder_status']=1;
+    $_SESSION['workorder_status']=1;
 
-if (!isset($_POST["workorder_work"])){
-$workorder_status=lm_isset_int('workorder_status');
+if (!isset($_POST["workorder_work_".$lang]))
+    {
+    $workorder_status=lm_isset_int('workorder_status');
 
-if ($workorder_status>0)
-$_SESSION['workorder_status']=$workorder_status;
-else if (isset($_GET['workorder_status']) && $_GET['workorder_status']==0){
-$_SESSION['workorder_status']=0;}
-}
+    if ($workorder_status>0)
+    $_SESSION['workorder_status']=$workorder_status;
+    else if (isset($_GET['workorder_status']) && $_GET['workorder_status']==0){
+    $_SESSION['workorder_status']=0;}
+    }
 //echo  $workorder_statuses[$_SESSION['workorder_status']];
 
 /*

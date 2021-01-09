@@ -5,7 +5,7 @@ $SQL="SELECT asset_id FROM assets WHERE main_asset_category_id>0 AND asset_id=".
 $result=$dba->Select($SQL);
 if ($dba->affectedRows()==1)
 $this_is_a_main_asset=1; //top of the tree
-$SQL="SELECT workorder_short,workorder_works.asset_id,workorder_works.workorder_id, workorder_work_id,workorder_work_start_time,workorder_work_end_time,workorder_work,workorder_user_id,workorder_works.workorder_partner_id FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND";
+$SQL="SELECT workorder_short_".$lang.",workorder_works.asset_id,workorder_works.workorder_id, workorder_work_id,workorder_work_start_time,workorder_work_end_time,workorder_work_".$lang.",workorder_user_id,workorder_works.workorder_partner_id FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND";
 if (isset($this_is_a_main_asset))
 $SQL.=" workorder_works.main_asset_id=".(int) $_GET['param2'];
 else
@@ -85,8 +85,8 @@ if ($_SESSION['user_level']<3 || isset($_GET['user_id'])){
     echo get_partner_name_from_id($row["workorder_partner_id"]);
     echo "</td>"; 
   }
-  echo "<td>".$row['workorder_short']."</td>";
- echo "<td>".$row['workorder_work']."</td>";
+  echo "<td>".$row['workorder_short_'.$lang]."</td>";
+ echo "<td>".$row['workorder_work_'.$lang]."</td>";
  echo "</tr>\n";
 
  

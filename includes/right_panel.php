@@ -1,26 +1,16 @@
-<?php 
-?>
-
-    <!-- Right Panel -->
-
-    <div id="right-panel" class="right-panel">
-
-        
+<div id="right-panel" class="right-panel"><!--ok-->
         <header id="header" class="header">
-
             <div class="header-menu">
-
                 <div class="col-sm-7">
                     <a id="menuToggle" class="menutoggle pull-left"><i class="fa fa fa-tasks"></i></a>
                     <div class="header-left">
                <?php 
-               if ($req_page=="partners"){
+ if ($req_page=="partners"){
                ?>
-                         <button class="search-trigger"><i class="fa fa-search"></i></button>
-                        
-                          <div class="form-inline">
-            <form class="search-form">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search" id="search" name="search" onfocus="this.value = this.value;" onkeydown="
+ <button class="search-trigger"><i class="fa fa-search"></i></button>
+ <div class="form-inline"><!--ok-->
+ <form class="search-form">
+ <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search" id="search" name="search" onfocus="this.value = this.value;" onkeydown="
             this.onkeydown=function(e){
     if(e.keyCode==13){
     event.preventDefault();
@@ -33,7 +23,7 @@ location.href='index.php?page=partners&partner_tag='+(this.value);
             ?>">
                                 <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
                             </form>
-                        </div>
+                        </div><!--id="form-inline"-->
                     
 <?php
 
@@ -67,17 +57,13 @@ $message_number=$dba->affectedRows();
 
 ?>
                         
-                        <div class="dropdown for-message">
+                        <div class="dropdown for-message"><!--ok-->
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="message" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-bell">
 <?php
                                 echo '<span class="count bg-danger">'.$message_number.'</span>';
-?>
-                                </i>
-                                
-
-</button>
-                            <div class="dropdown-menu" aria-labelledby="notification">
+?></i></button>
+                            <div class="dropdown-menu" aria-labelledby="notification"><!--ok-->
 <?php                               
 echo '<p class="red">'.gettext('You have ').$message_number." ".gettext(' message').'</p>';
 if ($message_number>0){
@@ -101,8 +87,8 @@ echo '<a class="dropdown-item media bg-flat-color-1" href="index.php?page=messag
 
 }
 }
-?>                           </div>
-                        </div>
+?>                           </div><!--dropdown menu-->
+                        </div><!--dropdown for message-->
 <?php 
 }
 }
@@ -115,13 +101,13 @@ $result=$dba->Select($SQL);
 $not_number=$dba->affectedRows();
 if ($not_number>0){
 ?>
-                        <div class="dropdown for-notification">
+                        <div class="dropdown for-notification"><!--ok-->
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="notification"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="ti-email"></i>
                                 <span class="count bg-primary"><?php echo $not_number; ?></span>
                             </button>
- <div class="dropdown-menu" aria-labelledby="notification">
+ <div class="dropdown-menu" aria-labelledby="notification"><!--ok-->
 <?php                               
 echo '<p class="red">'.gettext('You have ').$not_number." ".gettext(' notification').'</p>';
 
@@ -136,8 +122,8 @@ echo '<a class="dropdown-item media bg-flat-color-1" href="index.php?page=notifi
 
 }
 
-?>                           </div>                           
-                        </div>
+?>                           </div><!--dropdown menu-->                           
+                        </div><!--dropdown for notification-->
                     
  <?php
  }
@@ -165,8 +151,8 @@ alert ('".gettext("Wrong number! Check it!")."');
 ?>                   
                 </div></div>
 
-                <div class="col-sm-5">
-                    <div class="user-area dropdown float-right">
+                <div class="col-sm-5"><!--->
+                    <div class="user-area dropdown float-right"><!--ok-->
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <?php
                             if (is_user_working($_SESSION['user_id']))
@@ -177,7 +163,7 @@ alert ('".gettext("Wrong number! Check it!")."');
                             else
                             echo gettext("Logged as:")." ".$_SESSION['username'];?>
                         </a>
-                        <div class="user-menu dropdown-menu">
+                        <div class="user-menu dropdown-menu"><!--ok-->
 <?php 
 if (isset($_SESSION['MODIFY_USER'])){
 ?>
@@ -187,26 +173,26 @@ if (isset($_SESSION['MODIFY_USER'])){
                             <a class="nav-link" href="index.php?page=settings"><i class="fa fa-cog"></i> <?php echo gettext("Change password");?></a>
 
                             <?php echo "<a class=\"nav-link\" href=\"".URL."index.php?logout\"><i class=\"fa fa-power-off\"></i> Logout</a>";?>
-                        </div>
-                    </div>
-                    <div class="language-select dropdown" id="language-select">
+                        </div><!--id="user-menu dropdown-menu"-->
+                    </div><!--user-area-dropdown -->
+                    <div class="language-select dropdown" id="language-select"><!--ok-->
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
                             <i class="flag-icon flag-icon-<?php if ($lang=="en") echo "us"; else echo $lang;?>"></i>
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="language">
-                            <div class="dropdown-item">
+                        <div class="dropdown-menu" aria-labelledby="language"><!--ok-->
+                            <div class="dropdown-item"><!--ok-->
                               <a href="index.php?lang=hu"><span class="flag-icon flag-icon-hu"></span></a>
-                            </div>
+                            </div><!--dropdown-item-->
                             
-                            <div class="dropdown-item">
+                            <div class="dropdown-item"><!--ok-->
                               <a href="index.php?lang=en"><i class="flag-icon flag-icon-us"></i></a>
-                            </div>
+                            </div><!--dropdown-item-->
                             
-                        </div>
-                    </div>
+                        </div><!--dropdown-menu-->
+                    </div><!--id=language-select-->
 
-                </div>
-            </div>
+                </div><!--id="col-sm5"-->
+            </div><!--id="right-panel"-->
 
         </header><!-- /header -->
         <!-- Header-->

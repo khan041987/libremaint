@@ -5,10 +5,11 @@ require_once(INCLUDES_PATH.'work_stat_query.php');
 
 $date_termin=str_replace('-', '.', $_POST['start_date'])." - ".str_replace('-', '.', $_POST['end_date']);
 ob_end_clean();
+
 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
 $pdf->SetFont("freeserif", '', 10);
- 
+$pdf->setPrintHeader(false);
 $pdf->AddPage();
 $pdf->Bookmark(gettext("Diagrams"), 0, 0, '', '', array(0,64,128));
 if (isset($_POST['chart1']))
@@ -48,7 +49,12 @@ fclose($file);
 }
 // The '@' character is used to indicate that follows an image data stream and not an image file name
 //$html = '<img src="'.$filePath . '">';
-$date_termin=str_replace('-', '.', $_POST['start_date'])." - ".str_replace('-', '.', $_POST['end_date']);
+$startdate=DateTime::createFromFormat('Y-m-d', $_POST['start_date']);
+$enddate=DateTime::createFromFormat('Y-m-d', $_POST['end_date']);
+
+$date_termin=$startdate->format($lang_date_format)." - ".$enddate->format($lang_date_format);
+
+
 
 $html='<h2>'.gettext('Workhours by priority').' '.$date_termin.'</h2>';
 //$pdf->Image('@'.$imgData,'C');
@@ -68,12 +74,12 @@ $html='<h2>'.gettext('Workhours by assets').' '.$date_termin.'</h2>';
 $html.="<IMG src=\"".$filePath3."\">";
 
 
-if (isset($_POST['start_date']) && validateDate($_POST['start_date'],$lang_date_format))
+if (isset($_POST['start_date']) && validateDate($_POST['start_date'],"Y-m-d"))
 $start=$dba->escapeStr($_POST['start_date']);
 else 
 $start="";
 
-if (isset($_POST['end_date']) && validateDate($_POST['end_date'],$lang_date_format))
+if (isset($_POST['end_date']) && validateDate($_POST['end_date'],"Y-m-d"))
 $end=$dba->escapeStr($_POST['end_date']);
 else 
 $end="";
@@ -180,9 +186,88 @@ $html.=work_stat_query($start,$end,$request_type,$priority,'','',1);
 $html.=work_stat_query($start,$end,$request_type,$priority,'','',0);
 
 
+
 // Output the HTML content
 $pdf->writeHTML($html, true, false, true, false, '');
- 
+
+
+//notification
+$pdf->AddPage();
+$pdf->Bookmark(gettext("Notifications"), 0, 0, '', '', array(0,64,128));
+
+$pdf->Bookmark(gettext("Active notifications"), 1, 0, '', '', array(0,64,128));
+$html='<H1>'.gettext("Active notifications")." ".$date_termin.'</H1>';
+
+
+$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE notification_status<5 ORDER BY asset_name_".$lang;
+$result=$dba->Select($SQL);
+
+
+$main_asset_id=0;
+foreach ($result as $row){
+
+if ($main_asset_id!=$row["main_asset_id"])
+{
+    if ($main_asset_id>0)
+    $html.= "<hr size='1'>";
+$html.="<H2>".$row["asset_name_".$lang]."<br/></H2>";
+
+}
+$html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
+$html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
+$html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row["priority"]-1]."<br/>";
+
+$html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row["notification_type"]-1]."<br/>";
+
+$html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row["notification_status"]-1]."<br/>";
+$html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
+if ($row['notification_'.$lang]!="")
+$html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
+$html.= "<hr size='1'>";
+
+
+$main_asset_id=$row["main_asset_id"];
+
+}
+//$html.= "<hr size='1'>";
+$pdf->writeHTML($html, true, false, true, false, '');
+
+
+$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_time) <= DATE('".$end."') AND DATE(notification_time) >= DATE('".$start."') AND notificaton_status<6 ORDER BY asset_name_".$lang;
+$result=$dba->Select($SQL);
+
+$pdf->Bookmark(gettext("New notifications"), 1, 0, '', '', array(0,64,128));
+$html='<H1>'.gettext('New notifications')." ".$date_termin.'</H1>';
+
+$main_asset_id=0;
+foreach ($result as $row){
+if ($main_asset_id!=$row["main_asset_id"]){
+    if ($main_asset_id>0)
+    $html.= "<hr size='1'><br/>";
+$html.="<H2>".$row["asset_name_".$lang]."</H2>";
+}
+$html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
+$html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
+
+$html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row['priority']-1]."<br/>";
+
+$html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
+
+$html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
+$html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
+if ($row['notification_'.$lang]!="")
+$html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
+$html.= "<hr size='1'>";
+
+$main_asset_id=$row["main_asset_id"];
+
+}
+//$html.= "<hr size='1'>";
+// Output the HTML content
+$pdf->writeHTML($html, true, false, true, false, '');
+
+
+
 $pdf->lastPage();
 $pdf->addTOCPage();
 
@@ -193,6 +278,9 @@ $pdf->Ln();
 
 $pdf->SetFont('dejavusans', '', 12);
 
+
+
+
 // add a simple Table Of Content at first page
 // (check the example n. 59 for the HTML version)
 $pdf->addTOC(1, 'courier', '.', 'INDEX', 'B', array(128,0,0));
@@ -201,4 +289,4 @@ $pdf->addTOC(1, 'courier', '.', 'INDEX', 'B', array(128,0,0));
 $pdf->endTOCPage();
 
  //ob_end_clean();
-$pdf->Output('maintenance_report'.$date_termin.'.pdf', 'I');
+$pdf->Output('maintenance_report_'.$date_termin.'.pdf', 'I');

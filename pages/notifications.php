@@ -107,7 +107,7 @@ foreach ($notification_ids as $notification_id)
             
     {
     $SQL="INSERT INTO workorders (asset_id,main_asset_id,location_id,main_location_id,priority,workorder_short_".$lang.",workorder_".$lang.",user_id,workorder_time,notification_id,workrequest_id,request_type,replace_to_product_id,product_id_to_refurbish";
-    if (ENGLISH_AS_SECOND_LANG)
+    if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH'])
     $SQL.=",workorder_short_en,workorder_en";
             if (isset($_GET['workorder_partner_id']) && $_GET['workorder_partner_id']>0)
             $SQL.=",workorder_partner_id";
@@ -136,7 +136,7 @@ foreach ($notification_ids as $notification_id)
             $SQL.=(int) $row['notification_type'].",";
             $SQL.=(int) $row['replace_to_product_id'].",";
             $SQL.=(int) $row['product_id_to_refurbish'];
-            if (ENGLISH_AS_SECOND_LANG ){
+            if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH']){
             $SQL.=",'".$dba->escapeStr($row["notification_short_en"])."',";
             $SQL.="'".$dba->escapeStr($row["notification_en"])."'";
             }
@@ -190,8 +190,8 @@ $SQL.="now(),";
 $SQL.=(int) $_POST["notification_type"];
 if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH'])
 {
-$SQL.="'".$dba->escapeStr($_POST["notification_short_en"])."',";
-$SQL.="'".$dba->escapeStr($_POST["notification_en"])."',";
+$SQL.=",'".$dba->escapeStr($_POST["notification_short_en"])."',";
+$SQL.="'".$dba->escapeStr($_POST["notification_en"])."'";
 }
 $SQL.=")";
 if ($dba->Query($SQL)){
@@ -261,7 +261,7 @@ error_log($SQL,0);
                 $SQL="SELECT user_level,telegram_chat_id FROM users WHERE user_id=".$user;
                 $row=$dba->getRow($SQL);
                 if ($row['user_level']<3 && !empty($row['telegram_chat_id'])){// we need to notify only the managers
-                $SQL="INSERT INTO telegram_messages (user_id,sensor_id,received_message,sensor_value,notification_id) VALUES (".$user.",0,0,0,".$notification_id.")";
+                $SQL="INSERT INTO telegram_messages (user_id,sensor_id,received_message,sensor_value,notification_id) VALUES (".$user.",0,0,0,".(int) $_POST['notification_id'].")";
                 $dba->Query($SQL);
                 if (LM_DEBUG)
                 error_log($SQL,0); 
@@ -537,7 +537,7 @@ unset($_SESSION['main_asset_id']);
 echo "<div class=\"card-body\">";
  echo "<form action=\"index.php\" method=\"post\" enctype=\"multipart/form-data\">";
 ?>
-<table id="notification-table" class="table table-striped table-bordered">
+<table id="notification-table" class="table table-striped table-bordered table-hover">
 <thead>
 <tr>
 
@@ -560,7 +560,7 @@ else if (isset($_GET['notification_type']) && $notification_type==0){
 unset($_SESSION['notification_type']);
 }
 
-if (isset($_SESSION['ADD_WORKORDER']) && (isset($_SESSION['notification_status']) && 0==$_SESSION['notification_status'] || 1==$_SESSION['notification_status']))
+if (isset($_SESSION['ADD_WORKORDER']) && (isset($_SESSION['notification_status']) && 0==$_SESSION['notification_status'] || (isset($_SESSION['notification_status']) && 1==$_SESSION['notification_status'])))
     {
     echo "<input type=\"checkbox\" style=\"display:inline;\" id=\"select_all\" name=\"select_all\"";
     echo " onChange=\"enable_create_workorder_button()\"";
@@ -585,9 +585,9 @@ echo "<i class=\"fa fa-warning\"></i>".gettext("All")."</a>";
 
 foreach ($notification_statuses as $key => $value){
 echo "<a class=\"dropdown-item media bg-flat-color-10\"";
-if (isset($_SESSION['notification_status']) && $_SESSION['notification_status']==++$key)
+if (isset($_SESSION['notification_status']) && $_SESSION['notification_status']==$key-1)
 echo " style=\"background-color:orange;\"";
-echo " href=\"index.php?page=notifications&notification_status=".$key."\">\n";
+echo " href=\"index.php?page=notifications&notification_status=".++$key."\">\n";
 echo "<i class=\"fa fa-warning\"></i>\n";
 echo $value."</a>";
                             
@@ -658,7 +658,7 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 
-$SQL="SELECT user_id,notification_time,asset_id,main_asset_id,notification_short_".$lang.",notification_type,notification_id,notification_status FROM notifications WHERE ";
+$SQL="SELECT user_id,notification_time,asset_id,main_asset_id,notification_short_".$lang.",notification_short_en,notification_type,notification_id,notification_status FROM notifications WHERE ";
 $SQL.="main_asset_id IN ('".join("','",$users_assets)."')";
 
 if ($has==true && isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
@@ -733,23 +733,25 @@ foreach ($result as $row)
                            
                              echo "</div>";
     echo "</div>";
-    if (isset($_SESSION['ADD_WORKORDER']) && 3>$row['notification_status'])
-    
-      {echo "<input type=\"checkbox\" class=\"checkBoxClass\" ";
-      echo " onChange=\"enable_create_workorder_button()\" id=\"wr_".$row['main_asset_id']."\"";
-      echo " name=\"notification_id[]\" value=\"".$row['notification_id']."\">";                        
-    }
-    echo "</td><td>\n";
-    echo $notification_statuses[--$row["notification_status"]];
+if (isset($_SESSION['ADD_WORKORDER']) && 3>$row['notification_status'])
+  {echo "<input type=\"checkbox\" class=\"checkBoxClass\" ";
+   echo " onChange=\"enable_create_workorder_button()\" id=\"wr_".$row['main_asset_id']."\"";
+    echo " name=\"notification_id[]\" value=\"".$row['notification_id']."\">";                        
+  }
+
+echo "</td><td onClick=\"javascript:ajax_call('show_notification_detail','".$row['notification_id']."','','','','".URL."index.php','for_ajaxcall')\">\n";
+    if (ENGLISH_AS_SECOND_LANG && $row['notification_short_en']=='')//to see if translation needed
+    echo ".";
+echo $notification_statuses[--$row["notification_status"]];
 echo "</td><td>";
     
-    echo date($lang_date_format, strtotime($row["notification_time"]))."</td>\n";
+    echo date($lang_date_format." h:i", strtotime($row["notification_time"]))."</td>\n";
     
-echo "<td>".$notification_types[--$row["notification_type"]]."</td>";
-echo "<td>".get_username_from_id($row['user_id'])."</td>";    
+echo "<td onClick=\"javascript:ajax_call('show_notification_detail','".$row['notification_id']."','','','','".URL."index.php','for_ajaxcall')\">".$notification_types[--$row["notification_type"]]."</td>";
+echo "<td onClick=\"javascript:ajax_call('show_notification_detail','".$row['notification_id']."','','','','".URL."index.php','for_ajaxcall')\">".get_username_from_id($row['user_id'])."</td>";    
     if ((!lm_isset_int('asset_id')>0 && !isset($_POST['valid'])) || isset($_POST["notification"]))
     {
-        echo "<td>";
+        echo "<td onClick=\"javascript:ajax_call('show_notification_detail','".$row['notification_id']."','','','','".URL."index.php','for_ajaxcall')\">";
         
         if ($row['asset_id']>0)
         {

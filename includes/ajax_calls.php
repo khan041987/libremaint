@@ -1594,7 +1594,7 @@ echo "</div>\n";
 else if(isset($_GET['param1']) && $_GET['param1']=="show_notification_detail"){
 if (!$_SESSION['SEE_NOTIFICATION_DETAILS'])
 lm_die(gettext("You have no permission!"));
-$SQL="SELECT user_id,asset_id,notification,notification_short_".$lang.",notification_time,notification_type,priority FROM notifications WHERE notification_id='".(int) $_GET['param2']."'";
+$SQL="SELECT user_id,asset_id,notification_".$lang.",notification_short_".$lang.",notification_time,notification_type,priority FROM notifications WHERE notification_id='".(int) $_GET['param2']."'";
 if (LM_DEBUG)
         error_log("Notification detail: ".$SQL,0);
 $row=$dba->getRow($SQL);

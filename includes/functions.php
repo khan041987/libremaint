@@ -18,7 +18,7 @@ if (LM_DEBUG)
 error_log($SQL,0);
 $row=$dba->getRow($SQL);
 if (password_verify($password,$row['password'])){
- 
+clearstatcache(); 
 $_SESSION['logged']=1;
 $_SESSION['user_id']=$row['user_id'];
 $_SESSION['username']=$row['username'];

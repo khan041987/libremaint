@@ -5,11 +5,13 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header text-center">
+      
         <h4 class="modal-title w-100 font-weight-bold"><?php gettext("New product");?></h4>
        <button type="button" class="close" data-dismiss="modal">&times;</button>       
       </div>
+      <form action="index.php" method="POST" name="new_product_modal_form" enctype="multipart/form-data" class="form-horizontal">
       <div class="modal-body mx-3">
-       <form action="index.php" method="post" enctype="multipart/form-data" class="form-horizontal">
+       
     <?php    
     echo "<div class=\"row form-group\">";
     echo "<div class=\"col col-md-3\"><label for=\"modal_category_id\" class=\"form-control-label\">".gettext(" Category:")."</label></div>";
@@ -220,23 +222,21 @@ echo "<div class=\"row form-group\">\n";
         }
         echo "</select></div></div>\n";
 
-    echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
+    echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">\n";
     echo "<input type='hidden' id='page' name='page' value='".$_GET['param5']."'>";
     if ($_GET['param5']=='assets') //it is from the assets page and we need asset_id to attach the new product
-    echo "<input type='hidden' id='modal_asset_id' name='modal_asset_id' value='".$_GET['param2']."'>";
+    echo "<input type='hidden' id='modal_asset_id' name='modal_asset_id' value='".$_GET['param2']."'>\n";
     if ($_GET['param1']=="into_stock")// it is from into_stock ajax_call.php
-    echo "<input type='hidden' id='modal_destination' name='modal_destination' value='into_stock'>";
+    echo "<input type='hidden' id='modal_destination' name='modal_destination' value='into_stock'>\n";
 
-echo "</div>"; 
-  ?>     <div class="modal-footer d-flex justify-content-center">
-       <button type="submit" class="btn btn-primary btn-sm">
-<i class="fa fa-dot-circle-o"></i><?php echo gettext(" Submit ");?>
-</button>
-</form>
-      </div>  
-      </div>
+echo "</div>\n"; 
      
-    </div>
+echo "<div class=\"modal-footer d-flex justify-content-center\">";
+echo "<button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
+echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext(" Submit ")."</button></form>";
+?> 
+</div> 
+        
+     </div>
   </div>
-
 </div>

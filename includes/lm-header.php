@@ -70,7 +70,9 @@ echo "<script src=\"".VENDORS_LOC."jquery-ui/jquery-ui.min.js\"></script>\n";
     echo "<link rel='stylesheet' href=\"".VENDORS_LOC."lightbox/ekko-lightbox.min.css\">\n";
 echo "<script src=\"".VENDORS_LOC."lightbox/ekko-lightbox.min.js\"></script>\n";
 echo "<link rel=\"stylesheet\" href=\"".CSS_LOC."css/open_sans.css\">\n";
- 
+ echo "<STYLE>.table-hover> tbody> tr:hover{
+    background-color:yellow;
+}</STYLE>";
    ?>
    
 
@@ -78,7 +80,7 @@ echo "<link rel=\"stylesheet\" href=\"".CSS_LOC."css/open_sans.css\">\n";
  <?php
 //we need validation when create new <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
 
-if (isset($_GET["new"]) || isset($_GET['modify']))
+if (isset($_GET["new"]) || isset($_GET['modify']) || isset($_GET['into_stock']))
 {
 echo "<script src=\"".VENDORS_LOC."jquery-validation/dist/jquery.validate.min.js\"></script>";
 if ($lang!="en" && file_exists(VENDORS_PATH."jquery-validation/dist/localization/messages_".$lang.".js"))
