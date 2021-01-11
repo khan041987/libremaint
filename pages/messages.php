@@ -1,21 +1,33 @@
 <?php
 
-
-
 if (isset($_GET['checked']) && isset($_GET['message_id']) && (int) $_GET['message_id']>0){
 $SQL="UPDATE received_messages SET user_id_who_checked=".$_SESSION['user_id'].",checking_time=NOW() WHERE message_id=".(int) $_GET['message_id'];
 $dba->Query($SQL);
 
 }
 if (isset($_POST['new'])){
-    $SQL="INSERT INTO messages (message_en";
-    if ($lang!="en")
-    $SQL.=",message_".$lang;
-    $SQL.=") VALUES ('";
-    $SQL.=$dba->escapeStr($_POST['message_en']);
-    if ($lang!="en")
-    $SQL.="','".$dba->escapeStr($_POST['message_'.$lang]);
-    $SQL.="')";
+
+    $SQL="INSERT INTO messages (";
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="message_".LANG1;
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    {
+        if ($_SESSION['CAN_WRITE_LANG1'])
+        $SQL.=",";
+    $SQL.="message_".LANG2;
+    }
+    $SQL.=") VALUES (";
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="'".$dba->escapeStr($_POST['message_'.LANG1])."'";
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+       { 
+        if ($_SESSION['CAN_WRITE_LANG1'])
+        $SQL.=",";
+        $SQL.="'".$dba->escapeStr($_POST['message_'.LANG2])."'";
+        }
+    $SQL.=")";
     if ($dba->Query($SQL))
     lm_info(gettext("The new message text has been saved."));
     else
@@ -24,10 +36,16 @@ if (isset($_POST['new'])){
 
     
 else if (isset($_POST['modify'])){
-$SQL="UPDATE messages SET message_en='".$dba->escapeStr($_POST['message_en']);
-if ($lang!='en')
-$SQL.="','".$dba->escapeStr($_POST['message_en']);
-$SQL.="')";
+$SQL="UPDATE messages SET ";
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.="message_".LANG1."='".$dba->escapeStr($_POST['message_'.LANG1])."'";
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+{
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.=",";
+$SQL.="message_".LANG2."='".$dba->escapeStr($_POST['message_'.LANG2])."'";
+}
+$SQL.=")";
 if ($dba->Query($SQL))
     lm_info(gettext("The new message text has been modified."));
     else
@@ -58,21 +76,21 @@ $row=$dba->getRow($SQL);
 echo "<input type=\"hidden\" name=\"modify\" id=\"modify\" value=\"1\">\n";
 }else
 echo "<input type=\"hidden\" name=\"new\" id=\"new\" value=\"1\">\n";
-
+if ($_SESSION['CAN_WRITE_LANG1']){
     echo "<div class=\"row form-group\">\n";
-    echo "<div class=\"col col-md-3\"><label for=\"message_en\" class=\" form-control-label\">".gettext("Message (en):")."</label></div>\n";
+    echo "<div class=\"col col-md-3\"><label for=\"message_".LANG1."\" class=\" form-control-label\">".gettext("Message (").LANG1."):</label></div>\n";
 
     echo "<div class=\"col col-md-2\">\n";
-     echo "<input type=\"text\" id=\"message_en\" name=\"message_en\" placeholder=\"".gettext("Message (en)")."\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Message (en)")."</small></div>\n";
+     echo "<input type=\"text\" id=\"message_".LANG1."\" name=\"message_".LANG1."\" placeholder=\"".gettext("Message (").LANG1.")\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Message (").LANG1.")</small></div>\n";
     echo "</div>\n";
+    }
     
-    
-  if (ENGLISH_AS_SECOND_LANG && $lang!='en'){
+  if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
     echo "<div class=\"row form-group\">\n";
-    echo "<div class=\"col col-md-3\"><label for=\"message_en\" class=\" form-control-label\">".gettext("Message:")."</label></div>\n";
+    echo "<div class=\"col col-md-3\"><label for=\"message_".LANG2."\" class=\" form-control-label\">".gettext("Message:")."</label></div>\n";
         
     echo "<div class=\"col col-md-2\">\n";
-    echo "<input type=\"text\" id=\"message_".$lang."\" name=\"message_".$lang."\" placeholder=\"".gettext("Message")."\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Message")."</small></div>\n";
+    echo "<input type=\"text\" id=\"message_".LANG2."\" name=\"message_".LANG2."\" placeholder=\"".gettext("Message")."\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Message")."</small></div>\n";
     echo "</div>\n";
     }
     
@@ -84,17 +102,17 @@ echo "<input type=\"hidden\" name=\"new\" id=\"new\" value=\"1\">\n";
   echo "<script>\n";
 echo "$(\"#messsage_form\").validate({
   rules: {";
-  if (ENGLISH_AS_SECOND_LANG && $lang!="en")
+  if (LANG2_AS_SECOND_LANG && $_SESSION["CAN_WRITE_LANG2"])
 {
-  echo  "message_en: {
+  echo  "message_".LANG2.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('messages','message_en')."
+        maxlength: ".$dba->get_max_fieldlength('messages','message_'.LANG2)."
     }
     ";}
     
-    echo ",message_".$lang.": {
+    echo ",message_".LANG1.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('messages','message_'.$lang)."
+        maxlength: ".$dba->get_max_fieldlength('messages','message_'.LANG1)."
     }
   }
 })\n";
@@ -107,10 +125,12 @@ echo "</script>\n";
 <tr>
 
 <?php 
-if (ENGLISH_AS_SECOND_LANG || $lang=='en')
-echo "<th>".gettext("Message id")."</th><th>".gettext("Message (en)")."</th>";
-if ($lang!='en')
-echo "<th>".gettext("Message")."</th>";
+
+echo "<th>".gettext("Message id")."</th>";
+
+
+echo "<th>".gettext("Message (").$lang.")</th>";
+
 echo "</tr>\n";
 ?>
 </thead>
@@ -144,8 +164,7 @@ foreach ($result as $row)
 {
 $from++;
 echo "<tr><td>".$row['message_id'];
-echo "</td><td>".$row['message_en']."</td>\n";
-if ($lang!='en')
+
 echo "<td>".$row['message_'.$lang]."</td>\n";
 echo "</tr>\n";
 

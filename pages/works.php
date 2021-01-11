@@ -68,9 +68,12 @@ $SQL.=",workorder_work_end_time='".$_POST['workorder_work_end_date']." ".$_POST[
 $interval=date_diff(new DateTime($_POST['workorder_work_start_date']." ".$_POST['workorder_work_start_time']),new DateTime($_POST['workorder_work_end_date']." ".$_POST['workorder_work_end_time']));
 
 $SQL.=",workorder_worktime='".$interval->format('%h:%i:%s')."'";
-$SQL.=",workorder_work_".$lang."='".$dba->escapeStr($_POST['workorder_work_'.$lang])."'";
-if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH'])
-$SQL.=",workorder_work_en='".$dba->escapeStr($_POST['workorder_work_en'])."'";
+
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.=",workorder_work_".LANG1."='".$dba->escapeStr($_POST['workorder_work_'.LANG1])."'";
+
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+$SQL.=",workorder_work_".LANG2."='".$dba->escapeStr($_POST['workorder_work_'.LANG2])."'";
 
 $SQL.=",main_asset_id='".$workorder_row['main_asset_id']."'";
 $SQL.=",asset_id='".$workorder_row['asset_id']."'";
@@ -250,7 +253,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         if (isset($_GET['new'])){
         
                 
-        echo date(str_replace('.', '-',$lang_date_format));
+        echo date($lang_date_format_for_input);
         
         }
         else if (isset($_GET['modify']))
@@ -282,7 +285,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         echo "<input type=\"date\" onChange=\"check_time_period();\" id=\"workorder_work_end_date\" name=\"workorder_work_end_date\" value=\"";
         
         if (isset($_GET['new']))
-        echo date(str_replace('.', '-',$lang_date_format));
+        echo date($lang_date_format_for_input);
         else if (isset($_GET['modify']))
         echo date($lang_date_format, strtotime($row_mod['workorder_work_end_time']));
         echo "\">";
@@ -346,34 +349,36 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         
     echo "</div>\n"; //row form-group
     
-    
+    if ($_SESSION['CAN_WRITE_LANG1']){
     echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-2\"><label for=\"workorder_work_".$lang."\" class=\" form-control-label\">".gettext("Activity:")." </label></div>";
+    echo "<div class=\"col col-md-2\"><label for=\"workorder_work_".LANG1."\" class=\" form-control-label\">".gettext("Activity:")." </label></div>";
     echo "<div class=\"col col-md-7\">\n";
     echo "<div id='worktext_lenght'></div>";
-    echo " <textarea name=\"workorder_work_".$lang."\" id=\"workorder_work_".$lang."\" rows=\"4\""; 
+    echo " <textarea name=\"workorder_work_".LANG1."\" id=\"workorder_work_".LANG1."\" rows=\"4\""; 
     if ($workorder_row['work_details_required']==1)
     echo " placeholder=\"".gettext("work details required")."\" required";
-    echo " class=\"form-control\" onKeyup=\"document.getElementById('worktext_lenght').innerHTML='".gettext('Characters left: ')."'+(".get_max_allowed_string_lenght('workorder_works','workorder_work_'.$lang)."-this.value.length)\">";
+    echo " class=\"form-control\" onKeyup=\"document.getElementById('worktext_lenght').innerHTML='".gettext('Characters left: ')."'+(".$dba->get_max_fieldlength('workorder_works','workorder_work_'.LANG1)."-this.value.length)\">";
          if (isset($_GET['modify']))
-    echo $row_mod['workorder_work_'.$lang];
+    echo $row_mod['workorder_work_'.LANG1];
 
     echo "</textarea>\n"; 
     echo "</div></div>\n";
+    }
     
-    if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH']){
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
     
     echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-2\"><label for=\"workorder_work_en\" class=\" form-control-label\">".gettext("Activity (en):")." </label></div>";
+    echo "<div class=\"col col-md-2\"><label for=\"workorder_work_".LANG2."\" class=\" form-control-label\">".gettext("Activity (").LANG2."): </label></div>";
     echo "<div class=\"col col-md-7\">\n";
-    echo "<div id='worktext_en_lenght'></div>";
+    echo "<div id='worktext_".LANG2."_lenght'></div>";
     
-    echo " <textarea name=\"workorder_work_en\" id=\"workorder_work_en\" rows=\"4\""; 
+    echo " <textarea name=\"workorder_work_".LANG2."\" id=\"workorder_work_".LANG2."\" rows=\"4\""; 
     if ($workorder_row['work_details_required']==1)
     echo " placeholder=\"".gettext("work details required")."\" required";
-    echo " class=\"form-control\" onKeyup=\"document.getElementById('worktext_en_lenght').innerHTML='".gettext('Characters left: ')."'+(".get_max_allowed_string_lenght('workorder_works','workorder_work_en')."-this.value.length)\">";
+    echo " class=\"form-control\" onKeyup=\"document.getElementById('worktext_".LANG2."_lenght').innerHTML='".gettext('Characters left: ')."'+(".$dba->get_max_fieldlength('workorder_works','workorder_work_'.LANG2)."-this.value.length)\">";
          if (isset($_GET['modify']))
-    echo $row_mod['workorder_work_en'];
+    echo $row_mod['workorder_work_'.LANG2];
 
     echo "</textarea>\n"; 
     echo "</div></div>\n";
@@ -430,13 +435,15 @@ echo "</div>\n";
 echo "<script>check_time_period();\n";
 
 echo "$(\"#work_form\").validate({
-  rules: {
-    workorder_work_".$lang.": {
-      maxlength: ".$dba->get_max_fieldlength('workorder_works','workorder_work_'.$lang)."
+  rules: {";
+  if ($_SESSION['CAN_WRITE_LANG1'])
+  echo "
+    workorder_work_".LANG1.": {
+      maxlength: ".$dba->get_max_fieldlength('workorder_works','workorder_work_'.LANG1)."
     }";
-    if (ENGLISH_AS_SECOND_LANG && $_SESSION['CAN_WRITE_ENGLISH'])
-    echo "workorder_work_en: {
-      maxlength: ".$dba->get_max_fieldlength('workorder_works','workorder_work_en')."
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    echo "workorder_work_".LANG2.": {
+      maxlength: ".$dba->get_max_fieldlength('workorder_works','workorder_work_'.LANG2)."
     }";
 echo "  }
 })\n";
@@ -444,7 +451,10 @@ echo "</script>\n";
 
 if (isset($_SESSION['SEE_WORKS']))
 {
-$SQL="SELECT workorders.workorder_id,workorder_user_id,workorder_work_".$lang.",workorder_work_start_time,workorder_work_end_time,workorder,workorder_short FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND workorders.asset_id =".$asset_id." ORDER BY workorder_work_end_time DESC LIMIT 0,5";
+$SQL="SELECT workorders.workorder_id,workorder_user_id";
+
+$SQL.=",workorder_work_".$lang.",workorder_".$lang.",workorder_short_".$lang;
+$SQL.=",workorder_work_start_time,workorder_work_end_time FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND workorders.asset_id =".$asset_id." ORDER BY workorder_work_end_time DESC LIMIT 0,5";
 
 $result=$dba->Select($SQL);
 if ($dba->affectedRows()>0){
@@ -457,7 +467,7 @@ echo date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
 else
 echo date($lang_date_format." H:i", strtotime($row['workorder_work_end_time']))."</td>";
 echo "<td> ".get_username_from_id($row['workorder_user_id'])."</td>";
-if ($row['workorder']!="")
+if ($row['workorder_'.$lang]!="")
 echo "<td title='".$row['workorder_'.$lang]."'>".$row['workorder_short_'.$lang];
 else
 echo "<td>".$row['workorder_short_'.$lang];

@@ -56,7 +56,7 @@ echo "<form action=\"index.php\" method=\"post\" enctype=\"multipart/form-data\"
 echo "<div class=\"row form-group\">\n";
 echo "<div class=\"col col-md-2\">";
     echo "<select name=\"category\" id=\"category\" class=\"form-control\"  onChange=\"ajax_call('categories',this.value,".$_GET["param3"].",'','','".URL."index.php','for_ajaxcall')\">\n";
-    $SQL="SELECT category_id, category_name_en, category_name_".$lang." FROM categories WHERE category_parent_id=0";
+    $SQL="SELECT category_id, category_name_".LANG2.", category_name_".LANG1." FROM categories WHERE category_parent_id=0";
     $SQL.=" ORDER BY category_name_".$lang;
     error_log($SQL,0);
     $result=$dba->Select($SQL);
@@ -125,16 +125,18 @@ echo "<span aria-hidden=\"true\">×</span>\n</button>";
 echo "<div class=\"card\"><div class=\"card-header\">\n";
 
 if ($_GET['param3']=='assets' && isset($_SESSION['MODIFY_ASSET']))
-echo "<strong>".gettext("Rename asset")." ".$orig_name=get_asset_name_from_id($_GET["param2"],$lang);
+echo "<strong>".gettext("Rename asset")." ".get_asset_name_from_id($_GET["param2"],$lang);
+
 else if ($_GET['param3']=='locations' && isset($_SESSION['MODIFY_LOCATION']))
-echo "<strong>".gettext("Rename location")." ".$orig_name=get_location_name_from_id($_GET["param2"],$lang);
+echo "<strong>".gettext("Rename location")." ".get_location_name_from_id($_GET["param2"],$lang);
+
 else if ($_GET['param3']=='categories' && isset($_SESSION['MODIFY_CATEGORY']))
-echo "<strong>".gettext("Rename category")." ".$orig_name=get_category_name_from_id($_GET["param2"],$lang);
+echo "<strong>".gettext("Rename category")." ".get_category_name_from_id($_GET["param2"],$lang);
+
 else if ($_GET['param3']=='products' && isset($_SESSION['MODIFY_PRODUCT'])){
 echo "<strong>".gettext("Rename product")." ";
-$SQL="SELECT product_type_".$lang." FROM products WHERE product_id=".$_GET["param2"];
-$row=$dba->getRow($SQL);
-echo $orig_name=$row['product_type_'.$lang];
+
+echo get_product_name_from_id($_GET["param2"],$lang);
 }
 else
 echo lm_die(gettext("You have no permission to modify!"));
@@ -142,28 +144,39 @@ echo "</strong>\n";
 echo "</div><div class=\"card-body card-block\">";
 echo "<form action=\"index.php\" id=\"rename_form\" method=\"post\" enctype=\"multipart/form-data\" class=\"form-horizontal\">\n";
 
+if ($_SESSION['CAN_WRITE_LANG1'])
+{
+if ($_GET['param3']=='assets')
+$orig_name=get_asset_name_from_id($_GET["param2"],LANG1);
+else if ($_GET['param3']=='locations')
+$orig_name=get_location_name_from_id($_GET["param2"],LANG1);
+else if ($_GET['param3']=='categories')
+$orig_name=get_category_name_from_id($_GET["param2"],LANG1);
+else if ($_GET['param3']=='products')
+$orig_name=get_product_name_from_id($_GET["param2"],LANG1);;
+
+
 echo "<div class=\"row form-group\">\n";
 echo "<div class=\"col col-md-2\"><label for=\"new_name\" class=\"form-control-label\">".gettext("New name:")."</label></div>\n";
-echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"new_name_".$lang."\" name=\"new_name_".$lang."\" class=\"form-control\" value=\"".$orig_name."\" required></div></div>\n";
+echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"new_name_".LANG1."\" name=\"new_name_".LANG1."\" class=\"form-control\" value=\"".$orig_name."\" required></div></div>\n";
+}
 
-if ($lang!="en")
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
 {
 
 if ($_GET['param3']=='assets')
-$orig_name=get_asset_name_from_id($_GET["param2"],'en');
+$orig_name=get_asset_name_from_id($_GET["param2"],LANG2);
 else if ($_GET['param3']=='locations')
-$orig_name=get_location_name_from_id($_GET["param2"],'en');
+$orig_name=get_location_name_from_id($_GET["param2"],LANG2);
 else if ($_GET['param3']=='categories')
-$orig_name=get_category_name_from_id($_GET["param2"],'en');
+$orig_name=get_category_name_from_id($_GET["param2"],LANG2);
 else if ($_GET['param3']=='products'){
-$SQL="SELECT product_type_en FROM products WHERE product_id=".$_GET["param2"];
-$row=$dba->getRow($SQL);
-$orig_name=$row['product_type_en'];
+$orig_name=get_product_name_from_id($_GET["param2"],LANG2);;
 }
 
 echo "<div class=\"row form-group\">\n";
-echo "<div class=\"col col-md-2\"><label for=\"new_name_en\" class=\"form-control-label\">".gettext("New name (English):")."</label></div>\n";
-echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"new_name_en\" name=\"new_name_en\" class=\"form-control\" value=\"";
+echo "<div class=\"col col-md-2\"><label for=\"new_name_".LANG2."\" class=\"form-control-label\">".gettext("New name (").LANG2."): </label></div>\n";
+echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"new_name_".LANG2."\" name=\"new_name_".LANG2."\" class=\"form-control\" value=\"";
 if ($orig_name!='no data') //if $orig_name empty the get_.._name_from_id() returns with 'no-data' 
 echo $orig_name;
 echo "\" required></div></div>\n";
@@ -332,14 +345,17 @@ echo "<span aria-hidden=\"true\">×</span>\n</button>";
     echo "</div><div class=\"card-body card-block\">";
     echo "<form action=\"index.php\" method=\"post\" id=\"upload_form\" enctype=\"multipart/form-data\" class=\"form-horizontal\">\n";
 
+    if ($_SESSION['CAN_WRITE_LANG1']){
     echo "<div class=\"row form-group\">\n";
     echo "<div class=\"col col-md-2\"><label for=\"info_file_review\" class=\"form-control-label\">".gettext("File review:")."</label></div>\n";
-    echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"info_file_review_".$lang."\" name=\"info_file_review_".$lang."\" class=\"form-control\" value=\"\" required></div></div>\n";
-
-     echo "<div class=\"row form-group\">\n";
-    echo "<div class=\"col col-md-2\"><label for=\"info_file_review_en\" class=\"form-control-label\">".gettext("File review (English):")."</label></div>\n";
-    echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"info_file_review_en\" name=\"info_file_review_en\" class=\"form-control\" value=\"\" required></div></div>\n";
+    echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"info_file_review_".LANG1."\" name=\"info_file_review_".LANG1."\" class=\"form-control\" value=\"\" required></div></div>\n";
+    }
     
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+     echo "<div class=\"row form-group\">\n";
+    echo "<div class=\"col col-md-2\"><label for=\"info_file_review_".LANG2."\" class=\"form-control-label\">".gettext("File review (").LANG2."): </label></div>\n";
+    echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"info_file_review_".LANG2."\" name=\"info_file_review_".LANG2."\" class=\"form-control\" value=\"\" required></div></div>\n";
+    }
     echo "<div class=\"row form-group\">\n";
     echo "<div class=\"col col-md-2\"><label for=\"req_user_level\" class=\"form-control-label\">".gettext("Required user level:")."</label></div>\n";
     echo "<div class=\"col col-md-2\">";
@@ -432,7 +448,7 @@ echo "<div class=\"card\"><div class=\"card-header\">\n";
             echo "<option value=\"".$row["category_id"]."\"";
             if($_GET['param3']==$row["category_id"])
                 echo " selected";
-            echo ">".$row["category_name_en"]."</option>\n";
+            echo ">".$row["category_name_".LANG2]."</option>\n";
             }
             }
             echo "</select></div></div>";
@@ -465,7 +481,7 @@ echo "<div class=\"card\"><div class=\"card-header\">\n";
             if ($row["category_name_".$lang]!="")
             echo ">".$row["category_name_".$lang]."</option>\n";
             else
-            echo ">".$row["category_name_en"]."</option>\n";
+            echo ">".$row["category_name_".LANG2]."</option>\n";
                 }
             echo "</select>\n";
             }
@@ -704,59 +720,6 @@ echo "<div class=\"row form-group\">\n";
     echo "</form>";
 echo "</div>";   
 }
-else if(isset($_GET['param1']) && $_GET['param1']=="create_workrequest"){
-echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\">\n";
-echo "<span aria-hidden=\"true\">×</span>\n</button>";
-echo "<div class=\"card\"><div class=\"card-header\">\n";
-    echo "<strong>".gettext("Add workrequest to")." ".get_asset_name_from_id($_GET["param2"],$lang)."</strong>\n";
-    echo "</div><div class=\"card-body card-block\">";
-    echo "<form action=\"index.php\" method=\"post\" enctype=\"multipart/form-data\" class=\"form-horizontal\">\n";
-
-    echo "<div class=\"row form-group\">\n";
-    echo "<div class=\"col col-md-2\"><label for=\"workrequest\" class=\"form-control-label\">".gettext("Workrequest:")."</label></div>\n";
-    echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"info_file_review_".$lang."\" name=\"info_file_review_".$lang."\" class=\"form-control\" value=\"\"></div></div>\n";
-
-     echo "<div class=\"row form-group\">\n";
-    echo "<div class=\"col col-md-2\"><label for=\"info_file_review_en\" class=\"form-control-label\">".gettext("File review (English):")."</label></div>\n";
-    echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"info_file_review_en\" name=\"info_file_review_en\" class=\"form-control\" value=\"\"></div></div>\n";
-    
-    echo "<div class=\"row form-group\">\n";
-    echo "<div class=\"col col-md-2\"><label for=\"req_user_level\" class=\"form-control-label\">".gettext("Required user level:")."</label></div>\n";
-    echo "<div class=\"col col-md-2\">";
-        echo "<select name=\"req_user_level\" id=\"req_user_level\" class=\"form-control\")\">\n";
-        $SQL="SELECT user_level_".$lang.", user_level_id FROM user_levels ORDER BY user_level_".$lang;
-    if (LM_DEBUG)
-        error_log($SQL,0);
-        $result=$dba->Select($SQL);
-        echo "<option value=\"0\">".gettext("Please select")."</option>\n";
-        foreach ($result as $row){
-        echo "<option value=\"".$row["user_level_id"]."\"";
-        echo ">".$row["user_level_".$lang]."</option>\n";
-    
-        }
-        echo "</select></div></div>";
-
-
-    echo "<div class=\"row form-group\">\n";
-    echo "<div class=\"col col-md-2\"><label for=\"info_file_name\" class=\"form-control-label\">".gettext("File:")."</label></div>\n";
-    echo "<div class=\"col-12 col-md-3\"><input type=\"file\" id=\"info_file_name\" name=\"info_file_name[]\" ></div></div>\n";
-    
-    echo "<div class=\"card-footer\">\n";
-    if (isset($_SESSION["ADD_WORKREQUEST"]))
-    {
-    echo "<button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-    echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button>";
-    }else
-    echo gettext("You have no permission to add workrequest!");
-    echo "</div>\n";
-    echo "<input type=\"hidden\" name=\"page\" id=\"page\" value=\"assets\">";
-    echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
-
-    echo "<input type=\"hidden\" name=\"asset_id\" id=\"asset_id\" value=\"".$_GET["param2"]."\">";
-
-    echo "</div></form></div>";
-}
 else if (isset($_GET['param1']) && $_GET['param1']=="products"){
 //echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\">\n";
 //echo "<span aria-hidden=\"true\">×</span>\n</button>";
@@ -833,7 +796,7 @@ echo "<form method='POST' id='into_stock_form' name='into_stock_form' action='in
             echo "<option value=\"".$row["category_id"]."\"";
             if($_GET['param3']==$row["category_id"])
                 echo " selected";
-            echo ">".$row["category_name_en"]."</option>\n";
+            echo ">".$row["category_name_".LANG2]."</option>\n";
             }
             }
             echo "</select></div></div>";
@@ -865,7 +828,7 @@ echo "<form method='POST' id='into_stock_form' name='into_stock_form' action='in
             if ($row["category_name_".$lang]!="")
             echo ">".$row["category_name_".$lang]."</option>\n";
             else
-            echo ">".$row["category_name_en"]."</option>\n";
+            echo ">".$row["category_name_".LANG2]."</option>\n";
                 }
             echo "</select>\n";
             echo "</div>\n";
@@ -1134,7 +1097,7 @@ echo "</div></div>\n";
             echo "<option value=\"".$row["category_id"]."\"";
             if($_GET['param3']==$row["category_id"])
                 echo " selected";
-            echo ">".$row["category_name_en"]."</option>\n";
+            echo ">".$row["category_name_".LANG2]."</option>\n";
             }
             }
             echo "</select></div></div>";
@@ -1165,7 +1128,7 @@ echo "</div></div>\n";
             if ($row["category_name_".$lang]!="")
             echo ">".$row["category_name_".$lang]."</option>\n";
             else
-            echo ">".$row["category_name_en"]."</option>\n";
+            echo ">".$row["category_name_".LANG2]."</option>\n";
                 }
             echo "</select>";
             echo "</div>";
@@ -1570,7 +1533,7 @@ echo "<div class=\"card\">";
         
         echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"workrequest_short_".$lang."\" class=\"form-control-label\">".gettext("Workrequest(short):")."</label></div>\n";
-        echo "<div class=\"col-12 col-md-3\">".$row["workrequest_short".$lang]."</div></div>\n";
+        echo "<div class=\"col-12 col-md-3\">".$row["workrequest_short_".$lang]."</div></div>\n";
         
 
         echo "<div class=\"row form-group\">\n";

@@ -3,7 +3,9 @@
 $valid_languages=array(gettext('English')=>'en');
 $lang = 'en';//default language
 //this allows building main database as bilingual (assets,locations,products)
-define('ENGLISH_AS_SECOND_LANG',0);
+
+define('LANG1','hu');
+define('LANG2','en');
 
 function valid($locale) {
 global $valid_languages;
@@ -45,7 +47,11 @@ textdomain('lm-main');
 
 bind_textdomain_codeset('lm-main', 'UTF-8');
 
-//$lang="hu";
+if (substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)=='hu')
+$lang_date_format_for_input = 'Y-m-d';
+else
+$lang_date_format_for_input = 'd-m-Y';
+
 
 
 define( 'LOCALE','en');
@@ -106,7 +112,7 @@ define('ACCEPTED_FILE_TYPES', [
  "break",
  "ADD_NEW_CONNECTION_TYPE","SEE_CONNECTION_TYPE",
  "break",
- "CAN_WRITE_ENGLISH"
+ "CAN_WRITE_LANG1","CAN_WRITE_LANG2"
   );  
  $asset_importance=array(gettext("Critic"),gettext("High"),gettext("Medium"),gettext("Low"));
  //}

@@ -104,7 +104,7 @@ $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
 
 
 
-else if (isset($_POST['modal_product_type_en']) && $_POST['modal_product_type_en']!="" && is_it_valid_submit() && isset($_SESSION['ADD_PRODUCT'])){// add new product from modal_add_new_product_form.php
+else if ((isset($_POST['modal_product_type_'.LANG1]) && $_POST['modal_product_type_'.LANG1]!="") || (isset($_POST['modal_product_type_'.LANG2]) && $_POST['modal_product_type_'.LANG2]!="") && is_it_valid_submit() && isset($_SESSION['ADD_PRODUCT'])){// add new product from modal_add_new_product_form.php
 if (!empty($dba->escapeStr($_POST['modal_new_manufacturer']))){
 $SQL="INSERT INTO manufacturers (manufacturer_name) VALUES ('".$dba->escapeStr($_POST['modal_new_manufacturer'])."')";
 if ($dba->Query($SQL)){
@@ -115,15 +115,34 @@ else
 lm_error(gettext("Failed to save new manufacturer.")." ".$dba->err_msg);
 }
 
-    $SQL="INSERT INTO products (category_id,subcategory_id,product_type_en,product_type_".$lang.",product_properties_en,product_properties_".$lang." ,manufacturer_id,product_stockable,quantity_unit,display) VALUES (";
+    $SQL="INSERT INTO products (category_id,subcategory_id";
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    $SQL.=",product_type_".LANG2;
+    
+     if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.=",product_type_".LANG1;
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    $SQL.=",product_properties_".LANG2;
+    
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.=",product_properties_".LANG1;
+    
+    $SQL.=",manufacturer_id,product_stockable,quantity_unit,display) VALUES (";
     $SQL.=(int) $_POST['modal_category_id'].",";
     $SQL.=(int) $_POST['modal_subcategory_id'].",";
-    if (ENGLISH_AS_SECOND_LANG)
-    $SQL.="'".$dba->escapeStr($_POST['modal_product_type_en'])."',";
-    $SQL.="'".$dba->escapeStr($_POST['modal_product_type_'.$lang])."',";
-    if (ENGLISH_AS_SECOND_LANG)
-    $SQL.="'".$dba->escapeStr($_POST['modal_product_properties_en'])."',";
-    $SQL.="'".$dba->escapeStr($_POST['modal_product_properties_'.$lang])."',";
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    $SQL.="'".$dba->escapeStr($_POST['modal_product_type_'.LANG2])."',";
+     if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="'".$dba->escapeStr($_POST['modal_product_type_'.LANG1])."',";
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    $SQL.="'".$dba->escapeStr($_POST['modal_product_properties_'.LANG2])."',";
+    
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="'".$dba->escapeStr($_POST['modal_product_properties_'.LANG1])."',";
+    
     if (!empty($_POST['modal_new_manufacturer']))
     $SQL.=$manufacturer_id.",";
     else
@@ -195,12 +214,22 @@ $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
 
 
 else if (isset($_POST['new']) && isset($_POST["asset_name_".$lang])  && is_it_valid_submit() && isset($_SESSION['ADD_ASSET'])){ //it is from the new asset form
-    $SQL="INSERT INTO assets (asset_name_en,main_asset_category_id,grouped_asset,grouped_asset_id,entry_point,asset_importance,";
-    if (ENGLISH_AS_SECOND_LANG)
-    $SQL.="asset_name_".$lang.",";
-    $SQL.="main_part,asset_parent_id,asset_location,asset_article,asset_note,asset_note_conf) VALUES ('".$dba->escapeStr($_POST["asset_name_en"])."',".(int) $_POST['main_asset_category_id'].",".(int) $_POST['grouped_asset'].",".(int) $_POST['grouped_asset_id'].",".(int)$_POST['entry_point'].",".(int)$_POST['asset_importance'].",";
-    if (ENGLISH_AS_SECOND_LANG)
-    $SQL.="'".$dba->escapeStr($_POST["asset_name_".$lang])."',";
+    $SQL="INSERT INTO assets (";
+     if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="asset_name_".LANG1.",";
+    
+    $SQL.="main_asset_category_id,grouped_asset,grouped_asset_id,entry_point,asset_importance,";
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    $SQL.="asset_name_".LANG2.",";
+    $SQL.="main_part,asset_parent_id,asset_location,asset_article,asset_note,asset_note_conf) VALUES (";
+     if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.=",".$dba->escapeStr($_POST["asset_name_".LANG1])."',";
+    
+    $SQL.=(int) $_POST['main_asset_category_id'].",".(int) $_POST['grouped_asset'].",".(int) $_POST['grouped_asset_id'].",".(int)$_POST['entry_point'].",".(int)$_POST['asset_importance'].",";
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    $SQL.="'".$dba->escapeStr($_POST["asset_name_".LANG2])."',";
+    
     $SQL.=(int) $_POST["main_part"].",".(int) $_POST["parent_id"].",".(int) $_POST["asset_location"].",'".$dba->escapeStr($_POST['asset_article']);
     $SQL.="','".$dba->escapeStr($_POST['asset_note']);
     $SQL.="','".$dba->escapeStr($_POST['asset_note_conf']);
@@ -224,10 +253,10 @@ $row=$dba->getRow($SQL);
 }
 
 $SQL="UPDATE assets SET ";
-if (ENGLISH_AS_SECOND_LANG)
-$SQL.="asset_name_en='".$dba->escapeStr($_POST["asset_name_en"])."',";
-
-$SQL.="asset_name_".$lang."='".$dba->escapeStr($_POST["asset_name_".$lang])."',";
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+$SQL.="asset_name_".LANG2."='".$dba->escapeStr($_POST["asset_name_".LANG2])."',";
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.="asset_name_".LANG1."='".$dba->escapeStr($_POST["asset_name_".LANG1])."',";
 $SQL.="main_asset_category_id=".(int) $_POST['main_asset_category_id'].",";
 $SQL.="grouped_asset=".(int) $_POST['grouped_asset'].",";
 $SQL.="entry_point=".(int) $_POST['entry_point'].",";
@@ -258,11 +287,16 @@ $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
 
 
 else if (isset($_POST['page']) && isset($_POST["new_name_".$lang]) && !empty($_POST["new_name_".$lang]) && is_it_valid_submit() && isset($_SESSION['MODIFY_ASSET'])){ //it is from the rename asset form
-    $SQL="UPDATE assets SET asset_name_".$lang."='".$dba->escapeStr($_POST["new_name_".$lang])."'";
-    if (isset($_POST['new_name_en']) && !empty($_POST['new_name_en']))
-    $SQL.=",asset_name_en='".$dba->escapeStr($_POST["new_name_en"])."'";
+    $SQL="UPDATE assets SET ";
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="asset_name_".LANG1."='".$dba->escapeStr($_POST["new_name_".LANG1])."'";
     
-    $SQL.=" WHERE asset_id=".$_POST["asset_id"];
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && isset($_POST['new_name_'.LANG2]) && !empty($_POST['new_name_'.LANG2]))
+        if ($_SESSION['CAN_WRITE_LANG1'])
+        $SQL.=",";
+    $SQL.=",asset_name_".LANG2."='".$dba->escapeStr($_POST["new_name_".LANG2])."'";
+    
+    $SQL.=" WHERE asset_id=".(int) $_POST["asset_id"];
     if (LM_DEBUG)
         error_log($SQL,0); 
     if ($dba->Query($SQL)){
@@ -438,27 +472,31 @@ echo ">".$row["main_asset_category_".$lang]."</option>\n";
 </div>
 <?php
 }
-if (ENGLISH_AS_SECOND_LANG){
+
+if ($_SESSION['CAN_WRITE_LANG1']){
 echo "<div class=\"row form-group\">\n";
-echo "<div class=\"col col-md-3\"><label for=\"asset_name_en\" class=\"form-control-label\">\n";
-echo gettext("Name (en)").":";
+echo "<div class=\"col col-md-3\"><label for=\"asset_name_".LANG1."\" class=\"form-control-label\">\n";
+echo gettext("Name:");
 echo "</label></div>\n";
-echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"asset_name_en\" name=\"asset_name_en\" placeholder=\"".gettext("Name (en)")."\" class=\"form-control\"";
+echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"asset_name_".LANG1."\" name=\"asset_name_".LANG1."\" placeholder=\"".gettext("Name")."\" class=\"form-control\"";
 if (isset($_GET['modify']))
-echo " value='".$asset_row['asset_name_en']."'";
-echo " required><small class=\"form-text text-muted\">".gettext("Asset name (en)")."</small></div>\n";
+echo " value='".$asset_row['asset_name_'.LANG1]."'";
+echo " required><small class=\"form-text text-muted\">".gettext("Asset name")."</small></div>\n";
 echo "</div>\n";
 }
 
+if ($_SESSION['CAN_WRITE_LANG2'] && LANG2_AS_SECOND_LANG){
 echo "<div class=\"row form-group\">\n";
-echo "<div class=\"col col-md-3\"><label for=\"asset_name_".$lang."\" class=\"form-control-label\">\n";
-echo gettext("Name:");
+echo "<div class=\"col col-md-3\"><label for=\"asset_name_".LANG2."\" class=\"form-control-label\">\n";
+echo gettext("Name (").LANG2."):";
 echo "</label></div>\n";
-echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"asset_name_".$lang."\" name=\"asset_name_".$lang."\" placeholder=\"".gettext("Name")."\" class=\"form-control\"";
+echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"asset_name_".LANG2."\" name=\"asset_name_".LANG2."\" placeholder=\"".gettext("Name (").LANG2.")\" class=\"form-control\"";
 if (isset($_GET['modify']))
-echo " value='".$asset_row['asset_name_'.$lang]."'";
-echo " required><small class=\"form-text text-muted\">".gettext("Asset name")."</small></div>\n";
+echo " value='".$asset_row['asset_name_'.LANG2]."'";
+echo " required><small class=\"form-text text-muted\">".gettext("Asset name (").LANG2.")</small></div>\n";
 echo "</div>\n";
+}
+
 ?>
 
 <?php
@@ -615,15 +653,15 @@ echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["ti
 echo "<script>\n";
 echo "$(\"#asset_form\").validate({
   rules: {";
-  if (ENGLISH_AS_SECOND_LANG && $lang!="en"){
-  echo  "asset_name_en: {
+  if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+  echo  "asset_name_".LANG2.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('assets','asset_name_en')."
+        maxlength: ".$dba->get_max_fieldlength('assets','asset_name_'.LANG2)."
     }";}
     
-    echo ",asset_name_".$lang.": {
+    echo ",asset_name_".LANG1.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('assets','asset_name_'.$lang)."
+        maxlength: ".$dba->get_max_fieldlength('assets','asset_name_'.LANG1)."
     }
   }
 })\n";

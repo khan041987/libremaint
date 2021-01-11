@@ -141,10 +141,8 @@ if (LM_DEBUG)
 error_log($SQL,0);
 if (!empty($row["asset_name_".$lang]))
 return $row["asset_name_".$lang];
-else if (!empty($row["asset_name_en"]))
-return $row["asset_name_en"];
 else
-return gettext("no data");
+return gettext("no data, translation missing?");
 }else
 lm_die("get_asset_name_from_id: invalid id:".$id." or lang:".$lang);                    
 
@@ -160,10 +158,8 @@ if (LM_DEBUG)
 error_log($SQL,0);
 if ($row["location_name_".$lang]!="")
 return $row["location_name_".$lang];
-else if ($row["location_name_en"]!="")
-return $row["location_name_en"];
 else
-return gettext("no data");
+return gettext("no data, translation missing?");
 }else
 lm_die("get_location_name_from_id: invalid id:".$id." or lang:".$lang);                    
 
@@ -303,7 +299,7 @@ return $assets;
 function get_product_name_from_id($id,$lang):string{
 global $dba;
 if ($id>0){
-$SQL="Select product_id,category_name_".$lang." ,category_name_en,products.category_id,products.subcategory_id,product_type_".$lang.",product_type_en,product_properties_".$lang.",product_properties_en,display,manufacturer_id FROM products LEFT JOIN categories ON products.category_id=categories.category_id";
+$SQL="Select product_id,category_name_".$lang." ,products.category_id,products.subcategory_id,product_type_".$lang.",product_properties_".$lang.",display,manufacturer_id FROM products LEFT JOIN categories ON products.category_id=categories.category_id";
 $SQL.=" HAVING product_id=".$id;
 $row=$dba->getRow($SQL);
 $d=$row['display'];
@@ -331,24 +327,8 @@ if (($d >> 4) & 1)
 $name.=" ".$row['product_properties_'.$lang];
 return $name;
 
-}
-else if (!empty($row["product_type_en"]))
-if ((($d >> 0) & 1) && $row['category_id']>0)
-$name1=$row["category_name_en"];
-if ((($d >> 1) & 1) && $row['subcategory_id']>0)
-$name2=get_category_name_from_id($row['subcategory_id'],"en");
-if (($d >> 5) & 1)
-$name=$name2." ".$name1;
-else
-$name=$name1." ".$name2;
-
-if (($d >> 2) & 1)
-$name.=" ".$row['product_type_en'];
-if (($d >> 3) & 1)
-$name.=" ".get_manufacturer_name_from_id($row['manufacturer_id']);
-if (($d >> 4) & 1)
-$name.=" ".$row['product_properties_en'];
-return $name;
+}else
+return gettext("no data, missing translation?");
 
 }else 
 lm_die("get_product_name_from_id: invalid id:".$id);                    
@@ -685,6 +665,8 @@ error_log("get_task_from_id".$SQL,0);
 $row=$dba->getRow($SQL);
 if (empty($row[$where]) && $row['replace_to_product_id']>0)
 return gettext("replace");
+else if (empty($row[$where.'_short_'.$lang]))
+return gettext("missing translation??");
 else
 return $row[$where.'_short_'.$lang];
 }
@@ -1064,7 +1046,7 @@ lm_die("Wrong value at check_workorder_to_close()...");
 
 function copy_asset_with_children($source_asset_id,$target_asset_parent_id):void
 {
-global $dba,$lang;
+global $dba;
 static $t="_copied";
 $SQL="SELECT COLUMN_NAME as info FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='assets' AND COLUMN_NAME LIKE 'info_file_id%'";
 $info_file_ids=$dba->Select($SQL);
@@ -1077,8 +1059,15 @@ $connection_types=$dba->Select($SQL);
 
 
 
-$SQL="SELECT asset_name_".$lang.",asset_name_en,grouped_asset_id,grouped_asset,main_part,asset_parent_id,asset_location,asset_article";
-$SQL.=",asset_category_id,asset_subcategory_id,asset_product_id,asset_note,asset_note_conf";
+$SQL="SELECT asset_category_id";
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.=",asset_name_".LANG1;
+
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+$SQL.=",asset_name_".LANG2;
+
+$SQL.=",grouped_asset_id,grouped_asset,main_part,asset_parent_id,asset_location,asset_article";
+$SQL.=",asset_subcategory_id,asset_product_id,asset_note,asset_note_conf";
     if (!empty($info_file_ids))
     {
         foreach ($info_file_ids as $info_column)
@@ -1100,7 +1089,14 @@ $SQL.=",asset_category_id,asset_subcategory_id,asset_product_id,asset_note,asset
 $SQL.=" FROM assets WHERE asset_id='".(int) $source_asset_id."'";
 $source_row=$dba->getRow($SQL);
 
-$SQL="INSERT INTO assets (asset_name_".$lang.",asset_name_en,grouped_asset_id,grouped_asset,main_part,asset_parent_id,asset_location,asset_article";
+$SQL="INSERT INTO assets (";
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.="asset_name_".LANG1.",";
+
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+$SQL.="asset_name_".LANG2.",";
+
+$SQL.="grouped_asset_id,grouped_asset,main_part,asset_parent_id,asset_location,asset_article";
 $SQL.=",asset_category_id,asset_subcategory_id,asset_product_id,asset_note,asset_note_conf";
 if (!empty($info_file_ids))
     {
@@ -1120,7 +1116,14 @@ if (!empty($info_file_ids))
         $SQL.=",".$conntype_column['connection_type'];
     }
     
-$SQL.=") VALUES ('".$source_row['asset_name_'.$lang].$t."','".$source_row['asset_name_en'].$t."','".(int)$source_row['grouped_asset_id']."','".(int) $source_row['grouped_asset']."','".(int)$source_row['main_part']."','".(int)$target_asset_parent_id."','".(int)$source_row['asset_location']."','".$source_row['asset_article']."','";
+$SQL.=") VALUES (";
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.="'".$source_row['asset_name_'.LANG1].$t."',";
+
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+$SQL.="'".$source_row['asset_name_'.LANG2].$t."',";
+
+$SQL.="'".(int)$source_row['grouped_asset_id']."','".(int) $source_row['grouped_asset']."','".(int)$source_row['main_part']."','".(int)$target_asset_parent_id."','".(int)$source_row['asset_location']."','".$source_row['asset_article']."','";
 $SQL.= (int)$source_row['asset_category_id']."','".(int)$source_row['asset_subcategory_id']."','".(int) $source_row['asset_product_id']."','".$source_row['asset_note']."','".$source_row['asset_note_conf']."'";
 if (!empty($info_file_ids))
     {
@@ -1277,7 +1280,7 @@ return false;
 }
 
 function send_telegram_messages():void{
-global $dba,$lang;
+global $dba;
 $SQL="SELECT * FROM telegram_messages WHERE status=0";
 $result=$dba->Select($SQL);
 
@@ -1285,7 +1288,13 @@ if ($dba->affectedRows()>0)
 {
         foreach ($result as $row){
         if ($row['notification_id']>0){
-        $SQL="SELECT main_asset_id,notification_short_".$lang.",user_id FROM notifications WHERE notification_id=".$row['notification_id'];
+        $SQL="SELECT lang FROM users WHERE user_id=".$row['user_id'];
+        $row1=$dba->getRow($SQL);
+        $lang=$row1['lang'];
+        
+        $SQL="SELECT main_asset_id,notification_short_".$lang.",";
+               
+        $SQL.="user_id FROM notifications WHERE notification_id=".$row['notification_id'];
         $row1=$dba->getRow($SQL);
         $sender=get_asset_name_from_id($row1['main_asset_id'],$lang)." (".get_username_from_id($row1['user_id']).")";
         $message=$row1['notification_short_'.$lang];

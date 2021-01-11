@@ -58,10 +58,13 @@ $id_column="product_id";
 
 }
 
-else if (isset($_POST['page']) && isset($_POST["new_name_".$lang]) && !empty($_POST["new_name_".$lang])){ //it is from the rename asset form
-    $SQL="UPDATE products SET product_type_".$lang."='".$dba->escapeStr($_POST["new_name_".$lang])."'";
-    if (isset($_POST['new_name_en']) && !empty($_POST['new_name_en']))
-    $SQL.=",product_type_en='".$dba->escapeStr($_POST["new_name_en"])."'";
+else if (isset($_POST['page']) && (isset($_POST["new_name_".LANG1]) && !empty($_POST["new_name_".LANG1])) || (isset($_POST["new_name_".LANG2]) && !empty($_POST["new_name_".LANG2]))){ //it is from the rename asset form
+    $SQL="UPDATE products SET ";
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="product_type_".LANG1."='".$dba->escapeStr($_POST["new_name_".LANG1])."'";
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    $SQL.=",product_type_".LANG2."='".$dba->escapeStr($_POST["new_name_".LANG2])."'";
    
     $SQL.=" WHERE product_id='".$_POST["product_id"]."'";
     if (LM_DEBUG)
@@ -75,12 +78,19 @@ else if (isset($_POST['page']) && isset($_POST["new_name_".$lang]) && !empty($_P
 
 
 else if (isset($_POST['page']) && isset($_POST["modify_product"])  && is_it_valid_submit()){
-$SQL="UPDATE products SET product_type_".$lang."='".$dba->escapeStr($_POST["product_type_".$lang])."',";
- if (isset($_POST['product_type_en']))
-$SQL.="product_type_en='".$dba->escapeStr($_POST["product_type_en"])."',";
-$SQL.="product_properties_".$lang."='".$dba->escapeStr($_POST["product_properties_".$lang])."',";
-if (isset($_POST['product_properties_en']))
-$SQL.="product_properties_en='".$dba->escapeStr($_POST["product_properties_en"])."',";
+$SQL="UPDATE products SET ";
+
+if ($_SESSION['CAN_WRITE_LANG1'])
+{
+$SQL.="product_type_".LANG1."='".$dba->escapeStr($_POST["product_type_".LANG1])."',";
+$SQL.="product_properties_".LANG1."='".$dba->escapeStr($_POST["product_properties_".LANG1])."',";
+}
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+{
+$SQL.="product_type_".LANG2."='".$dba->escapeStr($_POST["product_type_".LANG2])."',";
+$SQL.="product_properties_".LANG2."='".$dba->escapeStr($_POST["product_properties_".LANG2])."',";
+}
+
 $SQL.="manufacturer_id=".(int) $_POST['manufacturer_id'].",";
 $SQL.="quantity_unit=".(int) $_POST['quantity_unit'].",";
 $SQL.="default_stock_location_id=".(int) $_POST['default_stock_location_id'].",";
@@ -106,16 +116,26 @@ if ($dba->Query($SQL))
 
 else if (isset($_POST['page']) && isset($_POST["new_product"])  && is_it_valid_submit()){
     $SQL="INSERT INTO products (category_id,subcategory_id,";
-    if (isset($_POST['product_type_en']) && !empty($_POST['product_type_en']))
-    $SQL.="product_type_en,";
-    $SQL.="product_type_".$lang.", product_properties_en,product_properties_".$lang." ,manufacturer_id,quantity_unit,default_stock_location_id ,product_stockable,display) VALUES (";
+    
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="product_type_".LANG1.",product_properties_".LANG1.",";
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    $SQL.="product_type_".LANG2.",product_properties_".LANG2.",";
+    
+    $SQL.="manufacturer_id,quantity_unit,default_stock_location_id ,product_stockable,display) VALUES (";
     $SQL.=(int) $_POST['category_id'].",";
     $SQL.=(int) $_POST['subcategory_id'].",";
-    if (isset($_POST['product_type_en']) && !empty($_POST['product_type_en']))
-    $SQL.="'".$dba->escapeStr($_POST['product_type_en'])."',";
-    $SQL.="'".$dba->escapeStr($_POST['product_type_'.$lang])."',";
-    $SQL.="'".$dba->escapeStr($_POST['product_properties_en'])."',";
-    $SQL.="'".$dba->escapeStr($_POST['product_properties_'.$lang])."',";
+    
+    if ($_SESSION['CAN_WRITE_LANG1']){
+    $SQL.="'".$dba->escapeStr($_POST['product_type_'.LANG1])."',";
+    $SQL.="'".$dba->escapeStr($_POST['product_type_'.LANG1])."',";
+    }
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    {
+    $SQL.="'".$dba->escapeStr($_POST['product_properties_'.LANG2])."',";
+    $SQL.="'".$dba->escapeStr($_POST['product_properties_'.LANG2])."',";
+    }
     $SQL.=(int) $_POST['manufacturer_id'].",";
     $SQL.=(int) $_POST['quantity_unit'].",";
     $SQL.=(int) $_POST['default_stock_location_id'].",";
@@ -240,10 +260,7 @@ echo gettext("New product");?></strong>
     foreach ($result as $row){
     if ($row["category_name_".$lang]!="")
     echo "<option value=\"".$row["category_id"]."\">".$row["category_name_".$lang]."</option>\n";
-    else
-    echo "<option value=\"".$row["category_id"]."\">".$row["category_name_en"]."</option>\n";
-
-    }
+     }
     echo "</select>";
     } else 
     echo get_category_name_from_id($row_orig['category_id'],$lang);
@@ -258,23 +275,25 @@ echo get_category_name_from_id($row_orig['subcategory_id'],$lang);
 echo "</div>";
   
  
-  
+ if ($_SESSION['CAN_WRITE_LANG1'])
+{ 
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"product_type_".$lang."\" class=\"form-control-label\">".gettext("Product type:")."</label></div>\n";
-echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_type_".$lang."\" name=\"product_type_".$lang."\" placeholder=\"".gettext("product type")."\" class=\"form-control\"";
+echo "<div class=\"col col-md-2\"><label for=\"product_type_".LANG1."\" class=\"form-control-label\">".gettext("Product type:")."</label></div>\n";
+echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_type_".LANG1."\" name=\"product_type_".LANG1."\" placeholder=\"".gettext("product type")."\" class=\"form-control\"";
 if (isset($_GET['modify']))
-echo " value='".$row_orig['product_type_'.$lang]."'";
+echo " value='".$row_orig['product_type_'.LANG1]."'";
 echo " required>";
 echo "<small class=\"form-text text-muted\">".gettext("product type")."</small></div>\n";
 echo "</div>";
+}
 
-if (ENGLISH_AS_SECOND_LANG && $lang!="en")
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
 {
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"product_type_en\" class=\"form-control-label\">".gettext("Product type (en):")."</label></div>\n";
-echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_type_en\" name=\"product_type_en\" placeholder=\"".gettext("product type")."\" class=\"form-control\"";
+echo "<div class=\"col col-md-2\"><label for=\"product_type_".CAN_WRITE_LANG2."\" class=\"form-control-label\">".gettext("Product type (").LANG2."): "</label></div>\n";
+echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_type_".LANG2."\" name=\"product_type_".LANG2."\" placeholder=\"".gettext("product type")."\" class=\"form-control\"";
 if (isset($_GET['modify']))
-echo " value='".$row_orig['product_type_en']."'";
+echo " value='".$row_orig['product_type_'.LANG2]."'";
 echo " required><small class=\"form-text text-muted\">".gettext("product type")."</small></div>\n";
 echo "</div>";
 
@@ -301,25 +320,28 @@ echo "<div class=\"col col-md-2\">";
 echo "</div>";
 
 
-if (ENGLISH_AS_SECOND_LANG && $lang!="en")
+if ($_SESSION['CAN_WRITE_LANG1'])
 {
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"product_properties_en\" class=\"form-control-label\">".gettext("Product properties en:")."</label></div>\n";
-echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_properties_en\" name=\"product_properties_en\" placeholder=\"".gettext("product properties en")."\" class=\"form-control\"";
+echo "<div class=\"col col-md-2\"><label for=\"product_properties_".LANG1."\" class=\"form-control-label\">".gettext("Product properties:")."</label></div>\n";
+echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_properties_".LANG1."\" name=\"product_properties_".LANG1."\" placeholder=\"".gettext("product properties")."\" class=\"form-control\"";
 if (isset($_GET['modify']))
-    echo " value='".$row_orig['product_properties_en']."'";
-echo "><small class=\"form-text text-muted\">".gettext("product properties en")."</small></div>\n";
+    echo " value='".$row_orig['product_properties_'.LANG1]."'";
+echo "><small class=\"form-text text-muted\">".gettext("product properties")."</small></div>\n";
 echo "</div>";
 }
 
 
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+{
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"product_properties_".$lang."\" class=\"form-control-label\">".gettext("Product properties:")."</label></div>\n";
-echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_properties_".$lang."\" name=\"product_properties_".$lang."\" placeholder=\"".gettext("product properties")."\" class=\"form-control\"";
+echo "<div class=\"col col-md-2\"><label for=\"product_properties_".LANG2."\" class=\"form-control-label\">".gettext("Product properties (").LANG2."):."</label></div>\n";
+echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_properties_".LANG2."\" name=\"product_properties_".LANG2."\" placeholder=\"".gettext("product properties ").LANG2."\" class=\"form-control\"";
 if (isset($_GET['modify']))
-    echo " value='".$row_orig['product_properties_'.$lang]."'";
-echo "><small class=\"form-text text-muted\">".gettext("product properties")."</small></div>\n";
+    echo " value='".$row_orig['product_properties_'.LANG2]."'";
+echo "><small class=\"form-text text-muted\">".gettext("product properties ").LANG2."</small></div>\n";
 echo "</div>";
+}
 
 
 echo "<div class=\"row form-group\">";
@@ -459,24 +481,27 @@ echo "<INPUT TYPE=\"hidden\" name=\"new_product\" id=\"new_product\" VALUE=\"1\"
 echo "<script>\n";
 echo "$(\"#product_form\").validate({
   rules: {";
-  if (ENGLISH_AS_SECOND_LANG && $lang!="en")
+  if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
 {
-  echo  "product_type_en: {
+  echo  "product_type_".LANG2.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('products','product_type_en')."
+        maxlength: ".$dba->get_max_fieldlength('products','product_type_'.LANG2)."
     }
-    ,product_properties_en: {
-        maxlength: ".$dba->get_max_fieldlength('products','product_properties_en')."
+    ,product_properties_".LANG2.": {
+        maxlength: ".$dba->get_max_fieldlength('products','product_properties_'.LANG2)."
     }";}
     
-    echo ",product_type_".$lang.": {
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    {
+    echo ",product_type_".LANG1.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('products','product_type_'.$lang)."
+        maxlength: ".$dba->get_max_fieldlength('products','product_type_'.LANG1)."
     }
     ,product_properties_".$lang.": {
-        maxlength: ".$dba->get_max_fieldlength('products','product_properties_'.$lang)."
+        maxlength: ".$dba->get_max_fieldlength('products','product_properties_'.LANG1)."
+    }";
     }
-  }
+  echo "}
 })\n";
 echo "</script>\n";
 }//if (isset($_GET["new"]))

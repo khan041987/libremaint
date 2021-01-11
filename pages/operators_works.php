@@ -45,7 +45,7 @@ if ($row['operator_user_id']==$_SESSION['user_id'])
     $dba->Query($SQL);
     $SQL="SELECT operator_user_id,operator_work_date FROM operator_works WHERE workrequest_id=".$row['workrequest_id']." AND deleted<>1 ORDER BY operator_work_date DESC LIMIT 0,1";
     $row1=$dba->getRow($SQL);
-    $SQL="UPDATE workrequests SET last_ready_date='".$row1['operator_work_date']."', last_ready_user_id=".$row1['operator_user_id']." WHERE workrequest_id=".$row['workrequest_id'];
+    $SQL="UPDATE workrequests SET last_ready_date='".$row1['operator_work_date']."', last_ready_user_id=".$row1['operator_user_id'].",workrequest_status=1 WHERE workrequest_id=".$row['workrequest_id'];
             $dba->Query($SQL);
     
     }
@@ -83,7 +83,7 @@ if (LM_DEBUG)
 error_log($SQL,0);
     if ($dba->Query($SQL))
             {
-            $SQL="UPDATE workrequests SET last_ready_date='".$_POST['operator_work_date']."', last_ready_user_id=".$_SESSION['user_id']." WHERE workrequest_id=".$workrequest_id;
+            $SQL="UPDATE workrequests SET workrequest_status=3, last_ready_date='".$_POST['operator_work_date']."', last_ready_user_id=".$_SESSION['user_id']." WHERE workrequest_id=".$workrequest_id;
             $dba->Query($SQL);
             if (LM_DEBUG)
             error_log($SQL,0);
@@ -138,7 +138,7 @@ echo "<div class=\"card-body card-block\">";
         echo "<div class=\"col-12 col-md-5\">";
         
         echo "<input type=\"date\" id=\"operator_work_date\" name=\"operator_work_date\" value=\"";
-        echo date($lang_date_format);
+        echo date($lang_date_format_for_input);
         echo "\">\n";
         echo "<input type=\"time\" id=\"operator_work_time\" name=\"operator_work_time\" value=\"";
         echo date("h:i");

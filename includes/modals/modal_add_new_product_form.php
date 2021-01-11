@@ -76,23 +76,25 @@
     echo "</div>\n"; 
  }else 
 echo "<div id=\"modal_subcategory_id\"></div>";
-  
+if ($_SESSION['CAN_WRITE_LANG1'])
+{
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-3\"><label for=\"modal_product_type_".$lang."\" class=\"form-control-label\">".gettext("Product type:")."</label></div>\n";
+echo "<div class=\"col col-md-3\"><label for=\"modal_product_type_".LANG1."\" class=\"form-control-label\">".gettext("Product type:")."</label></div>\n";
 echo "<div class=\"col-11 col-md-8\">\n";
-echo "<input type=\"text\" id=\"modal_product_type_".$lang."\" name=\"modal_product_type_".$lang."\" placeholder=\"".gettext("product type")."\" class=\"form-control\" onkeyup=\"ajax_call('search','product_type_".$lang."','products',this.value,'modal_product_type_".$lang."','".URL."index.php','livesearch')\">\n";
+echo "<input type=\"text\" id=\"modal_product_type_".LANG1."\" name=\"modal_product_type_".LANG1."\" placeholder=\"".gettext("product type")."\" class=\"form-control\" onkeyup=\"ajax_call('search','product_type_".LANG1."','products',this.value,'modal_product_type_".LANG1."','".URL."index.php','livesearch')\">\n";
 echo "<div id='livesearch'></div>\n";
 echo "<small class=\"form-text text-muted\">".gettext("product type")."</small></div>\n";
 echo "</div>\n";
+}
 
-if ($lang!="en")
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
 {
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-3\"><label for=\"modal_product_type_en\" class=\"form-control-label\">".gettext("Product type en:")."</label></div>\n";
+echo "<div class=\"col col-md-3\"><label for=\"modal_product_type_".LANG2."\" class=\"form-control-label\">".gettext("Product type ").LANG2."):</label></div>\n";
 echo "<div class=\"col-11 col-md-8\">\n";
-echo "<input type=\"text\" id=\"modal_product_type_en\" name=\"modal_product_type_en\" placeholder=\"".gettext("product type en")."\" class=\"form-control\" onkeyup=\"ajax_call('search','product_type_en','products',this.value,'modal_product_type_en','".URL."index.php','livesearch_en')\">\n";
-echo "<div id='livesearch_en'></div>\n";
-echo "<small class=\"form-text text-muted\">".gettext("product type en")."</small></div>\n";
+echo "<input type=\"text\" id=\"modal_product_type_".LANG2."\" name=\"modal_product_type_".LANG2."\" placeholder=\"".gettext("product type")." ".LANG2."\" class=\"form-control\" onkeyup=\"ajax_call('search','product_type_".LANG2."','products',this.value,'modal_product_type_".LANG2."','".URL."index.php','livesearch_".LANG2."')\">\n";
+echo "<div id='livesearch_".LANG2."'></div>\n";
+echo "<small class=\"form-text text-muted\">".gettext("product type").LANG2."</small></div>\n";
 echo "</div>\n";
 }
 
@@ -127,18 +129,23 @@ echo "<div class=\"col col-md-3\"><label for=\"modal_new_manufacturer\" class=\"
 echo "<div class=\"col-11 col-md-8\"><input type=\"text\" id=\"modal_new_manufacturer\" name=\"modal_new_manufacturer\" placeholder=\"".gettext("new manufacturer")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("new manufacturer")."</small></div>\n";
 echo "</div>\n";
 echo "</div>\n";
-if ($lang!='en'){
+
+if ($_SESSION['CAN_WRITE_LANG1']){
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-3\"><label for=\"modal_product_properties_en\" class=\"form-control-label\">".gettext("Product properties en:")."</label></div>\n";
-echo "<div class=\"col-11 col-md-8\"><input type=\"text\" id=\"modal_product_properties_en\" name=\"modal_product_properties_en\" placeholder=\"".gettext("product properties en")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("product properties en")."</small></div>\n";
+echo "<div class=\"col col-md-3\"><label for=\"modal_product_properties_".LANG1."\" class=\"form-control-label\">".gettext("Product properties:")."</label></div>\n";
+echo "<div class=\"col-11 col-md-8\"><input type=\"text\" id=\"modal_product_properties_".LANG1."\" name=\"modal_product_properties_".LANG1."\" placeholder=\"".gettext("product properties")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("product properties")."</small></div>\n";
 echo "</div>";
 }
 
 
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+{
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-3\"><label for=\"modal_product_properties_".$lang."\" class=\"form-control-label\">".gettext("Product properties:")."</label></div>\n";
-echo "<div class=\"col-11 col-md-8\"><input type=\"text\" id=\"modal_product_properties_".$lang."\" name=\"modal_product_properties_".$lang."\" placeholder=\"".gettext("product properties")."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("product properties")."</small></div>\n";
+echo "<div class=\"col col-md-3\"><label for=\"modal_product_properties_".LANG2."\" class=\"form-control-label\">".gettext("Product properties")." ".LANG2.":</label></div>\n";
+echo "<div class=\"col-11 col-md-8\"><input type=\"text\" id=\"modal_product_properties_".LANG2."\" name=\"modal_product_properties_".LANG2."\" placeholder=\"".gettext("product properties")." ".LANG2."\" class=\"form-control\"><small class=\"form-text text-muted\">".gettext("product properties")." ".LANG2."</small></div>\n";
 echo "</div>";
+}
+
 
 
 echo "<div class=\"row form-group\">";

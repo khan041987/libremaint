@@ -4,13 +4,23 @@
 <?php 
 if (isset($_POST['page']) && isset($_POST['category_parent_id']) && is_it_valid_submit()){ //it is from the form
 $SQL="INSERT INTO categories (";
-if (ENGLISH_AS_SECOND_LANG && $lang!="en")
-$SQL.="category_name_en,";
 
-$SQL.="category_name_$lang,category_parent_id) VALUES (";
-if (ENGLISH_AS_SECOND_LANG && $lang!="en")
-$SQL.="'".$_POST["category_name_en"]."',";
-$SQL.="'".$_POST["category_name_".$lang]."',".(int)$_POST["category_parent_id"].")";
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+$SQL.="category_name_".LANG2.",";
+
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.="category_name_".LANG1.",";
+
+$SQL.="category_parent_id) VALUES (";
+
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+$SQL.="'".$dba->escapeStr($_POST["category_name_".LANG2])."',";
+
+if ($_SESSION['CAN_WRITE_LANG1'])
+$SQL.="'".$dba->escapeStr($_POST["category_name_".LANG1])."',";
+
+$SQL.=(int)$_POST["category_parent_id"].")";
+
 if (LM_DEBUG_LOG)
 error_log($SQL,0); 
 if ($dba->Query($SQL))
@@ -21,9 +31,18 @@ echo "<div class=\"card\">".gettext("Failed to save new category ").$dba->err_ms
 }
 
 else if (isset($_POST['page']) && isset($_POST["new_name_".$lang]) && !empty($_POST["new_name_".$lang]) && is_it_valid_submit()){ //it is from the rename category form
-    $SQL="UPDATE categories SET category_name_".$lang."='".$_POST["new_name_".$lang]."'";
-    if (isset($_POST['new_name_en']) && !empty($_POST['new_name_en']))
-    $SQL.=",category_name_en='".$dba->escapeStr($_POST["new_name_en"])."'";
+    $SQL="UPDATE categories SET";
+    
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.=" category_name_".LANG1."='".$_POST["new_name_".LANG1]."'";
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+        if ($_SESSION['CAN_WRITE_LANG1'])
+        $SQL.=",";
+    
+    if (isset($_POST['new_name_'.LANG2]) && !empty($_POST['new_name_'.LANG2]))
+    $SQL.=" category_name_".LANG2."='".$dba->escapeStr($_POST["new_name_".LANG2])."'";
+   
    
     $SQL.=" WHERE category_id='".(int) $_POST["category_id"]."'";
     if (LM_DEBUG)
@@ -54,41 +73,46 @@ else if (isset($_GET["new"])){
 
     echo "<div class=\"col col-md-2\">";
     echo "<select name=\"category_parent_id\" id=\"category_parent_id\" class=\"form-control\">\n";
-    $SQL="SELECT category_id, category_name_en, category_name_".$lang." FROM categories WHERE category_parent_id=0";
+    $SQL="SELECT category_id, category_name_".LANG1;
+    
+    if (LANG2_AS_SECOND_LANG)
+    $SQL.=", category_name_".LANG2;
+    
+    $SQL.=" FROM categories WHERE category_parent_id=0";
     $SQL.=" ORDER BY category_name_".$lang;
     error_log($SQL,0);
     $result=$dba->Select($SQL);
     echo "<option value=\"0\">".gettext("Please select")."</option>\n";
     foreach ($result as $row){
-    if ($row["category_name_".$lang]!="")
+    if ($row["category_name_".LANG1]!="")
     {
     echo "<option value=\"".$row["category_id"]."\"";
     if (isset($_GET['parent_id']) && $_GET['parent_id']==$row["category_id"])
     echo " selected";
-    echo ">".$row["category_name_".$lang]."</option>\n";
+    echo ">".$row["category_name_".LANG1]."</option>\n";
      }
     else
     {
     echo "<option value=\"".$row["category_id"]."\"";
     if (isset($_GET['parent_id']) && $_GET['parent_id']==$row["category_id"])
     echo " selected";
-    echo ">".$row["category_name_en"]."</option>\n";
+    echo ">".$row["category_name_".LANG2]."</option>\n";
     }
     }
     echo "</select></div></div>";
   
-if (ENGLISH_AS_SECOND_LANG && $lang!="en"){  
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){  
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-3\"><label for=\"category_name_en\" class=\"form-control-label\">".gettext("Category name (English):")."</label></div>\n";
-echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"category_name_en\" name=\"category_name_en\" placeholder=\"".gettext("Category name (English)")."\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Category name")."</small></div>\n";
+echo "<div class=\"col col-md-3\"><label for=\"category_name_".LANG2."\" class=\"form-control-label\">".gettext("Category name (").LANG2."):</label></div>\n";
+echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"category_name_".LANG2."\" name=\"category_name_".LANG2."\" placeholder=\"".gettext("Category name (").LANG2.")\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Category name")."</small></div>\n";
 echo "</div>";}
  
- 
+ if ($_SESSION['CAN_WRITE_LANG1']){ 
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-3\"><label for=\"category_name_".$lang."\" class=\"form-control-label\">".gettext("Name:")."</label></div>\n";
-echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"category_name_".$lang."\" name=\"category_name_".$lang."\" placeholder=\"".gettext("Name")."\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Category name")."</small></div>\n";
+echo "<div class=\"col col-md-3\"><label for=\"category_name_".LANG1."\" class=\"form-control-label\">".gettext("Name:")."</label></div>\n";
+echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"category_name_".LANG1."\" name=\"category_name_".LANG1."\" placeholder=\"".gettext("Name")."\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Category name")."</small></div>\n";
 echo "</div>";
-
+}
 
 ?>
 
@@ -112,16 +136,16 @@ echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["ti
 echo "<script>\n";
 echo "$(\"#category_form\").validate({
   rules: {";
-  if (ENGLISH_AS_SECOND_LANG && $lang!="en")
+  if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
 
-  echo  "category_name_en: {
+  echo  "category_name_".LANG2.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('categories','category_name_en')."
+        maxlength: ".$dba->get_max_fieldlength('categories','category_name_'.LANG2)."
     }";
    
-    echo ",category_name_".$lang.": {
+    echo ",category_name_".LANG1.": {
         required: true,
-        maxlength: ".$dba->get_max_fieldlength('categories','category_name_'.$lang)."
+        maxlength: ".$dba->get_max_fieldlength('categories','category_name_'.LANG1)."
     }   
   }
 })\n";
