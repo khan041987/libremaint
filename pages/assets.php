@@ -223,7 +223,7 @@ else if (isset($_POST['new']) && isset($_POST["asset_name_".$lang])  && is_it_va
     $SQL.="asset_name_".LANG2.",";
     $SQL.="main_part,asset_parent_id,asset_location,asset_article,asset_note,asset_note_conf) VALUES (";
      if ($_SESSION['CAN_WRITE_LANG1'])
-    $SQL.=",".$dba->escapeStr($_POST["asset_name_".LANG1])."',";
+    $SQL.="'".$dba->escapeStr($_POST["asset_name_".LANG1])."',";
     
     $SQL.=(int) $_POST['main_asset_category_id'].",".(int) $_POST['grouped_asset'].",".(int) $_POST['grouped_asset_id'].",".(int)$_POST['entry_point'].",".(int)$_POST['asset_importance'].",";
     
@@ -243,7 +243,7 @@ else if (isset($_POST['new']) && isset($_POST["asset_name_".$lang])  && is_it_va
 $asset_tree_has_changed[]=get_whole_path('asset',(int) $asset_id,1)[0];
         }
         else
-        echo "<div class=\"card\">".gettext("Failed to save new asset ").$dba->err_msg."</div>";
+        lm_error(gettext("Failed to save new asset ").$dba->err_msg);
 
 }
 else if (isset($_POST['modify']) && isset($_POST["asset_id"]) && is_it_valid_submit() && isset($_SESSION['MODIFY_ASSET'])){
