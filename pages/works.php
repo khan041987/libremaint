@@ -454,6 +454,8 @@ if (isset($_SESSION['SEE_WORKS']))
 $SQL="SELECT workorders.workorder_id,workorder_user_id";
 
 $SQL.=",workorder_work_".$lang.",workorder_".$lang.",workorder_short_".$lang;
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3)
+$SQL.=",workorder_work_".LANG2;
 $SQL.=",workorder_work_start_time,workorder_work_end_time FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND workorders.asset_id =".$asset_id." ORDER BY workorder_work_end_time DESC LIMIT 0,5";
 
 $result=$dba->Select($SQL);
@@ -461,7 +463,10 @@ if ($dba->affectedRows()>0){
 echo "<strong>".gettext("Last 5 activities...")."</strong>";
 echo "<table class='table table-striped table-bordered'>\n";
 foreach($result as $row){
-echo "<tr><td>".date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))." - ";
+echo "<tr><td>";
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3 && empty($row['workorder_work_'.LANG2]))
+echo " * ";
+echo date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))." - ";
 if (date("Y.m.d", strtotime($row['workorder_work_start_time']))==date("Y.m.d", strtotime($row['workorder_work_end_time'])))
 echo date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
 else

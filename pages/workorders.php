@@ -885,7 +885,7 @@ echo $value."</a>";
                             </div>
 <?php
 echo gettext("Date")."</th>";
-if ((!lm_isset_int('asset_id')>0 || isset($_POST['modify_workorder']) || isset($_POST['new_workorder']) || isset($_POST["workorder_work"])) && !isset($_GET['new'])){
+if ((!lm_isset_int('asset_id')>0 || isset($_POST['modify_workorder']) || isset($_POST['new_workorder']) || isset($_POST["workorder_user_id"])) && !isset($_GET['new'])){
         echo "<th";
         if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
         echo " STYLE=\"background-color:orange\"";
@@ -983,7 +983,7 @@ if (!empty($result)){
                         $SQL.=" FROM workorders";
                         $SQL.=" WHERE 1=1";
 
-                        if ($asset_id>0 && !isset($_POST['modify_workorder']) && !isset($_GET['new']) && !isset($_POST["workorder_work"]))
+                        if (!isset($_POST['modify_workorder']) && !isset($_POST["workorder_work_user_id"]) && $asset_id>0 && !isset($_GET['new']) )
                         $SQL.=" AND asset_id=".$asset_id;
 
                        // if ($_SESSION['workorder_status']>0)
@@ -1070,11 +1070,11 @@ if (!empty($result)){
                     
                         //echo " onClick=\"visibility('workorder_".$row1['main_asset_id']."')\"";
                         echo ">\n";
-                        if (LANG2_AS_SECOND_LANG && $_SESSION['USER_LEVEL']<3 && $_SESSION['CAN_WRITE_LANG2'] && $row1['workorder_short_'.LANG2]=="")
+                        if (LANG2_AS_SECOND_LANG && $_SESSION['user_level']<3 && $_SESSION['CAN_WRITE_LANG2'] && $row1['workorder_short_'.LANG2]=="")
                         echo " * ";//tranlation needed
                         echo date($lang_date_format, strtotime($row1["workorder_time"]))."</td>\n";
                        
-                            if (!lm_isset_int('asset_id')>0 || isset($_POST["workorder_work"])|| isset($_POST['modify_workorder']))
+                            if (!lm_isset_int('asset_id')>0 || isset($_POST["workorder_user_id"])|| isset($_POST['modify_workorder']))
                             {
                                 echo "<td>";
                                 if (5>$row1['workorder_status'])

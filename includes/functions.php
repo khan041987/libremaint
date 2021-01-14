@@ -1291,13 +1291,16 @@ if ($dba->affectedRows()>0)
         $SQL="SELECT lang FROM users WHERE user_id=".$row['user_id'];
         $row1=$dba->getRow($SQL);
         $lang=$row1['lang'];
-        
+        if (!empty($lang))
+        {
         $SQL="SELECT main_asset_id,notification_short_".$lang.",";
                
         $SQL.="user_id FROM notifications WHERE notification_id=".$row['notification_id'];
         $row1=$dba->getRow($SQL);
         $sender=get_asset_name_from_id($row1['main_asset_id'],$lang)." (".get_username_from_id($row1['user_id']).")";
         $message=$row1['notification_short_'.$lang];
+        }else
+        lm_die(gettext("Empty lang in users table"));
         }
         else if ($row['sensor_id']>0){
         $SQL="SELECT asset_id FROM iot_sensors WHERE sensor_id=".$row['sensor_id'];

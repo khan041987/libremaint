@@ -375,7 +375,7 @@ $pagenumber=lm_isset_int('pagenumber');
 if ($pagenumber<1)
 $pagenumber=1;
 $from=1;
-$SQL="SELECT user_id,username,firstname,surname,user_phone,user_email,user_level,firstname_is_first FROM users";
+$SQL="SELECT user_id,username,firstname,surname,user_phone,user_email,user_level,firstname_is_first FROM users ORDER BY surname";
 $result_all=$dba->Select($SQL);
 $number_all=$dba->affectedRows();
 $from=($pagenumber-1)*ROWS_PER_PAGE;

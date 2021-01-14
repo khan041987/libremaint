@@ -290,7 +290,7 @@ echo "</div>";
 if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
 {
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"product_type_".CAN_WRITE_LANG2."\" class=\"form-control-label\">".gettext("Product type (").LANG2."): "</label></div>\n";
+echo "<div class=\"col col-md-2\"><label for=\"product_type_".CAN_WRITE_LANG2."\" class=\"form-control-label\">".gettext("Product type (").LANG2."): </label></div>\n";
 echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_type_".LANG2."\" name=\"product_type_".LANG2."\" placeholder=\"".gettext("product type")."\" class=\"form-control\"";
 if (isset($_GET['modify']))
 echo " value='".$row_orig['product_type_'.LANG2]."'";
@@ -335,7 +335,7 @@ echo "</div>";
 if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
 {
 echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"product_properties_".LANG2."\" class=\"form-control-label\">".gettext("Product properties (").LANG2."):."</label></div>\n";
+echo "<div class=\"col col-md-2\"><label for=\"product_properties_".LANG2."\" class=\"form-control-label\">".gettext("Product properties (").LANG2."): </label></div>\n";
 echo "<div class=\"col-12 col-md-10\"><input type=\"text\" id=\"product_properties_".LANG2."\" name=\"product_properties_".LANG2."\" placeholder=\"".gettext("product properties ").LANG2."\" class=\"form-control\"";
 if (isset($_GET['modify']))
     echo " value='".$row_orig['product_properties_'.LANG2]."'";

@@ -1,7 +1,0 @@
-ALTER TABLE `libremaint`.`users` 
-CHANGE COLUMN `CAN_WRITE_LANG2` `CAN_WRITE_LANG2` BIT(1) NOT NULL DEFAULT b'0' ,
-ADD COLUMN `CAN_WRITE_LANG1` BIT(1) NOT NULL DEFAULT b'0' AFTER `ADD_CONNECTION_TO_PRODUCT`;
-
-$dba->get_max_field_lenght vd function
-
-update users set lang='hu';
