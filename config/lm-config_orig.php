@@ -10,9 +10,15 @@ define('VENDORS_PATH', ABSPATH.'vendor/');
 define('INCLUDES_PATH', ABSPATH.'includes/');
 define('INCLUDES_LOC', URL.'includes/');
 define('PAGES_LOC', URL.'pages/');
+
 define('PAGES_PATH', ABSPATH.'pages/');
 define('ASSETS_PATH', ABSPATH.'assets/');
 define('TMP_PATH','/tmp/');
+
+//you have to make your own telegram bot for this feature
+//and dont forget to change the token you got in the 'send_message.py'
+define('TELEGRAM_SENDSCRIPT_PATH', ABSPATH);
+
 
 //files locations attached to works,assets,spares,...
 define('INFO_LOC', URL.'info_files/');

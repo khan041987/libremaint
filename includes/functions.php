@@ -1316,9 +1316,9 @@ if ($dba->affectedRows()>0)
         
         
           if (LM_DEBUG)
-error_log('python /var/www/send_message.py '.$row2['telegram_chat_id'].' "'.$sender.': '.$message.' '.date("Y.m.d H:i", strtotime($row['received_time'])).'"',0); 
+error_log('python /var/www/send_message.py '.$row2['telegram_chat_id'].' "'.$sender.': '.$message.' '.date($lang_date_format." H:i", strtotime($row['received_time'])).'"',0); 
 
-        exec('python /var/www/send_message.py '.$row2['telegram_chat_id'].' "'.$sender.': '.$message.' '.date("Y.m.d H:i", strtotime($row['received_time'])).'"');
+        exec('python '.TELEGRAM_SENDSCRIPT_PATH.'send_message.py '.$row2['telegram_chat_id'].' "'.$sender.': '.$message.' '.date($lang_date_format." H:i", strtotime($row['received_time'])).'"');
         
         $SQL="UPDATE telegram_messages SET status=1,sending_time=now() WHERE message_id=".$row['message_id'];
         $dba->Query($SQL);
