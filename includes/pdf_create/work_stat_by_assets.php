@@ -199,109 +199,115 @@ $pdf->Bookmark(gettext("Active notifications"), 1, 0, '', '', array(0,64,128));
 $html='<H1>'.gettext("Active notifications")." ".$date_termin.'</H1>';
 
 
-$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE notification_status<5 ORDER BY asset_name_".$lang;
+$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE notification_status<4 ORDER BY asset_name_".$lang;
 $result=$dba->Select($SQL);
 
-
-$main_asset_id=0;
-foreach ($result as $row){
-
-if ($main_asset_id!=$row["main_asset_id"])
+if ($dba->affectedRows())
 {
-    if ($main_asset_id>0)
+    $main_asset_id=0;
+    foreach ($result as $row){
+
+    if ($main_asset_id!=$row["main_asset_id"])
+    {
+        if ($main_asset_id>0)
+        $html.= "<hr size='1'>";
+    $html.="<H2>".$row["asset_name_".$lang]."<br/></H2>";
+
+    }
+    $html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
+    $html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
+    $html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row["priority"]-1]."<br/>";
+
+    $html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row["notification_type"]-1]."<br/>";
+
+    $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row["notification_status"]-1]."<br/>";
+    $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
+    if ($row['notification_'.$lang]!="")
+    $html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
     $html.= "<hr size='1'>";
-$html.="<H2>".$row["asset_name_".$lang]."<br/></H2>";
 
+
+    $main_asset_id=$row["main_asset_id"];
+
+    }
+    //$html.= "<hr size='1'>";
+    $pdf->writeHTML($html, true, false, true, false, '');
 }
-$html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
-$html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
-$html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row["priority"]-1]."<br/>";
 
-$html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row["notification_type"]-1]."<br/>";
+$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_closing_time) <= DATE('".$end."') AND DATE(notification_closing_time) >= DATE('".$start."') AND notification_status=4 OR notification_status=5 ORDER BY asset_name_".$lang;
+$result=$dba->Select($SQL);
+if (LM_DEBUG)
+error_log($SQL,0);
+if ($dba->affectedRows()>0)
+{
+    $pdf->Bookmark(gettext("Solved notifications"), 1, 0, '', '', array(0,64,128));
+    $html='<H1>'.gettext('Solved notifications')." ".$date_termin.'</H1>';
 
-$html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row["notification_status"]-1]."<br/>";
-$html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
-if ($row['notification_'.$lang]!="")
-$html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
-$html.= "<hr size='1'>";
+    $main_asset_id=0;
+    foreach ($result as $row){
+    if ($main_asset_id!=$row["main_asset_id"]){
+        if ($main_asset_id>0)
+        $html.= "<hr size='1'><br/>";
+    $html.="<H2>".$row["asset_name_".$lang]."</H2>";
+    }
+    $html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
+    $html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
 
+    $html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row['priority']-1]."<br/>";
 
-$main_asset_id=$row["main_asset_id"];
+    $html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
 
+    $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
+    $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
+    if ($row['notification_'.$lang]!="")
+    $html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
+    $html.= "<hr size='1'>";
+
+    $main_asset_id=$row["main_asset_id"];
+
+    }
+    //$html.= "<hr size='1'>";
+    // Output the HTML content
+    $pdf->writeHTML($html, true, false, true, false, '');
 }
-//$html.= "<hr size='1'>";
-$pdf->writeHTML($html, true, false, true, false, '');
 
 
-$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_closing_time) <= DATE('".$end."') AND DATE(notification_closing_time) >= DATE('".$start."') AND notificaton_status=4 OR notification_status=5 ORDER BY asset_name_".$lang;
+
+$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_time) <= DATE('".$end."') AND DATE(notification_time) >= DATE('".$start."') AND notification_status<4 ORDER BY asset_name_".$lang;
 $result=$dba->Select($SQL);
 
-$pdf->Bookmark(gettext("Solved notifications"), 1, 0, '', '', array(0,64,128));
-$html='<H1>'.gettext('Solved notifications')." ".$date_termin.'</H1>';
+if ($dba->affectedRows()>0)
+{
+    $pdf->Bookmark(gettext("New notifications"), 1, 0, '', '', array(0,64,128));
+    $html='<H1>'.gettext('New notifications')." ".$date_termin.'</H1>';
 
-$main_asset_id=0;
-foreach ($result as $row){
-if ($main_asset_id!=$row["main_asset_id"]){
-    if ($main_asset_id>0)
-    $html.= "<hr size='1'><br/>";
-$html.="<H2>".$row["asset_name_".$lang]."</H2>";
+    $main_asset_id=0;
+    foreach ($result as $row){
+    if ($main_asset_id!=$row["main_asset_id"]){
+        if ($main_asset_id>0)
+        $html.= "<hr size='1'><br/>";
+    $html.="<H2>".$row["asset_name_".$lang]."</H2>";
+    }
+    $html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
+    $html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
+
+    $html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row['priority']-1]."<br/>";
+
+    $html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
+
+    $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
+    $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
+    if ($row['notification_'.$lang]!="")
+    $html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
+    $html.= "<hr size='1'>";
+
+    $main_asset_id=$row["main_asset_id"];
+
+    }
+    //$html.= "<hr size='1'>";
+    // Output the HTML content
+    $pdf->writeHTML($html, true, false, true, false, '');
 }
-$html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
-$html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
-
-$html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row['priority']-1]."<br/>";
-
-$html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
-
-$html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
-$html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
-if ($row['notification_'.$lang]!="")
-$html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
-$html.= "<hr size='1'>";
-
-$main_asset_id=$row["main_asset_id"];
-
-}
-//$html.= "<hr size='1'>";
-// Output the HTML content
-$pdf->writeHTML($html, true, false, true, false, '');
-
-
-
-
-$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_time) <= DATE('".$end."') AND DATE(notification_time) >= DATE('".$start."') AND notificaton_status<6 ORDER BY asset_name_".$lang;
-$result=$dba->Select($SQL);
-
-$pdf->Bookmark(gettext("New notifications"), 1, 0, '', '', array(0,64,128));
-$html='<H1>'.gettext('New notifications')." ".$date_termin.'</H1>';
-
-$main_asset_id=0;
-foreach ($result as $row){
-if ($main_asset_id!=$row["main_asset_id"]){
-    if ($main_asset_id>0)
-    $html.= "<hr size='1'><br/>";
-$html.="<H2>".$row["asset_name_".$lang]."</H2>";
-}
-$html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
-$html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
-
-$html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row['priority']-1]."<br/>";
-
-$html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
-
-$html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
-$html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
-if ($row['notification_'.$lang]!="")
-$html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
-$html.= "<hr size='1'>";
-
-$main_asset_id=$row["main_asset_id"];
-
-}
-//$html.= "<hr size='1'>";
-// Output the HTML content
-$pdf->writeHTML($html, true, false, true, false, '');
-
 
 
 $pdf->lastPage();
