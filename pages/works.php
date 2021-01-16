@@ -257,7 +257,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         
         }
         else if (isset($_GET['modify']))
-        echo date($lang_date_format, strtotime($row_mod['workorder_work_start_time']));
+        echo date($lang_date_format_for_input, strtotime($row_mod['workorder_work_start_time']));
         echo "\">\n";
         
         echo "<input type=\"time\" onChange=\"check_time_period();\" id=\"workorder_work_start_time\" name=\"workorder_work_start_time\" value=\"";
@@ -287,7 +287,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
         if (isset($_GET['new']))
         echo date($lang_date_format_for_input);
         else if (isset($_GET['modify']))
-        echo date($lang_date_format, strtotime($row_mod['workorder_work_end_time']));
+        echo date($lang_date_format_for_input, strtotime($row_mod['workorder_work_end_time']));
         echo "\">";
         
         echo "<input type=\"time\" onChange=\"check_time_period();\" id=\"workorder_work_end_time\" name=\"workorder_work_end_time\" value=\"";
@@ -454,8 +454,7 @@ if (isset($_SESSION['SEE_WORKS']))
 $SQL="SELECT workorders.workorder_id,workorder_user_id";
 
 $SQL.=",workorder_work_".$lang.",workorder_".$lang.",workorder_short_".$lang;
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3)
-$SQL.=",workorder_work_".LANG2;
+
 $SQL.=",workorder_work_start_time,workorder_work_end_time FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1 AND workorders.asset_id =".$asset_id." ORDER BY workorder_work_end_time DESC LIMIT 0,5";
 
 $result=$dba->Select($SQL);
@@ -464,8 +463,6 @@ echo "<strong>".gettext("Last 5 activities...")."</strong>";
 echo "<table class='table table-striped table-bordered'>\n";
 foreach($result as $row){
 echo "<tr><td>";
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3 && empty($row['workorder_work_'.LANG2]))
-echo " * ";
 echo date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))." - ";
 if (date("Y.m.d", strtotime($row['workorder_work_start_time']))==date("Y.m.d", strtotime($row['workorder_work_end_time'])))
 echo date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
@@ -588,7 +585,12 @@ echo "<th>".gettext("Work")."</th><th></th></tr>";
 echo "</thead>";
 echo "<tbody>";
 
-$SQL="SELECT workorder_works.workorder_id,workorder_works.workorder_status, workorder_work_id,workorder_works.main_asset_id,workorder_works.asset_id,workorder_work_start_time,workorder_work_end_time,workorder_work_".$lang.",workorder_works.workorder_user_id,workorder_works.workorder_partner_id,workorder_short_".$lang." FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1";
+$SQL="SELECT workorder_works.workorder_id,workorder_works.workorder_status, workorder_work_id,workorder_works.main_asset_id,workorder_works.asset_id,workorder_work_start_time,workorder_work_end_time,workorder_work_".$lang.",workorder_works.workorder_user_id,workorder_works.workorder_partner_id,workorder_short_".$lang;
+
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3)
+$SQL.=",workorder_work_".LANG1.",workorder_work_".LANG2;
+
+$SQL.=" FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1";
 
 if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>=0)
 $SQL.=" AND workorder_works.main_asset_id='".$_SESSION['main_asset_id']."'";
@@ -640,7 +642,10 @@ foreach ($result as $row){
          }              
              
 echo "</div></td>";
-echo "<td>".date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))."</td>";
+echo "<td>";
+if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3 && !empty($row['workorder_work_'.LANG1]) && empty($row['workorder_work_'.LANG2]))
+echo " * ";//translation needed
+echo date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))."</td>";
 if (date("Y.m.d", strtotime($row['workorder_work_start_time']))==date("Y.m.d", strtotime($row['workorder_work_end_time'])))
 echo "<td>".date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
 else
