@@ -50,7 +50,7 @@ $user_id=$dba->insertedId();
         $SQL=" select column_name from information_schema.columns where table_schema = 'libremaint' and table_name='users' and column_type = 'bit(1)'";
         $result=$dba->Select($SQL);
         foreach($result as $row){
-        $SQL="UPDATE users SET ".$row['column_name']."=1 WHERE user_id=".$user_id;
+        $SQL="UPDATE users SET ".$row['column_name']."=b'1' WHERE user_id=".$user_id;
         $dba->Query($SQL);
         }
         }
@@ -93,12 +93,12 @@ $SQL="UPDATE users SET ";
     $SQL.=",";
     if (isset($_POST[$p]) && $_POST[$p]==1)
     {
-    $SQL.="`".$p."`=1";
+    $SQL.="`".$p."`=b'1'";
         
     }
     else
     {
-    $SQL.="`".$p."`=0";
+    $SQL.="`".$p."`=b'0'";
     
     }
     $i++;
