@@ -5,18 +5,18 @@
 if (isset($_POST['page']) && isset($_POST['category_parent_id']) && is_it_valid_submit()){ //it is from the form
 $SQL="INSERT INTO categories (";
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 $SQL.="category_name_".LANG2.",";
 
-if ($_SESSION['CAN_WRITE_LANG1'])
+if (isset($_SESSION['CAN_WRITE_LANG1']))
 $SQL.="category_name_".LANG1.",";
 
 $SQL.="category_parent_id) VALUES (";
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 $SQL.="'".$dba->escapeStr($_POST["category_name_".LANG2])."',";
 
-if ($_SESSION['CAN_WRITE_LANG1'])
+if (isset($_SESSION['CAN_WRITE_LANG1']))
 $SQL.="'".$dba->escapeStr($_POST["category_name_".LANG1])."',";
 
 $SQL.=(int)$_POST["category_parent_id"].")";
@@ -36,8 +36,8 @@ else if (isset($_POST['page']) && isset($_POST["new_name_".$lang]) && !empty($_P
     if ($_SESSION['CAN_WRITE_LANG1'])
     $SQL.=" category_name_".LANG1."='".$_POST["new_name_".LANG1]."'";
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
-        if ($_SESSION['CAN_WRITE_LANG1'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
+        if (isset($_SESSION['CAN_WRITE_LANG1']))
         $SQL.=",";
     
     if (isset($_POST['new_name_'.LANG2]) && !empty($_POST['new_name_'.LANG2]))
@@ -101,13 +101,13 @@ else if (isset($_GET["new"])){
     }
     echo "</select></div></div>";
   
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){  
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){  
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-3\"><label for=\"category_name_".LANG2."\" class=\"form-control-label\">".gettext("Category name (").LANG2."):</label></div>\n";
 echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"category_name_".LANG2."\" name=\"category_name_".LANG2."\" placeholder=\"".gettext("Category name (").LANG2.")\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Category name")."</small></div>\n";
 echo "</div>";}
  
- if ($_SESSION['CAN_WRITE_LANG1']){ 
+ if (isset($_SESSION['CAN_WRITE_LANG1'])){ 
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-3\"><label for=\"category_name_".LANG1."\" class=\"form-control-label\">".gettext("Name:")."</label></div>\n";
 echo "<div class=\"col-12 col-md-9\"><input type=\"text\" id=\"category_name_".LANG1."\" name=\"category_name_".LANG1."\" placeholder=\"".gettext("Name")."\" class=\"form-control\" required><small class=\"form-text text-muted\">".gettext("Category name")."</small></div>\n";
@@ -136,7 +136,7 @@ echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["ti
 echo "<script>\n";
 echo "$(\"#category_form\").validate({
   rules: {";
-  if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+  if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 
   echo  "category_name_".LANG2.": {
         required: true,

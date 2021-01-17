@@ -43,7 +43,7 @@ error_log($SQL,0);
     
     $SQL.=",main_asset_id,asset_id,workorder_user_id,workorder_status,unplanned_shutdown";
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.=",workorder_work_".LANG2;
 
     if ($workorder_row['workorder_partner_id']>0)
@@ -71,7 +71,7 @@ error_log($SQL,0);
     $SQL.=(int) $_POST['workorder_status'].",";
     $SQL.=(int) $_POST['unplanned_shutdown'];
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.=",'".$dba->escapeStr($_POST['workorder_work_'.LANG2])."'";
     
     if ($workorder_row['workorder_partner_id']>0)
@@ -139,12 +139,12 @@ if (isset($_POST['page']) && isset($_POST["workorder_".$lang]) && is_it_valid_su
     $SQL.=" workorder_deadline='".$dba->escapeStr($_POST['workorder_deadline'])."',";
     else
     $SQL.=" workorder_deadline=null,";
-    if ($_SESSION['CAN_WRITE_LANG2'])
+    if (isset($_SESSION['CAN_WRITE_LANG2']))
     {
     $SQL.=" workorder_short_".LANG1."='".$dba->escapeStr($_POST["workorder_short_".LANG1])."',";
     $SQL.=" workorder_".LANG1."='".$dba->escapeStr($_POST["workorder_".LANG1])."',";
     }
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
     $SQL.=" workorder_short_".LANG2."='".$dba->escapeStr($_POST["workorder_short_".LANG2])."',";
     $SQL.=" workorder_".LANG2."='".$dba->escapeStr($_POST["workorder_".LANG2])."',";
     }
@@ -211,7 +211,7 @@ else if (isset($_POST['new_workorder']) && isset($_SESSION['ADD_WORKORDER']) && 
     $SQL.=",workorder_short_".LANG1.",workorder_".LANG1;
     $SQL.=",user_id,workorder_time,request_type,replace_to_product_id,workorder_partner_id,workorder_partner_supervisor_user_id,work_details_required";
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.=",workorder_short_".LANG2.",workorder_".LANG2;
     
     if(!empty($_POST['employee_ids']))
@@ -253,7 +253,7 @@ else if (isset($_POST['new_workorder']) && isset($_SESSION['ADD_WORKORDER']) && 
     $SQL.=(int) $_POST["workorder_partner_id"].",";
     $SQL.=(int) $_POST["workorder_partner_supervisor_user_id"].",";
     $SQL.=(int) $_POST["work_details_required"];
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
     $SQL.=",'".$dba->escapeStr($_POST["workorder_short_".LANG2])."',";
     $SQL.="'".$dba->escapeStr($_POST["workorder_".LANG2])."'";
     
@@ -504,7 +504,7 @@ echo " required></div>\n";
 echo "</div>";   
  }
  
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col-5 col-md-2\"><label for=\"workorder_short_".LANG2."\" class=\"form-control-label\">".gettext("Workorder (").LANG2.", max.".$dba->get_max_fieldlength('workorders','workorder_short_'.LANG2)."):</label></div>\n";
 echo "<div class=\"col-5 col-md-3\"><input type=\"text\" id=\"workorder_short_".LANG2."\" name=\"workorder_short_".LANG2."\" class=\"form-control\" ";
@@ -645,7 +645,7 @@ echo "</textarea></div>\n";
 echo "</div>\n";
 }
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"workorder_".LANG2."\" class=\" form-control-label\">".gettext("Workorder (").LANG2."):</label></div>";
 echo "<div class=\"col-12 col-md-9\"><textarea name=\"workorder_".LANG2."\" id=\"workorder_".LANG2."\" rows=\"9\" placeholder=\"".gettext("workorder")."\" class=\"form-control\">";
@@ -706,7 +706,7 @@ echo "$(\"#workorder_form\").validate({
     }";
     }
     
- if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])  { 
+ if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))  { 
   echo ",workorder_short_".LANG2.": {
       required: true,
       maxlength: ".$dba->get_max_fieldlength('workorders','workorder_short_'.LANG2)."
@@ -959,7 +959,7 @@ if (!empty($result)){
              }
              //list of child workorders
     $SQL="SELECT workorder_id,main_asset_id,asset_id,main_location_id,location_id,workorder_short_".$lang;
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.=",workorder_short_".LANG2;
     $SQL.=",workorder_time,workorder_status,request_type,workrequest_id,workorder_partner_id,product_id_to_refurbish,priority";
                         $SQL1="SELECT COLUMN_NAME as info FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name ='workorders'
@@ -1070,7 +1070,7 @@ if (!empty($result)){
                     
                         //echo " onClick=\"visibility('workorder_".$row1['main_asset_id']."')\"";
                         echo ">\n";
-                        if (LANG2_AS_SECOND_LANG && $_SESSION['user_level']<3 && $_SESSION['CAN_WRITE_LANG2'] && $row1['workorder_short_'.LANG2]=="")
+                        if (LANG2_AS_SECOND_LANG && $_SESSION['user_level']<3 && isset($_SESSION['CAN_WRITE_LANG2']) && $row1['workorder_short_'.LANG2]=="")
                         echo " * ";//tranlation needed
                         echo date($lang_date_format, strtotime($row1["workorder_time"]))."</td>\n";
                        

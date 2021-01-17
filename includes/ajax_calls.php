@@ -144,7 +144,7 @@ echo "</strong>\n";
 echo "</div><div class=\"card-body card-block\">";
 echo "<form action=\"index.php\" id=\"rename_form\" method=\"post\" enctype=\"multipart/form-data\" class=\"form-horizontal\">\n";
 
-if ($_SESSION['CAN_WRITE_LANG1'])
+if (isset($_SESSION['CAN_WRITE_LANG1']))
 {
 if ($_GET['param3']=='assets')
 $orig_name=get_asset_name_from_id($_GET["param2"],LANG1);
@@ -161,7 +161,7 @@ echo "<div class=\"col col-md-2\"><label for=\"new_name\" class=\"form-control-l
 echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"new_name_".LANG1."\" name=\"new_name_".LANG1."\" class=\"form-control\" value=\"".$orig_name."\" required></div></div>\n";
 }
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 {
 
 if ($_GET['param3']=='assets')
@@ -345,13 +345,13 @@ echo "<span aria-hidden=\"true\">×</span>\n</button>";
     echo "</div><div class=\"card-body card-block\">";
     echo "<form action=\"index.php\" method=\"post\" id=\"upload_form\" enctype=\"multipart/form-data\" class=\"form-horizontal\">\n";
 
-    if ($_SESSION['CAN_WRITE_LANG1']){
+    if (isset($_SESSION['CAN_WRITE_LANG1'])){
     echo "<div class=\"row form-group\">\n";
     echo "<div class=\"col col-md-2\"><label for=\"info_file_review\" class=\"form-control-label\">".gettext("File review:")."</label></div>\n";
     echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"info_file_review_".LANG1."\" name=\"info_file_review_".LANG1."\" class=\"form-control\" value=\"\" required></div></div>\n";
     }
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
      echo "<div class=\"row form-group\">\n";
     echo "<div class=\"col col-md-2\"><label for=\"info_file_review_".LANG2."\" class=\"form-control-label\">".gettext("File review (").LANG2."): </label></div>\n";
     echo "<div class=\"col-12 col-md-3\"><input type=\"text\" id=\"info_file_review_".LANG2."\" name=\"info_file_review_".LANG2."\" class=\"form-control\" value=\"\" required></div></div>\n";
@@ -2837,6 +2837,88 @@ if ($n!="")
 echo substr($n,0,-7);
 
 }
+}
+
+
+
+else if (isset($_GET['param1']) && $_GET['param1']=="notification_messages")
+{
+    $SQL="SELECT not_message_id,not_message_".$lang.",user_id,not_message_time FROM notifications_messages WHERE notification_id=".(int) $_GET['param2']." ORDER BY not_message_id";
+    $result=$dba->Select($SQL);
+    $dba->Query($SQL);
+            if (LM_DEBUG)
+            error_log($SQL,0);
+?>                  
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+            <div class="col-md-12">
+                <div class="box box-warning direct-chat direct-chat-warning">
+                    
+                    <div class="box-header with-border"><?php
+                      echo "<h3 class=\"box-title\">".gettext("Messages")."</h3>";
+                      echo "<div class=\"box-tools pull-right\"> <span data-toggle=\"tooltip\" title=\"\" class=\"badge bg-yellow\">";
+                      echo $dba->affectedRows();
+                      echo "</span> <button type=\"button\" class=\"btn btn-box-tool\" data-widget=\"remove\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\"><i class=\"fa fa-times\"></i> </button> </div>
+                    </div>\n";
+                   echo "<div class=\"box-body\">";
+                        if ($dba->affectedRows()>0){ 
+                    $user_id=0;
+                    echo "<div class=\"direct-chat-messages\">\n";
+                    foreach ($result as $row){
+                   
+                    
+                   
+                            if ($user_id==0 || $user_id==$row['user_id'])
+                           echo "<div class=\"direct-chat-msg\">\n";
+                           else
+                           echo "<div class=\"direct-chat-msg right\">\n";
+                           
+                                echo "<div class=\"direct-chat-info clearfix\">\n"; 
+                                if ($user_id==0 || $user_id==$row['user_id'])
+                                {
+                                echo "<span class=\"direct-chat-name pull-left\">";
+                                  echo "</span> <span class=\"direct-chat-timestamp pull-left\"> ";
+                                  }
+                                else
+                                {
+                                echo "<span class=\"direct-chat-name pull-right\">";
+                                  echo "</span> <span class=\"direct-chat-timestamp pull-right\"> ";}
+                                $user_id=$row['user_id'];
+                                
+                                echo get_user_full_name_from_id($row['user_id']);
+                              
+                                echo " ".date($lang_date_format." H:i", strtotime($row["not_message_time"]));
+                                echo "</span> </div> <img class=\"direct-chat-img\" src=\"https://img.icons8.com/color/36/000000/administrator-male.png\" alt=\"message user image\">\n";
+                                echo "<div class=\"direct-chat-text\">";
+                                echo $row['not_message_'.$lang];
+                                echo "</div>\n";
+                            echo "</div>\n";
+                         }
+                         echo "</div>";
+                         }    
+                    
+                       
+                   echo "</div>\n";
+                  
+                                
+                   echo "<div class=\"box-footer\">";
+                      echo "<form action=\"#\" method=\"post\">\n";
+                         echo "<div class=\"input-group\"> <input type=\"text\" name=\"not_message_".$lang."\" placeholder=\"";
+                         echo gettext("Type Message ...");
+                    echo "\" class=\"form-control\"> <span class=\"input-group-btn\"> <button type=\"submit\" class=\"btn btn-warning btn-flat\">Send</button> </span> </div>\n";
+                    echo "<input type='hidden' name='page' id='page' value='notifications'>\n";
+                    echo "<input type='hidden' name='notification_id' id='notification_id' value='".(int) $_GET['param2']."'>\n";
+                       echo "\n</form>";
+                        
+                  echo "\n</div>";
+                    
+               echo "</div>
+            </div>
+        </div>
+    </div>
+</div>\n";
 
 }
+
 ?>

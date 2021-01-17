@@ -113,7 +113,7 @@ foreach ($workrequest_ids as $workrequest_id)
     
     $SQL.=",user_id,workorder_time,workrequest_id,notification_id,request_type,replace_to_product_id,product_id_to_refurbish";
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.=",workorder_short_".LANG2.",workorder_".LANG2;
             if (isset($_GET['workorder_partner_id']) && $_GET['workorder_partner_id']>0)
             $SQL.=",workorder_partner_id";
@@ -145,7 +145,7 @@ foreach ($workrequest_ids as $workrequest_id)
             $SQL.=(int) $row['request_type'].",";
             $SQL.=(int) $row['replace_to_product_id'].",";
             $SQL.=(int) $row['product_id_to_refurbish'];
-            if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+            if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
             {
             $SQL.=",'".$dba->escapeStr($row["workrequest_short_".LANG2])."',";
             $SQL.="'".$dba->escapeStr($row["workrequest_".LANG2])."'";
@@ -223,7 +223,7 @@ if ($_SESSION['CAN_WRITE_LANG1'])
 $SQL.=",workrequest_short_".LANG1.",workrequest_".LANG1;
 
 $SQL.=",user_id,workrequest_time,for_operators,request_type,replace_to_product_id,product_id_to_refurbish";
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 $SQL.=",workrequest_short_".LANG2.",workrequest_".LANG2;
 $SQL.=")";
 $SQL.=" VALUES ";
@@ -251,7 +251,7 @@ $SQL.="'".(int) $_POST["request_type"]."',";
 
 $SQL.="'".(int) $_POST["replace_to_product_id"]."',";
 $SQL.="'".(int) $_POST["product_id_to_refurbish"]."'";
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 {
 $SQL.=",'".$dba->escapeStr($_POST["workrequest_short_".LANG2])."',";
 $SQL.="'".$dba->escapeStr($_POST["workrequest_".LANG2])."'";
@@ -276,7 +276,7 @@ if ($_SESSION['CAN_WRITE_LANG1'])
 $SQL.="workrequest_short_".LANG1."='".$dba->escapeStr($_POST["workrequest_short_".LANG1])."',";
 $SQL.="workrequest_".LANG1."='".$dba->escapeStr($_POST["workrequest_".LANG1])."',";
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 {
 $SQL.="workrequest_short_".LANG2."='".$dba->escapeStr($_POST["workrequest_short_".LANG2])."',";
 $SQL.="workrequest_".LANG2."='".$dba->escapeStr($_POST["workrequest_".LANG2])."',";
@@ -703,7 +703,7 @@ echo "</div>";
  
  
  
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"workrequest_short_".LANG2."\" class=\"form-control-label\">".gettext("Workrequest (").LANG2.", max.".$dba->get_max_fieldlength('workrequests','workrequest_short_'.LANG2)."):</label></div>\n";
 echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"workrequest_short_".LANG2."\" name=\"workrequest_short_".LANG2."\" class=\"form-control\"";
@@ -750,7 +750,7 @@ echo "</textarea></div>\n";
 echo "</div>\n";
 }
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){        
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){        
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"workrequest_".LANG2."\" class=\" form-control-label\">".gettext("Workrequest (").LANG2."):</label></div>";
 echo "<div class=\"col-12 col-md-9\"><textarea name=\"workrequest_".LANG2."\" id=\"workrequest_".LANG2."\" rows=\"9\" placeholder=\"".gettext("workrequest")."\" class=\"form-control\">";
@@ -800,7 +800,7 @@ echo "$(\"#workrequest_form\").validate({
     workrequest_".LANG1.": {
       maxlength: ".$dba->get_max_fieldlength('workrequests','workrequest_'.LANG1)."
     }";
-  if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+  if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
   echo ",workrequest_short_".LANG2.": {
        required: true,
        maxlength: ".$dba->get_max_fieldlength('workrequests','workrequest_short_'.LANG2)."
@@ -932,7 +932,7 @@ if ($pagenumber<1)
 $pagenumber=1;
 
 $SQL="SELECT user_id,workrequest_time,asset_id,main_asset_id,workrequest_short_".$lang;
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 $SQL.=",workrequest_short_".LANG2;
 $SQL.=",service_interval_date,service_interval_hours,repetitive,service_interval_mileage,last_ready_date,workrequest_id,workrequest_status,for_operators,product_id_to_refurbish,labour_norm FROM workrequests WHERE 1=1";
 if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
@@ -1018,7 +1018,7 @@ foreach ($result as $row)
       echo " name=\"workrequest_id[]\" value=\"".$row['workrequest_id']."\">";                        
     }
     echo "</td><td>\n";
-if (LANG2_AS_SECOND_LANG && $_SESSION['USER_LEVEL']<3 && $_SESSION['CAN_WRITE_LANG2'] && $row['workrequest_short_'.LANG2]=="")
+if (LANG2_AS_SECOND_LANG && $_SESSION['USER_LEVEL']<3 && isset($_SESSION['CAN_WRITE_LANG2']) && $row['workrequest_short_'.LANG2]=="")
     echo " * "; //translation needed
     
     echo date($lang_date_format, strtotime($row["workrequest_time"]))."</td>\n";

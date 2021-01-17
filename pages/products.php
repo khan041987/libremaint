@@ -63,7 +63,7 @@ else if (isset($_POST['page']) && (isset($_POST["new_name_".LANG1]) && !empty($_
     if ($_SESSION['CAN_WRITE_LANG1'])
     $SQL.="product_type_".LANG1."='".$dba->escapeStr($_POST["new_name_".LANG1])."'";
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.=",product_type_".LANG2."='".$dba->escapeStr($_POST["new_name_".LANG2])."'";
    
     $SQL.=" WHERE product_id='".$_POST["product_id"]."'";
@@ -85,7 +85,7 @@ if ($_SESSION['CAN_WRITE_LANG1'])
 $SQL.="product_type_".LANG1."='".$dba->escapeStr($_POST["product_type_".LANG1])."',";
 $SQL.="product_properties_".LANG1."='".$dba->escapeStr($_POST["product_properties_".LANG1])."',";
 }
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 {
 $SQL.="product_type_".LANG2."='".$dba->escapeStr($_POST["product_type_".LANG2])."',";
 $SQL.="product_properties_".LANG2."='".$dba->escapeStr($_POST["product_properties_".LANG2])."',";
@@ -120,7 +120,7 @@ else if (isset($_POST['page']) && isset($_POST["new_product"])  && is_it_valid_s
     if ($_SESSION['CAN_WRITE_LANG1'])
     $SQL.="product_type_".LANG1.",product_properties_".LANG1.",";
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.="product_type_".LANG2.",product_properties_".LANG2.",";
     
     $SQL.="manufacturer_id,quantity_unit,default_stock_location_id ,product_stockable,display) VALUES (";
@@ -131,7 +131,7 @@ else if (isset($_POST['page']) && isset($_POST["new_product"])  && is_it_valid_s
     $SQL.="'".$dba->escapeStr($_POST['product_type_'.LANG1])."',";
     $SQL.="'".$dba->escapeStr($_POST['product_type_'.LANG1])."',";
     }
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     {
     $SQL.="'".$dba->escapeStr($_POST['product_properties_'.LANG2])."',";
     $SQL.="'".$dba->escapeStr($_POST['product_properties_'.LANG2])."',";
@@ -287,7 +287,7 @@ echo "<small class=\"form-text text-muted\">".gettext("product type")."</small><
 echo "</div>";
 }
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 {
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"product_type_".CAN_WRITE_LANG2."\" class=\"form-control-label\">".gettext("Product type (").LANG2."): </label></div>\n";
@@ -332,7 +332,7 @@ echo "</div>";
 }
 
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 {
 echo "<div class=\"row form-group\">";
 echo "<div class=\"col col-md-2\"><label for=\"product_properties_".LANG2."\" class=\"form-control-label\">".gettext("Product properties (").LANG2."): </label></div>\n";
@@ -481,7 +481,7 @@ echo "<INPUT TYPE=\"hidden\" name=\"new_product\" id=\"new_product\" VALUE=\"1\"
 echo "<script>\n";
 echo "$(\"#product_form\").validate({
   rules: {";
-  if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+  if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 {
   echo  "product_type_".LANG2.": {
         required: true,

@@ -954,10 +954,14 @@ if ($all_employees_have_finished==true)
         if (LM_DEBUG)
         error_log($SQL,0);
         }
+        $asset_tree_has_changed[]=get_whole_path('asset',$workorder_row['asset_id'],1)[0];
         include(INCLUDES_PATH."asset_tree.php"); //rebuild asset_tree
-        }
+        }//if ($workorder_row['replace_to_product_id']>0){
+           
         if (LM_DEBUG)
         error_log("workorder_row['product_id_to_refurbish']: ".$workorder_row['product_id_to_refurbish']."\n workorder_partner_id:".$workorder_row['workorder_partner_id'],0);
+        
+        
         if ($workorder_row['product_id_to_refurbish']>0 &&  $workorder_row['workorder_partner_id']>0){
         $SQL="SELECT workorder_id FROM stock_movements WHERE to_stock_location_id>0 AND workorder_id=".$workorder_id;
         

@@ -72,7 +72,7 @@ $SQL.=",workorder_worktime='".$interval->format('%h:%i:%s')."'";
 if ($_SESSION['CAN_WRITE_LANG1'])
 $SQL.=",workorder_work_".LANG1."='".$dba->escapeStr($_POST['workorder_work_'.LANG1])."'";
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 $SQL.=",workorder_work_".LANG2."='".$dba->escapeStr($_POST['workorder_work_'.LANG2])."'";
 
 $SQL.=",main_asset_id='".$workorder_row['main_asset_id']."'";
@@ -366,7 +366,7 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
     }
     
     
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
     
     echo "<div class=\"row form-group\">";
     echo "<div class=\"col col-md-2\"><label for=\"workorder_work_".LANG2."\" class=\" form-control-label\">".gettext("Activity (").LANG2."): </label></div>";
@@ -441,7 +441,7 @@ echo "$(\"#work_form\").validate({
     workorder_work_".LANG1.": {
       maxlength: ".$dba->get_max_fieldlength('workorder_works','workorder_work_'.LANG1)."
     }";
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     echo "workorder_work_".LANG2.": {
       maxlength: ".$dba->get_max_fieldlength('workorder_works','workorder_work_'.LANG2)."
     }";
@@ -587,7 +587,7 @@ echo "<tbody>";
 
 $SQL="SELECT workorder_works.workorder_id,workorder_works.workorder_status, workorder_work_id,workorder_works.main_asset_id,workorder_works.asset_id,workorder_work_start_time,workorder_work_end_time,workorder_work_".$lang.",workorder_works.workorder_user_id,workorder_works.workorder_partner_id,workorder_short_".$lang;
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3)
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']) && $_SESSION['user_level']<3)
 $SQL.=",workorder_work_".LANG1.",workorder_work_".LANG2;
 
 $SQL.=" FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1";
@@ -643,7 +643,7 @@ foreach ($result as $row){
              
 echo "</div></td>";
 echo "<td>";
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3 && !empty($row['workorder_work_'.LANG1]) && empty($row['workorder_work_'.LANG2]))
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']) && $_SESSION['user_level']<3 && !empty($row['workorder_work_'.LANG1]) && empty($row['workorder_work_'.LANG2]))
 echo " * ";//translation needed
 echo date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))."</td>";
 if (date("Y.m.d", strtotime($row['workorder_work_start_time']))==date("Y.m.d", strtotime($row['workorder_work_end_time'])))
