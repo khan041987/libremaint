@@ -2843,7 +2843,7 @@ echo substr($n,0,-7);
 
 else if (isset($_GET['param1']) && $_GET['param1']=="notification_messages")
 {
-    $SQL="SELECT not_message_id,not_message_".$lang.",user_id,not_message_time FROM notifications_messages WHERE notification_id=".(int) $_GET['param2']." ORDER BY not_message_id";
+    $SQL="SELECT not_message_id,not_message_".$lang.",user_id,not_message_time,has_red FROM notifications_messages WHERE notification_id=".(int) $_GET['param2']." ORDER BY not_message_id";
     $result=$dba->Select($SQL);
     $dba->Query($SQL);
             if (LM_DEBUG)
@@ -2862,12 +2862,30 @@ else if (isset($_GET['param1']) && $_GET['param1']=="notification_messages")
                       echo "</span> <button type=\"button\" class=\"btn btn-box-tool\" data-widget=\"remove\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\"><i class=\"fa fa-times\"></i> </button> </div>
                     </div>\n";
                    echo "<div class=\"box-body\">";
-                        if ($dba->affectedRows()>0){ 
-                    $user_id=0;
-                    echo "<div class=\"direct-chat-messages\">\n";
-                    foreach ($result as $row){
+             $i=1;
+             if ($dba->affectedRows()>0){ 
+                     foreach ($result as $row){ 
+                      $user_id=0;
+                    if ($i){ 
                    
+                    echo "<div class=\"direct-chat-messages\">\n";
                     
+                    if (!empty($row['has_red']))
+                   $users_who_red=json_decode($row['has_red'],true); 
+                   else
+                   $users_who_red=array();
+                        if (is_array($users_who_red) && !in_array($_SESSION['user_id'],$users_who_red)) 
+                        {
+                        $users_who_red[]=(int) $_SESSION['user_id'];
+                        $users_who_red=json_encode(array_unique($users_who_red));
+                        $SQL="UPDATE notifications_messages SET has_red='".$users_who_red."' WHERE notification_id=".(int)$_GET['param2'];
+                        $dba->Query($SQL);
+                       if (LM_DEBUG)
+                        error_log($SQL,0); 
+                        }
+                    $i=0;
+                    }
+                   
                    
                             if ($user_id==0 || $user_id==$row['user_id'])
                            echo "<div class=\"direct-chat-msg\">\n";
@@ -2906,7 +2924,7 @@ else if (isset($_GET['param1']) && $_GET['param1']=="notification_messages")
                       echo "<form action=\"#\" method=\"post\">\n";
                          echo "<div class=\"input-group\"> <input type=\"text\" name=\"not_message_".$lang."\" placeholder=\"";
                          echo gettext("Type Message ...");
-                    echo "\" class=\"form-control\"> <span class=\"input-group-btn\"> <button type=\"submit\" class=\"btn btn-warning btn-flat\">Send</button> </span> </div>\n";
+                    echo "\" class=\"form-control\"> <span class=\"input-group-btn\"> <button type=\"submit\" class=\"btn btn-warning btn-flat\"> ".gettext("Send")." </button> </span> </div>\n";
                     echo "<input type='hidden' name='page' id='page' value='notifications'>\n";
                     echo "<input type='hidden' name='notification_id' id='notification_id' value='".(int) $_GET['param2']."'>\n";
                        echo "\n</form>";

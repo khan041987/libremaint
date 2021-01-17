@@ -1,3 +1,22 @@
+<?php echo "<link rel=\"stylesheet\" href=\"".CSS_LOC."css/not_message.css\">\n";
+$new_message_has_saved=false;
+if (isset($_POST['not_message_'.$lang]))
+{
+    if (!empty($dba->escapeStr($_POST['not_message_'.$lang])))
+        {
+        $SQL="INSERT INTO notifications_messages (user_id,notification_id, not_message_time,not_message_".$lang.") VALUES ";
+        $SQL.="(".$_SESSION['user_id'].",".(int) $_POST['notification_id'].",NOW(),'".$dba->escapeStr($_POST['not_message_'.$lang])."')";
+        if ($dba->Query($SQL)){
+        $new_message_has_saved=true;
+        }
+        else
+        lm_error(gettext("Failed to save the new message!")." ".$SQL." ".$dba->err_msg);
+        }else
+        lm_error(gettext("The message was empty!"));
+
+}
+
+?>
 <div id='for_ajaxcall'>
 </div>
 <script>
@@ -692,7 +711,7 @@ $SQL="SELECT user_id,notification_time,asset_id,main_asset_id,";
 if ($_SESSION['CAN_WRITE_LANG1'])
 $SQL.="notification_short_".LANG1.",";
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
 $SQL.="notification_short_".LANG2.",";
 
 $SQL.="notification_type,notification_id,notification_status FROM notifications WHERE notification_status<6 AND";
@@ -731,7 +750,28 @@ foreach ($result as $row)
     echo " class='bg-flat-color-6'";
     else if (0==$row["notification_status"])
     echo " class='bg-flat-color-10'";
-    echo "><div class=\"user-area dropdown float-right\">\n";
+    echo ">";
+$SQL="SELECT COUNT(not_message_id) as num FROM notifications_messages WHERE notification_id=".$row['notification_id'];
+$row1=$dba->getRow($SQL);
+
+if (!isset($row1) || $row1['num']==0)
+    echo " <a href=\"javascript:ajax_call('notification_messages',".$row["notification_id"].",'','','','".URL."index.php','for_ajaxcall')\" title=\"new message\"><i class=\"fa fa-envelope\"></i></a> ";
+    else{
+        
+        
+        $SQL="SELECT COUNT(not_message_id) as num FROM notifications_messages WHERE notification_id=".$row['notification_id']." AND JSON_CONTAINS(has_red,'".$_SESSION['user_id']."')";
+        $row2=$dba->getRow($SQL);
+        if (LM_DEBUG)
+            error_log($SQL,0); 
+          
+        if ($row1['num']==$row2['num'])
+            echo " <a href=\"javascript:ajax_call('notification_messages',".$row["notification_id"].",'','','','".URL."index.php','for_ajaxcall')\" title=\"new message\"><i class=\"fa fa-envelope-open\" style=\"color:green;\"></i></a> ";
+        else
+            echo " <a href=\"javascript:ajax_call('notification_messages',".$row["notification_id"].",'','','','".URL."index.php','for_ajaxcall')\" title=\"new message\"><i class=\"fa fa-bell\" style=\"color:red;\"></i></a> ";
+        }
+
+    
+    echo "<div class=\"user-area dropdown float-right\">\n";
                             
                              echo "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">";
                              echo $from;
@@ -769,19 +809,19 @@ foreach ($result as $row)
 //$notification_statuses=array(gettext("New"),gettext("Confirmed"),gettext("Work in progress"),gettext("Resolved"),gettext("Closed"),gettext("Deleted"));
                            
                              echo "</div>";
-    echo "</div>";
+    echo "</div>\n";
 if (isset($_SESSION['ADD_WORKORDER']) && 3>$row['notification_status'])
   {echo "<input type=\"checkbox\" class=\"checkBoxClass\" ";
    echo " onChange=\"enable_create_workorder_button()\" id=\"wr_".$row['main_asset_id']."\"";
     echo " name=\"notification_id[]\" value=\"".$row['notification_id']."\">";                        
   }
-
-echo "</td><td onClick=\"javascript:ajax_call('show_notification_detail','".$row['notification_id']."','','','','".URL."index.php','for_ajaxcall')\">\n";
+echo "</td>\n";
+echo "<td onClick=\"javascript:ajax_call('show_notification_detail','".$row['notification_id']."','','','','".URL."index.php','for_ajaxcall')\">\n";
     if (LANG2_AS_SECOND_LANG && $_SESSION['user_level']<3 && $row['notification_short_'.LANG2]=='')//to see if translation needed
     echo "*";
 echo $notification_statuses[--$row["notification_status"]];
-echo "</td><td>";
-    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'] && $_SESSION['user_level']<3 && $row['notification_short_'.LANG2]=='')//to see if translation needed
+echo "</td>\n<td>";
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']) && $_SESSION['user_level']<3 && $row['notification_short_'.LANG2]=='')//to see if translation needed
     echo " * ";
     echo date($lang_date_format." H:i", strtotime($row["notification_time"]))."</td>\n";
     
@@ -879,4 +919,8 @@ $(document).ready(function () {
         $(".checkBoxClass").prop('checked', $(this).prop('checked'));
     });
 });
+<?php
+if ($new_message_has_saved)
+echo "ajax_call('notification_messages',".(int) $_POST["notification_id"].",'','','','".URL."index.php','for_ajaxcall')";
+?>
 </script>
