@@ -440,6 +440,7 @@ CREATE TABLE `notifications_message` (
   `not_message_en` varchar(300) DEFAULT NULL,
   `not_message_time` timestamp NULL DEFAULT NULL,
   `user_id` tinyint(3) NOT NULL,
+  `has_read` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`not_message_id`),
   UNIQUE KEY `notification_id_UNIQUE` (`notification_id`),
   UNIQUE KEY `not_message_id_UNIQUE` (`not_message_id`),
@@ -454,6 +455,37 @@ CREATE TABLE `notifications_message` (
 LOCK TABLES `notifications_message` WRITE;
 /*!40000 ALTER TABLE `notifications_message` DISABLE KEYS */;
 /*!40000 ALTER TABLE `notifications_message` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notifications_messages`
+--
+
+DROP TABLE IF EXISTS `notifications_messages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifications_messages` (
+  `not_message_id` int(10) NOT NULL AUTO_INCREMENT,
+  `notification_id` int(10) unsigned NOT NULL,
+  `not_message_hu` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `not_message_en` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `not_message_time` timestamp NULL DEFAULT NULL,
+  `user_id` tinyint(3) NOT NULL,
+  `has_red` longtext COLLATE utf8mb4_unicode_ci,
+  `not_message_parent_id` int(10) unsigned DEFAULT NULL COMMENT 'maybe it will be used later',
+  PRIMARY KEY (`not_message_id`),
+  UNIQUE KEY `not_message_id_UNIQUE` (`not_message_id`),
+  UNIQUE KEY `not_message_time_UNIQUE` (`not_message_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifications_messages`
+--
+
+LOCK TABLES `notifications_messages` WRITE;
+/*!40000 ALTER TABLE `notifications_messages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifications_messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -876,7 +908,8 @@ CREATE TABLE `users` (
   `SEE_CONNECTION_OF_ASSET` bit(1) NOT NULL DEFAULT b'0',
   `SEE_CONNECTION_OF_PRODUCT` bit(1) NOT NULL DEFAULT b'0',
   `ADD_CONNECTION_TO_PRODUCT` bit(1) NOT NULL DEFAULT b'0',
-  `CAN_WRITE_ENGLISH` bit(1) NOT NULL DEFAULT b'0',
+  `CAN_WRITE_LANG1` bit(1) NOT NULL DEFAULT b'0',
+  `CAN_WRITE_LANG2` bit(1) NOT NULL DEFAULT b'0',
   `ADD_NOTIFICATION` bit(1) NOT NULL DEFAULT b'0',
   `SEE_NOTIFICATIONS` bit(1) NOT NULL DEFAULT b'0',
   `SEE_NOTIFICATION_DETAILS` bit(1) NOT NULL DEFAULT b'0',
@@ -907,7 +940,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `username_UNIQUE` (`username`),
   UNIQUE KEY `telegram_chat_id_UNIQUE` (`telegram_chat_id`),
   UNIQUE KEY `users_card_id_UNIQUE` (`users_card_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -916,6 +949,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'admin','admin','admin',1,'$2y$10$ggxs7tP3NMkXcbmlRQXBF.loKxDw3gC3.U0MoB13ipJXzTLtdrh52',1,NULL,NULL,0,'2000-01-01 12:00:00','2000-01-01 12:00:00',1,_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '\0',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',_binary '',NULL,NULL,NULL,'hu','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000','06:00:00.0000','14:00:00.0000',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1063,4 +1097,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-01-06 17:46:56
+-- Dump completed on 2021-01-17 16:54:32
