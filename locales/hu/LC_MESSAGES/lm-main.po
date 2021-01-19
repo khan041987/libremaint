@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Libremaint\n"
-"POT-Creation-Date: 2021-01-17 16:11+0100\n"
-"PO-Revision-Date: 2021-01-17 16:13+0100\n"
+"POT-Creation-Date: 2021-01-19 17:08+0100\n"
+"PO-Revision-Date: 2021-01-19 17:10+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu_HU\n"
@@ -1000,7 +1000,8 @@ msgstr "Partner címkék:"
 
 #: includes/ajax_calls.php:2093 includes/ajax_calls.php:2317
 #: includes/ajax_calls.php:2473 includes/ajax_calls.php:2567
-#: pages/partners.php:121 pages/settings.php:64 pages/users.php:344
+#: pages/notifications.php:531 pages/partners.php:121 pages/settings.php:64
+#: pages/users.php:344
 msgid "Reset"
 msgstr "Alaphelyzet"
 
@@ -1140,7 +1141,7 @@ msgstr "Minimum mennyiség:"
 msgid "Type Message ..."
 msgstr "Üzenj itt"
 
-#: includes/ajax_calls.php:2927
+#: includes/ajax_calls.php:2927 pages/notifications.php:530
 msgid "Send"
 msgstr "Küld"
 
@@ -1548,9 +1549,17 @@ msgstr "Termék azonosító"
 msgid "Logged as:"
 msgstr "Bejelentkezve:"
 
+#: includes/right_panel.php:171
+msgid "My Profile"
+msgstr "Profilom"
+
 #: includes/right_panel.php:173 pages/settings.php:21
 msgid "Change password"
 msgstr "Jelszó változtatása"
+
+#: includes/right_panel.php:175
+msgid "Logout"
+msgstr "Kijelentkezés"
 
 #: includes/show_assets_tree_menu.php:16
 #: includes/show_assets_tree_menu_ajax.php:67
