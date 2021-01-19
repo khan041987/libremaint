@@ -527,8 +527,8 @@ echo "<INPUT TYPE=\"hidden\" name=\"asset_id\" id=\"asset_id\" value=\"0\">";
 echo "<INPUT TYPE=\"hidden\" name=\"location_id\" id=\"location_id\" VALUE=\"".lm_isset_int('asset_id')."\">";
 }*/
 echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button></div>\n";
+echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Send")." </button>\n";
+echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
 echo "</form></div>";
 echo "<script>\n";
 
