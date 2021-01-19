@@ -1284,7 +1284,7 @@ return false;
 }
 
 function send_telegram_messages():void{
-global $dba;
+global $dba,$lang;
 $SQL="SELECT * FROM telegram_messages WHERE status=0";
 $result=$dba->Select($SQL);
 
