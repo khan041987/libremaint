@@ -1,4 +1,6 @@
 <?php
+if (!isset($_SESSION['logged']))
+header("Location: by.php");
 if (isset($_GET['param1']) && $_GET['param1']=="is_it_valid_time_period"){
 $start_time=new DateTime($dba->escapeStr($_GET['param2']));
 $end_time=new DateTime($dba->escapeStr($_GET['param3']));
