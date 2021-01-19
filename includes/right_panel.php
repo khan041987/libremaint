@@ -168,16 +168,16 @@ alert ('".gettext("Wrong number! Check it!")."');
 if (isset($_SESSION['MODIFY_USER'])){
 ?>
                         
-                            <a class="nav-link" href="index.php?page=users&modify=1"><i class="fa fa-user"></i> My Profile</a>
+                            <a class="nav-link" href="index.php?page=users&modify=1"><i class="fa fa-user"></i><?php echo gettext("My Profile");?></a>
 <?php } ?>
                             <a class="nav-link" href="index.php?page=settings"><i class="fa fa-cog"></i> <?php echo gettext("Change password");?></a>
 
-                            <?php echo "<a class=\"nav-link\" href=\"".URL."index.php?logout\"><i class=\"fa fa-power-off\"></i> Logout</a>";?>
+                            <?php echo "<a class=\"nav-link\" href=\"".URL."index.php?logout\"><i class=\"fa fa-power-off\"></i>".gettext("Logout")."</a>";?>
                         </div><!--id="user-menu dropdown-menu"-->
                     </div><!--user-area-dropdown -->
                     <div class="language-select dropdown" id="language-select"><!--ok-->
                         <a class="dropdown-toggle" href="#" data-toggle="dropdown"  id="language" aria-haspopup="true" aria-expanded="true">
-                            <i class="flag-icon flag-icon-<?php if ($lang=="en") echo "us"; else echo $lang;?>"></i>
+                            <i class="flag-icon flag-icon-<?php if ($lang=="en") echo "gb"; else echo $lang;?>"></i>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="language"><!--ok-->
                             <div class="dropdown-item"><!--ok-->
@@ -185,7 +185,7 @@ if (isset($_SESSION['MODIFY_USER'])){
                             </div><!--dropdown-item-->
                             
                             <div class="dropdown-item"><!--ok-->
-                              <a href="index.php?lang=en"><i class="flag-icon flag-icon-us"></i></a>
+                              <a href="index.php?lang=en"><i class="flag-icon flag-icon-gb"></i></a>
                             </div><!--dropdown-item-->
                             
                         </div><!--dropdown-menu-->
