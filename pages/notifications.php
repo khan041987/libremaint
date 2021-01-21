@@ -682,9 +682,10 @@ echo "<th>".gettext("User")."</th>";
             echo " onChange=\"location.href='index.php?page=notifications&main_asset_id='+this.value\"";
             echo " style='display:inline;width:200px;'>\n";
     echo "<option value='all'>".gettext("All assets");
+    $has=false;
     foreach($result as $row){
     echo "<option value='".$row['main_asset_id']."'";
-    $has=false;
+    
     if (isset($_SESSION['main_asset_id']) && $row['main_asset_id']==$_SESSION['main_asset_id']){
     echo " selected=1";
     $has=true;
