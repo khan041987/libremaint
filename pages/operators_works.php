@@ -176,9 +176,9 @@ echo "</div>";
   
   if (isset($_GET['main_asset_id']) && in_array($_GET['main_asset_id'], $users_assets))
   {
-  $SQL="SELECT asset_id,workrequest_short_".$lang.",workrequest_".$lang.",workrequest_id,last_ready_date,last_ready_user_id FROM workrequests WHERE for_operators=1 AND main_asset_id=".$main_asset_id." AND workrequest_status<>4 ORDER BY workrequest_short_".$lang;
+  $SQL="SELECT workrequests.asset_id,workrequest_short_".$lang.",workrequest_".$lang.",workrequest_id,last_ready_date,last_ready_user_id,asset_name_".$lang." FROM workrequests LEFT JOIN assets ON workrequests.asset_id=assets.asset_id WHERE for_operators=1 AND main_asset_id=".$main_asset_id." AND workrequest_status<>4 ORDER BY asset_name_".$lang;
   $result=$dba->Select($SQL);
-  
+
   if ($dba->affectedRows()>0){
   echo "<div class=\"row form-group\">";
     echo "<div class=\"col col-md-2\">\n";
