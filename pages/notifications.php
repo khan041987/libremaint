@@ -609,6 +609,14 @@ else if (isset($_GET['notification_type']) && $notification_type==0){
 unset($_SESSION['notification_type']);
 }
 
+$notification_user_id=lm_isset_int('notification_user_id');
+if ($notification_user_id>0)
+$_SESSION['notification_user_id']=$notification_user_id;
+else if (isset($_GET['notification_user_id']) && $notification_user_id==0){
+
+unset($_SESSION['notification_user_id']);
+}
+
 if (isset($_SESSION['ADD_WORKORDER']) && (isset($_SESSION['notification_status']) && 0==$_SESSION['notification_status'] || (isset($_SESSION['notification_status']) && 1==$_SESSION['notification_status'])))
     {
     echo "<input type=\"checkbox\" style=\"display:inline;\" id=\"select_all\" name=\"select_all\"";
@@ -668,7 +676,31 @@ echo "<th>";
         }
          echo "</select>\n";
 echo "</th>";
-echo "<th>".gettext("User")."</th>";
+echo "<th";
+if (isset($_SESSION['notification_user_id']) && $_SESSION['notification_user_id']>0)
+        echo " STYLE=\"background-color:orange\"";
+    echo ">".gettext("User");
+    $SQL="SELECT DISTINCT(users.user_id),surname FROM notifications LEFT JOIN users ON users.user_id=notifications.user_id ORDER BY surname";
+    
+    $result=$dba->Select($SQL);
+    
+    echo " <select name=\"notification_user_id\" id=\"notification_user_id\" class=\"form-control\"";
+            echo " onChange=\"location.href='index.php?page=notifications&notification_user_id='+this.value\"";
+            echo " style='display:inline;width:200px;'>\n";
+    echo "<option value='all'>".gettext("All users");
+   
+    foreach($result as $row){
+    echo "<option value='".$row['user_id']."'";
+    
+    if (isset($_SESSION['notification_user_id']) && $row['user_id']==$_SESSION['notification_user_id']){
+    echo " selected=1";
+    }
+    echo ">";
+     echo get_user_full_name_from_id($row['user_id'])."\n";
+    }
+    echo "</select>\n";        
+    
+echo "</th>";
     echo "<th";
     if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
         echo " STYLE=\"background-color:orange\"";
@@ -727,6 +759,8 @@ $SQL.=" AND notification_status='".$_SESSION['notification_status']."'";
 if (isset($_SESSION['notification_type']) && $_SESSION['notification_type']>0)
 $SQL.=" AND notification_type='".$_SESSION['notification_type']."'";
 
+if (isset($_SESSION['notification_user_id']) && $_SESSION['notification_user_id']>0)
+$SQL.=" AND user_id='".$_SESSION['notification_user_id']."'";
 $SQL.=" ORDER BY notification_time DESC";
 
 $result_all=$dba->Select($SQL);
