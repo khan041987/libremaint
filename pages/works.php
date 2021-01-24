@@ -519,9 +519,14 @@ if (!lm_isset_int('asset_id')>0 || (lm_isset_int('asset_id')>0 && isset($_POST['
         if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>0)
         echo " STYLE=\"background-color:orange\"";
         echo ">".gettext("Asset");
-        
+        $S="SELECT users_assets FROM users WHERE user_id=".$_SESSION['user_id'];
+        $r=$dba->getRow($S);
+        $users_assets=json_decode($r['users_assets'],true);
 
-        $SQL="SELECT main_asset_id, asset_name_".$lang." FROM workorder_works LEFT JOIN assets on assets.asset_id=workorder_works.main_asset_id group by main_asset_id ORDER BY asset_name_".$lang;
+        $SQL="SELECT asset_id, asset_name_".$lang." FROM assets";
+        $SQL.=" WHERE asset_id IN ('".join("','",$users_assets)."')";
+        $SQL.=" ORDER BY asset_name_".$lang;
+          
             $result1=$dba->Select($SQL);
             echo " <select name=\"fmain_asset_id\" id=\"fmain_asset_id\" class=\"form-control\"";
                     echo " onChange=\"{if (this.value!='')
@@ -531,11 +536,11 @@ if (!lm_isset_int('asset_id')>0 || (lm_isset_int('asset_id')>0 && isset($_POST['
                     echo " style='display:inline;width:200px;'>\n";
             echo "<option value='all'>".gettext("All assets");
             foreach($result1 as $row1){
-            echo "<option value='".$row1['main_asset_id']."'";
-            if (isset($_SESSION['main_asset_id']) && $row1['main_asset_id']==$_SESSION['main_asset_id'] )
+            echo "<option value='".$row1['asset_id']."'";
+            if (isset($_SESSION['main_asset_id']) && $row1['asset_id']==$_SESSION['main_asset_id'] )
             echo " selected";
             echo ">";
-            if ($row1['main_asset_id']==0)
+            if ($row1['asset_id']==0)
             echo gettext("Refurbish");
             else
             echo $row1['asset_name_'.$lang]."\n";
@@ -544,14 +549,16 @@ if (!lm_isset_int('asset_id')>0 || (lm_isset_int('asset_id')>0 && isset($_POST['
 
         echo "</th>";
 }
-if ($_SESSION['user_level']<3 || isset($_GET['user_id']))
-{
+//if ($_SESSION['user_level']<3 || isset($_GET['user_id']))
+//{
 if (isset($_GET['workorder_user_id']) && (int) $_GET['workorder_user_id']>=0)
 $_SESSION['workorder_user_id']=(int) $_GET['workorder_user_id'];
 
 echo "<th>";
 echo "<select name=\"work_user_id\" id=\"work_user_id\" class=\"form-control\" required onChange=\"location.href='index.php?page=works&workorder_user_id='+this.value\">\n";
-    $SQL="SELECT user_id,firstname,surname FROM users WHERE active=1";
+    
+
+    $SQL="SELECT user_id,firstname,surname FROM users WHERE active=1 AND user_level<4";
     $SQL.=" ORDER BY surname";
     if (LM_DEBUG)
     error_log($SQL,0);
@@ -567,7 +574,7 @@ echo "<select name=\"work_user_id\" id=\"work_user_id\" class=\"form-control\" r
     }
     else{
     echo "<option value=\"".$row["user_id"]."\"";
-    if (isset($_GET['workorder_user_id']) && $_SESSION['workorder_user_id']==$row['user_id'])
+    if (isset($_SESSION['workorder_user_id']) && $_SESSION['workorder_user_id']==$row['user_id'])
     echo " selected";
     echo ">".$row["surname"]." ".$row["firstname"]."</option>\n";
     }
@@ -579,8 +586,8 @@ echo "<select name=\"work_user_id\" id=\"work_user_id\" class=\"form-control\" r
 
 echo "</th>";
 echo "<th>".gettext("Partner")."</th>";
-}
-echo "<th>".gettext("Work")."</th><th></th></tr>";
+//}
+echo "<th>".gettext("Work")."</th><th>".gettext("Work done")."</th></tr>";
 
 echo "</thead>";
 echo "<tbody>";
@@ -592,12 +599,17 @@ $SQL.=",workorder_work_".LANG1.",workorder_work_".LANG2;
 
 $SQL.=" FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE workorder_works.deleted<>1";
 
+
+
+$SQL.=" AND workorders.main_asset_id IN ('".join("','",$users_assets)."')";
+
+
 if (isset($_SESSION['main_asset_id']) && $_SESSION['main_asset_id']>=0)
 $SQL.=" AND workorder_works.main_asset_id='".$_SESSION['main_asset_id']."'";
 
-if ($_SESSION['user_level']>2)
-$SQL.=" AND workorder_user_id=".(int) $_SESSION['user_id'];
-else if (isset($_SESSION['workorder_user_id']) && $_SESSION['workorder_user_id']>0)
+//if ($_SESSION['user_level']>2)
+//$SQL.=" AND workorder_user_id=".(int) $_SESSION['user_id'];
+if (isset($_SESSION['workorder_user_id']) && $_SESSION['workorder_user_id']>0)
 $SQL.=" AND workorder_user_id=".(int) $_SESSION['workorder_user_id'];
 
 $SQL.=" ORDER BY workorder_work_end_time DESC";
@@ -673,7 +685,7 @@ if (!lm_isset_int('asset_id')>0 || (lm_isset_int('asset_id')>0 && isset($_POST['
     }
     echo "</td>\n";
     }
-if ($_SESSION['user_level']<3 || isset($_GET['user_id'])){
+//if ($_SESSION['user_level']<3 || isset($_GET['user_id'])){
     echo "<td>".get_username_from_id($row["workorder_user_id"])."</td>"; 
     echo "<td>";
     if ($row["workorder_partner_id"]>0)
@@ -682,7 +694,7 @@ if ($_SESSION['user_level']<3 || isset($_GET['user_id'])){
     echo get_partner_name_from_id($row["workorder_partner_id"]);
     }
     echo "</td>"; 
-  }
+ // }
  echo "<td><a";
    if (isset($_SESSION["MODIFY_WORK"]) && ($allow_to_modify_date>$now || $_SESSION['user_level']<3)){
          echo " href=\"index.php?page=works&modify=1&workorder_work_id=".$row['workorder_work_id']."&workorder_id=".$row['workorder_id'];

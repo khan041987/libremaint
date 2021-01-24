@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Libremaint\n"
-"POT-Creation-Date: 2021-01-24 11:57+0100\n"
-"PO-Revision-Date: 2021-01-24 11:59+0100\n"
+"POT-Creation-Date: 2021-01-24 15:05+0100\n"
+"PO-Revision-Date: 2021-01-24 15:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu_HU\n"
@@ -61,11 +61,12 @@ msgid "OR"
 msgstr "UT"
 
 #: config/lm-settings.php:136 config/lm-settings_orig.php:133
-#: pages/works.php:498
+#: includes/left_panel.php:82 pages/works.php:498
 msgid "Works"
 msgstr "Munkák"
 
 #: config/lm-settings.php:136 config/lm-settings_orig.php:133
+#: includes/left_panel.php:82
 msgid "WR"
 msgstr "MU"
 
@@ -356,7 +357,7 @@ msgstr "Törölt"
 
 #: config/lm-settings.php:193 config/lm-settings_orig.php:190
 #: pages/notifications.php:641 pages/operators_works.php:318
-#: pages/stock.php:264 pages/workorders.php:870 pages/works.php:559
+#: pages/stock.php:264 pages/workorders.php:870 pages/works.php:566
 msgid "All"
 msgstr "Összes"
 
@@ -702,7 +703,7 @@ msgstr "Alaphelyzet"
 #: pages/connections.php:34 pages/connections.php:170 pages/messages.php:350
 #: pages/operators_works.php:416 pages/users.php:30 pages/users.php:86
 #: pages/users.php:118 pages/users.php:198 pages/users.php:267
-#: pages/users.php:470 pages/works.php:715
+#: pages/users.php:470 pages/works.php:727
 msgid "You have no permission!"
 msgstr "Nincs jogosultsága!"
 
@@ -1723,18 +1724,18 @@ msgstr "Dolgozó"
 
 #: includes/workorder_consumption.php:58
 #: includes/workorders_consumption_from_asset_id.php:35 pages/partners.php:155
-#: pages/works.php:581
+#: pages/works.php:588
 msgid "Partner"
 msgstr "Partner"
 
 #: includes/workorder_consumption.php:60
-#: includes/workorders_consumption_from_asset_id.php:38 pages/works.php:583
+#: includes/workorders_consumption_from_asset_id.php:38 pages/works.php:590
 msgid "Work"
 msgstr "Munka"
 
 #: includes/workorder_consumption.php:74
-#: includes/workorders_consumption_from_asset_id.php:58 pages/works.php:631
-#: pages/works.php:689
+#: includes/workorders_consumption_from_asset_id.php:58 pages/works.php:643
+#: pages/works.php:701
 msgid "alter work"
 msgstr "tevékenység módosítása"
 
@@ -2450,7 +2451,7 @@ msgid "All users"
 msgstr "Minden felhasználó"
 
 #: pages/notifications.php:716 pages/operators_works.php:295
-#: pages/workorders.php:899 pages/workrequests.php:907 pages/works.php:532
+#: pages/workorders.php:899 pages/workrequests.php:907 pages/works.php:537
 msgid "All assets"
 msgstr "Minden vagyontárgy"
 
@@ -2535,7 +2536,7 @@ msgstr "Nincs feladat ehhez a vagyontárgyhoz jelenleg."
 msgid "Note"
 msgstr "Megjegyzés"
 
-#: pages/operators_works.php:375 pages/works.php:638
+#: pages/operators_works.php:375 pages/works.php:650
 msgid "You are about to delete a work. Are you sure?"
 msgstr "Törölsz egy tevékenységet. Biztos?"
 
@@ -2718,7 +2719,7 @@ msgstr "Minden hely"
 
 #: pages/stock.php:453 pages/workorders.php:906 pages/workorders.php:942
 #: pages/workorders.php:1095 pages/workrequests.php:914
-#: pages/workrequests.php:1045 pages/works.php:539
+#: pages/workrequests.php:1045 pages/works.php:544
 msgid "Refurbish"
 msgstr "Felújítás"
 
@@ -2890,7 +2891,7 @@ msgstr "Cég"
 msgid "Workorder"
 msgstr "Feladat"
 
-#: pages/workorders.php:1049 pages/works.php:634
+#: pages/workorders.php:1049 pages/works.php:646
 msgid "Product to workorder"
 msgstr "Termék kiírása"
 
@@ -3121,6 +3122,13 @@ msgstr "Munka ("
 #: pages/works.php:462
 msgid "Last 5 activities..."
 msgstr "Utolsó 5 tevékenység..."
+
+#: pages/works.php:590
+msgid "Work done"
+msgstr "Elvégzett munka"
+
+#~ msgid "Maintenance works"
+#~ msgstr "Munkák"
 
 #~ msgid "New name (English):"
 #~ msgstr "Új név (angol):"

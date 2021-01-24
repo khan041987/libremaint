@@ -77,6 +77,10 @@ echo "</a>\n";
     }//if (isset($_GET["page"]) && $_GET["page"]==$page)
     }//if ($_SESSION['user_level']>$page[1])
 }//foreach
+if ($_SESSION['user_level']>3 && $_SESSION['SEE_WORKS']){
+echo "<li class=\"menu-item-has-children dropdown\" >\n";
+echo "<a href=\"index.php?page=works\" class=\"dropdown-toggle\" aria-haspopup=\"true\" aria-expanded=\"false\" id=\"works\"> <i class=\"menu-icon\">".gettext("WR")."</i>".gettext("Works")."</a>\n";
+}               
 
 ?>
                
