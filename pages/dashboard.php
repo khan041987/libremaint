@@ -358,13 +358,18 @@ echo gettext("pc");
                         <h4 class="mb-0">
                             <span class="count">
 <?php 
-$SQL="SELECT count(workorder_work_id) as count FROM workorder_works WHERE workorder_works.deleted<>1 AND workorder_user_id=".$SESSION['user_id'];
+$SQL="SELECT count(operator_work_id) as count FROM operator_works WHERE deleted<>1 AND user_id=".$_SESSION['user_id'];
 $row=$dba->getRow($SQL);
+if (!empty($row))
+{
 echo (int) $row['count']." ";
 if ($row['count']>1)
 echo gettext("pcs");
 else
 echo gettext("pc");
+}
+echo "0 pc";
+
 ?>
                             </span>
                         </h4>
