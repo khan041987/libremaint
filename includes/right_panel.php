@@ -94,7 +94,7 @@ echo '<a class="dropdown-item media bg-flat-color-1" href="index.php?page=messag
 }
 
 if (OPERATOR_NOTIFICATIONS_SUPPORT && isset($users_assets) && $_SESSION['user_level']<3){
-$SQL="SELECT notification_short,main_asset_id FROM notifications WHERE  notification_status=1";
+$SQL="SELECT notification_short_".$lang.",main_asset_id FROM notifications WHERE  notification_status=1";
 $SQL.=" AND main_asset_id IN ('".join("','",$users_assets)."')";
 
 $result=$dba->Select($SQL);
@@ -109,14 +109,14 @@ if ($not_number>0){
                             </button>
  <div class="dropdown-menu" aria-labelledby="notification"><!--ok-->
 <?php                               
-echo '<p class="red">'.gettext('You have ').$not_number." ".gettext(' notification').'</p>';
+echo '<p class="red">'.gettext('You have')." ".$not_number." ".gettext(' notification').'</p>';
 
 foreach ($result as $row){
 
 echo '<a class="dropdown-item media bg-flat-color-1" href="index.php?page=notifications">';
                                 echo '<i class="fa fa-check"></i><p>';
                           
-                echo get_asset_name_from_id($row['main_asset_id'],$lang).': '.$row['notification_short'];
+                echo get_asset_name_from_id($row['main_asset_id'],$lang).': '.$row['notification_short_'.$lang];
                                 
                                 echo '</p></a>';
 
