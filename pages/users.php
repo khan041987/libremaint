@@ -117,40 +117,80 @@ else if (isset($_POST['user_id']) && isset($_POST["action"]) && $_POST["action"]
 if (!isset($_SESSION['MODIFY_USER']))
 lm_die(gettext("You have no permission!"));
 
-
-$SQL="UPDATE users SET users_assets='".$dba->escapeStr($_POST['users_assets_json'])."'";
+$SQL="UPDATE users SET users_assets='".$dba->escapeStr($_POST["users_assets_json"])."'";
 $SQL.=" WHERE user_id=".(int) $_POST['user_id'];
 if ($dba->Query($SQL))
 lm_info("The assets belong to user has been modified.");
 else
 lm_info("Failed to modified user's assets.");
 
-$users_assets=json_decode($_POST["users_assets_json"],true);
-         
+
  $SQL="SELECT asset_id,assets_users FROM assets WHERE asset_parent_id=0";           
  $result=$dba->Select($SQL); 
- $assets_users=array();
+ 
   foreach($result as $row)           
             {
-            
-            if (!empty($row['assets_users']))
+            if (!isset($row['assets_users']))
+            $assets_users=array();
+            else
             $assets_users=json_decode($row['assets_users'],true);   
             
             
-            if (in_array($row['asset_id'],$users_assets)) 
-            {
-           
+            if (in_array($row['asset_id'],$users_assets) && (empty($assets_users) || !in_array((int) $_POST['user_id'],$assets_users))) 
+            
             $assets_users[]=(int) $_POST['user_id'];
-            }
-            else
+            
+            else if (!in_array($row['asset_id'],$users_assets) && in_array((int) $_POST['user_id'],$assets_users))
+            
             $assets_users=array_merge(array_diff($assets_users,(int) $_POST['user_id']));
-            $assets_users=json_encode(array_unique($assets_users));
+            
+            array_unique($assets_users);
+            asort($assets_users);
+            
+            $assets_users=json_encode($assets_users,true);
             $SQL="UPDATE assets SET assets_users='".$assets_users."' WHERE asset_id=".$row['asset_id'];
             
             $result=$dba->Query($SQL);
             }
 
-
+//repair the assets_users column
+/*
+$SQL="SELECT user_id,users_assets FROM users";
+ $res=$dba->Select($SQL);
+ foreach ($res as $r)
+ {
+$users_assets=json_decode($r["users_assets"],true);
+ 
+ $SQL="SELECT asset_id,assets_users FROM assets WHERE asset_parent_id=0";           
+ $result=$dba->Select($SQL); 
+ 
+  foreach($result as $row)           
+            {
+            
+            if (!isset($row['assets_users']))
+            $assets_users=array();
+            else
+            $assets_users=json_decode($row['assets_users'],true);   
+            
+            
+            if (in_array($row['asset_id'],$users_assets) && (empty($assets_users) || !in_array($r['user_id'],$assets_users))) 
+            
+            $assets_users[]=(int) $r['user_id'];
+            
+            else if (!in_array($row['asset_id'],$users_assets) && in_array((int) $r['user_id'],$assets_users))
+            
+            $assets_users=array_merge(array_diff($assets_users,(int) $r['user_id']));
+            
+            array_unique($assets_users);
+            asort($assets_users);
+            
+            $assets_users=json_encode($assets_users,true);
+            $SQL="UPDATE assets SET assets_users='".$assets_users."' WHERE asset_id=".$row['asset_id'];
+            
+            $result=$dba->Query($SQL);
+            }
+            
+  }*/          
 }
 
 else if (isset($_POST['user_id']) && ENTRY_ACCESS_CONTROL && isset($_POST["action"]) && $_POST["action"]=='users_entry_points' && is_it_valid_submit()){// modify user's assets
