@@ -2279,6 +2279,7 @@ echo "</div>";//card
 else if (isset($_GET['param1']) && $_GET['param1']=="show_user_detail"){//from users.php
 echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\">\n";
 echo "<span aria-hidden=\"true\">×</span>\n</button>\n";
+echo "<script src=\"".INCLUDES_LOC."javascripts.js\"></script>\n";
 echo "<div class=\"card\"\>\n";
 if (!$_SESSION['SEE_USER_DETAIL'])
 lm_die(gettext("You have no permission!"));
@@ -2287,8 +2288,13 @@ $row=$dba->getRow($SQL);
     echo "<div class=\"card-header\">\n";
     echo "<strong>".gettext("Show user details...")." ".get_username_from_id($_GET['param2'])."</strong>\n";
     echo "</div>";//card-header
+    
+    
+
  echo "<form class=\"form-horizontal\" method=\"POST\">\n";
     echo "<div class= \"card-body\">\n";
+    echo "<button type='button' onClick='invert_check()' class=\"btn btn-primary btn-sm\">".gettext("Invert check")."</button> ";
+echo "<button type='button' onClick='check_uncheck_all()' class=\"btn btn-primary btn-sm\">".gettext("Check/uncheck all")."</button><br/></br>";
     $i=0;
     foreach ($priviliges as $p){//from lm-settings.php
            
@@ -2398,39 +2404,7 @@ echo "</tbody></table>";
 else if (isset($_GET['param1']) && $_GET['param1']=="show_users_assets"){// from users.php
 echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\">\n";
 echo "<span aria-hidden=\"true\">×</span>\n</button>\n";
-
-
-?><script>
-function users_assets_to_json(){
-checkboxes = document.querySelectorAll('input[name="users_assets[]"]');
-var users_assets=[];
-checkboxes.forEach(e => { 
-    if (e.checked){
-    users_assets.push(e.value);
-    
-    }
-})
-
-document.getElementById("users_assets_json").value=JSON.stringify(users_assets);
-
-}
-
-function check_uncheck(){
-
-  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  for (var checkbox of checkboxes) {
-    if (checkbox.checked)
-    checkbox.checked = false;
-    else
-    checkbox.checked=true;
-    
-  }
-
-
-
-}
-</script>
-<?php
+echo "<script src=\"".INCLUDES_LOC."javascripts.js\"></script>\n";
 
 $SQL="SELECT asset_id,asset_name_".$lang." FROM assets WHERE asset_parent_id=0 ORDER BY asset_name_".$lang;
 $result=$dba->Select($SQL);
@@ -2446,11 +2420,11 @@ else
 $user_assets=array();
 echo "<div class='card'>\n";
 echo "<div class='card-header'>\n";
-echo gettext("Assets belong to ").get_username_from_id($_GET['param2'])."</div>";
+echo gettext("Assets belong to").": ".get_username_from_id($_GET['param2'])."</div>";
 echo "<form class=\"form-horizontal\" method=\"POST\" onSubmit=\"return users_assets_to_json()\">\n";
 echo "<div class='card-body'>";
-echo "<button type='button' onClick='check_uncheck()' class=\"btn btn-primary btn-sm\">".gettext("Check all")."</button><br/>";
-
+echo "<button type='button' onClick='invert_check()' class=\"btn btn-primary btn-sm\">".gettext("Invert check")."</button> ";
+echo "<button type='button' onClick='check_uncheck_all()' class=\"btn btn-primary btn-sm\">".gettext("Check/uncheck all")."</button><br/></br>";
 foreach ($result as $row){
 echo "<INPUT STYLE='margin-left:1em;margin-right:1em;' TYPE='checkbox' name='users_assets[]'";
             if (in_array($row['asset_id'],$users_assets))
