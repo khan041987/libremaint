@@ -294,7 +294,7 @@ else if (isset($_POST['page']) && isset($_POST["new_name_".$lang]) && !empty($_P
     if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']) && isset($_POST['new_name_'.LANG2]) && !empty($_POST['new_name_'.LANG2]))
         if (isset($_SESSION['CAN_WRITE_LANG1']))
         $SQL.=",";
-    $SQL.=",asset_name_".LANG2."='".$dba->escapeStr($_POST["new_name_".LANG2])."'";
+    $SQL.="asset_name_".LANG2."='".$dba->escapeStr($_POST["new_name_".LANG2])."'";
     
     $SQL.=" WHERE asset_id=".(int) $_POST["asset_id"];
     if (LM_DEBUG)
