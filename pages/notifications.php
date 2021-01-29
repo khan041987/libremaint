@@ -270,6 +270,7 @@ error_log($SQL,0);
 }else if (isset($_POST['page']) && isset($_POST["notification_id"]) && isset($_POST['modify_notification'])  && is_it_valid_submit()){ //it is from the modify notification form
 //repetitive priority service_interval_date service_interval_hours notification_short 
 $SQL="UPDATE notifications SET ";
+$SQL.="main_asset_id='".(int) $_POST['main_asset_id']."',";
 $SQL.="asset_id='".(int) $_POST['asset_id']."',";
 $SQL.="priority='".(int) $_POST["priority"]."',";
 
@@ -328,9 +329,7 @@ if (isset($_GET['notification_id'])){
 $SQL="SELECT * FROM notifications WHERE notification_id='".(int) $_GET['notification_id']."'";
 $notification_row=$dba->getRow($SQL);}
 echo "<div id=\"notification_form\" class=\"card\">\n";
-echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('notification_form').innerHTML=''\">\n";
-echo "<span aria-hidden=\"true\">×</span>\n</button>";?>
-
+?>
 <div class="card-header">
 <strong><?php 
 if (isset($_GET["new"]))
@@ -374,13 +373,16 @@ echo "<div class=\"row form-group\">";
     echo "</div>\n";
 
     echo "<div class=\"col col-md-3\">";
-        echo "<select name=\"main_asset_id\" id=\"main_asset_id\" class=\"form-control\" required>\n";
+        echo "<select name=\"main_asset_id\" id=\"main_asset_id\" class=\"form-control\" required";
+        if (isset($_GET['modify']))
+        echo " onChange=\"location.href='index.php?page=notifications&notification_id=".(int) $_GET['notification_id']."&modify=1&mod_asset_id='+this.value\"";
+        echo ">\n";
         echo "<option value=''>".gettext("Select an asset!")."</option>\n";
         foreach($users_assets as $asset_id) 
         {
        
         echo "<option value=\"".$asset_id."\"";
-        if (isset($_GET['modify']) && $notification_row['main_asset_id']==$asset_id)
+        if (isset($_GET['modify']) && !isset($_GET['mod_asset_id']) && $notification_row['main_asset_id']==$asset_id || (isset($_GET['mod_asset_id']) && $_GET['mod_asset_id']==$asset_id))
         echo " selected";
         
         echo ">".get_asset_name_from_id($asset_id,$lang)."</option>\n";
@@ -389,7 +391,7 @@ echo "<div class=\"row form-group\">";
     echo "</div>";
 echo "</div>";
 
-if ($_SESSION['user_level']<4 && isset($_GET['modify']) && $notification_row['main_asset_id']>0)
+if ($_SESSION['user_level']<4 && isset($_GET['modify']) && ($notification_row['main_asset_id']>0 || (isset($_GET['mod_asset_id']) && $_GET['mod_asset_id']>0)))
 {//the operators shouldn't change the asset_id
 echo "<div class=\"row form-group\">";
     echo "<div class=\"col col-md-2\">\n";
@@ -400,6 +402,9 @@ echo "<div id=\"tree\" class=\"col col-md-3\">\n";
 echo "<ul id=\"treeData\" style=\"display: none;\">\n";
 $resp="";
 include(INCLUDES_PATH."asset_tree_func.php");
+if (isset($_GET['mod_asset_id']))
+echo tree_construct($_GET['mod_asset_id'],0);
+else
 echo tree_construct($notification_row['main_asset_id'],0);    
 echo "</ul></div>";
 if (isset($_GET['modify']) && $notification_row['asset_id']>0){
@@ -414,7 +419,7 @@ $n.=$k."-><wbr>";}
 if ($n!="")
 echo substr($n,0,-7);
 echo "</div>";
-}
+}   
 else
 echo "<div id=\"asset_name\"></div>";
 echo "</div>";
@@ -621,7 +626,7 @@ if (isset($_SESSION['ADD_WORKORDER']) && (isset($_SESSION['notification_status']
     {
     echo "<input type=\"checkbox\" style=\"display:inline;\" id=\"select_all\" name=\"select_all\"";
     echo " onChange=\"enable_create_workorder_button()\"";
-    echo ">";
+    echo "> ";
     }
     
 ?>
