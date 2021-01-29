@@ -326,7 +326,7 @@ $SQL="SELECT workrequest_short_".$lang.",asset_id FROM workrequests WHERE asset_
         echo substr($n,0,-7);
 
 
-        echo ' '.$row['workrequest_short'.$lang].'</li>';
+        echo ' '.$row['workrequest_short_'.$lang].'</li>';
 
         }
         echo '</ul></div>';
@@ -858,7 +858,7 @@ else if (isset($_GET['workrequest_status']) && $workrequest_status==0){
 unset($_SESSION['workrequest_status']);
 }
 
-if (isset($_SESSION['ADD_WORKORDER']) && (isset($_SESSION['workrequest_status']) && 0==$_SESSION['workrequest_status'] || 1==$_SESSION['workrequest_status']))
+if (isset($_SESSION['ADD_WORKORDER']) && isset($_SESSION['workrequest_status']) && (0==$_SESSION['workrequest_status'] || 1==$_SESSION['workrequest_status']))
     {
     echo "<input type=\"checkbox\" style=\"display:inline;\" id=\"select_all\" name=\"select_all\"";
     echo " onChange=\"enable_create_workorder_button()\"";
@@ -1018,7 +1018,7 @@ foreach ($result as $row)
       echo " name=\"workrequest_id[]\" value=\"".$row['workrequest_id']."\">";                        
     }
     echo "</td><td>\n";
-if (LANG2_AS_SECOND_LANG && $_SESSION['USER_LEVEL']<3 && isset($_SESSION['CAN_WRITE_LANG2']) && $row['workrequest_short_'.LANG2]=="")
+if (LANG2_AS_SECOND_LANG && $_SESSION['user_level']<3 && isset($_SESSION['CAN_WRITE_LANG2']) && $row['workrequest_short_'.LANG2]=="")
     echo " * "; //translation needed
     
     echo date($lang_date_format, strtotime($row["workrequest_time"]))."</td>\n";
