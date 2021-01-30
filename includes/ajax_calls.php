@@ -2563,6 +2563,26 @@ echo "<div class= \"card-body\">\n";
     
 $SQL="SELECT * FROM assets WHERE asset_id=".(int) $_GET['param2'];
     $row=$dba->getRow($SQL);
+ 
+if ($row['asset_product_id']>0)
+{
+$SQL="SELECT product_stockable FROM products WHERE product_id=".$row['asset_product_id'];
+$row1=$dba->getRow($SQL);
+        if ($row1['product_stockable']==1)
+        {
+        echo "<strong>".gettext("The product built in:")."</strong> ".get_product_name_from_id($row['asset_product_id'],$lang)." <mark>".Luhn($row['asset_product_id'])."</mark> ";
+
+        $in_stock=get_sum_quantity_from_product_id($row['asset_product_id']);
+        if ($in_stock>0)
+        echo "<strong style=\"color:green;\">";
+        else
+        echo "<strong style=\"color:red;\">";
+
+        echo gettext("in stock").": ".$in_stock." ".get_quantity_unit_from_product_id($row['asset_product_id'])[0];
+        echo "</strong>";
+        }
+}
+    
     $products_can_connect=array();
         foreach($row as $key=>$value)
         {
@@ -2577,7 +2597,7 @@ $SQL="SELECT * FROM assets WHERE asset_id=".(int) $_GET['param2'];
                 {
                 $SQL="SELECT stock_location_partner_id,stock_location_asset_id FROM stock WHERE product_id=".(int) $product_id;
                 $row1=$dba->getRow($SQL);
-                echo get_product_name_from_id($product_id,$lang);
+                echo get_product_name_from_id($product_id,$lang)." <mark>".Luhn($product_id)."</mark>";
                 
                 if ($row['asset_product_id']==$product_id)
                 echo " <strong style=\"color:green;\">".gettext("built in here")."</strong>";
@@ -2596,7 +2616,7 @@ $SQL="SELECT * FROM assets WHERE asset_id=".(int) $_GET['param2'];
                 else if ($row1['stock_location_partner_id']>0)
 echo " <strong style=\"color:green;\">".get_partner_name_from_id($row1['stock_location_partner_id'])."</strong>";
                 else if (get_sum_quantity_from_product_id($product_id)>0)
-                echo " <strong style=\"color:green;\">".gettext("in stock")."</strong>";
+                echo " <strong style=\"color:green;\">".gettext("in stock")." ".get_sum_quantity_from_product_id($product_id)." ".get_quantity_unit_from_product_id($product_id)[0]."</strong>";
                 echo "<br/>\n";
                 }
             

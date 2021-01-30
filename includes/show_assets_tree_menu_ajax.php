@@ -149,7 +149,7 @@ $text="";
                                $text.=gettext("Modify asset")."</a>";
                               }
                               
-                            if ($connection_exist>0){
+                            if ($connection_exist>0 || $row['asset_product_id']>0){
                             $text.= "<a class=\"nav-link\" href=\"javascript:ajax_call('show_builtable_products','".$id."','','','','".URL."index.php','for_ajaxcall')\"><i class=\"fa fa-user\"></i> ";
                               $text.=gettext("Show builtable products")."</a>";
                               
