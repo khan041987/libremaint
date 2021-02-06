@@ -98,8 +98,8 @@ echo "</div>";
 if (isset($_SESSION['MODIFY_ASSET']))
 {
 echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button>\n";
+echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button>\n";
 }else 
 echo gettext("You have no permission to modify an asset!");
 echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
@@ -185,8 +185,8 @@ echo "\" required></div></div>\n";
 }
 
 echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button></div>\n";
+echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
 echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
 echo "<input type=\"hidden\" name=\"page\" id=\"page\" value=\"".$_GET['param3']."\">";
 if ($_GET['param3']=='assets')
@@ -387,8 +387,8 @@ echo "<span aria-hidden=\"true\">×</span>\n</button>";
     echo "<div class=\"col-12 col-md-3\"><input type=\"file\" id=\"info_file_name\" name=\"info_file_name[]\"  multiple></div></div>\n";
     
     echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-    echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button></div>\n";
+    echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
     echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
     echo "<input type=\"hidden\" name=\"page\" id=\"page\" value=\"".$_GET['param3']."\">";
     if ($_GET['param3']=='assets')
@@ -532,10 +532,10 @@ if ($_GET['param2']>0){
 ?>
 <div class="card-footer">
 <button type="submit" class="btn btn-primary btn-sm">
-<i class="fa fa-dot-circle-o"></i><?php echo gettext(" Submit ");?>
+<i class="fa fa-dot-circle-o"></i> <?php echo gettext("Submit");?> 
 </button>
 <button type="reset" class="btn btn-danger btn-sm">
-<i class="fa fa-ban"></i><?php echo gettext(" Reset ");?>
+<i class="fa fa-ban"></i> <?php echo gettext("Reset");?>
 </button>
 </div>
 <?php
@@ -575,8 +575,8 @@ echo "<span aria-hidden=\"true\">×</span>\n</button>";
     if (isset($_SESSION['ADD_WORKORDER']))
     {
     echo "<button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-    echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button>";
+    echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button>";
     }else
     echo gettext("You have no permission to add workorder!");
     echo "</div>\n";
@@ -716,8 +716,8 @@ echo "<div class=\"row form-group\">\n";
         echo " onClick=\"ajax_call('modify_review_value','save".$_GET['param3']."','".$_GET['param3']."',review.value,'".$_GET['param2']."','".URL."index.php','info_file_review_".$_GET['param3']."')\"";
 
         echo "type=\"button\" class=\"btn btn-primary btn-sm\">\n";
-        echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-        echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button>";
+        echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+        echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button>";
     echo "</div>\n";
     echo "</form>";
 echo "</div>";   
@@ -977,7 +977,7 @@ echo "<form method='POST' id='into_stock_form' name='into_stock_form' action='in
                 echo "<button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
                 echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext("Submit")."</button>\n";
                 }
-        echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i>".gettext(" Reset")."</button>";
+        echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button>";
         }else
         echo gettext("You have no permission!");
        
@@ -1214,8 +1214,8 @@ echo "</div></div>\n";
         echo "<div class=\"card-footer\" style=\"display:none;\">";
     if ($_SESSION['ADD_PRODUCT_WORKORDER']){
     echo "<button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-    echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button>";
+    echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button>";
     }else
     echo gettext("You have no permission!");
     echo "</div>\n";
@@ -1293,8 +1293,8 @@ echo "<span aria-hidden=\"true\">×</span>\n</button>";
         echo "</select></div></div>";
         
     echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-    echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button></div>\n";
+    echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
     echo "<input type=\"hidden\" name=\"page\" id=\"page\" value=\"".$_GET['param5']."\">";
     echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
 
@@ -1559,7 +1559,7 @@ echo "</div>\n";
 else if(isset($_GET['param1']) && $_GET['param1']=="show_notification_detail"){
 if (!$_SESSION['SEE_NOTIFICATION_DETAILS'])
 lm_die(gettext("You have no permission!"));
-$SQL="SELECT user_id,asset_id,notification_".$lang.",notification_short_".$lang.",notification_time,notification_type,priority FROM notifications WHERE notification_id='".(int) $_GET['param2']."'";
+$SQL="SELECT * FROM notifications WHERE notification_id='".(int) $_GET['param2']."'";
 if (LM_DEBUG)
         error_log("Notification detail: ".$SQL,0);
 $row=$dba->getRow($SQL);
@@ -1582,7 +1582,7 @@ echo "<div class=\"card\">";
         echo "<strong>".gettext("Show notification details...")." ".substr($n,0,-7)."</strong>\n";
     echo "</div>\n";
     echo "<div class=\"card-body card-block\">";
-        echo "<form class=\"form-horizontal\">\n";
+        
         
         echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"notified_by\" class=\"form-control-label\">".gettext("Notified by:")."</label></div>\n";
@@ -1612,8 +1612,19 @@ echo "<div class=\"card\">";
         echo "<div class=\"col col-md-2\"><label for=\"priority_type\" class=\"form-control-label\">".gettext("Priority:")."</label></div>\n";
         //$activity_types from confg/lm-settings.php
         echo "<div class=\"col-12 col-md-3\">".$priority_types[$row["priority"]-1]."</div></div>\n";
-      
-    echo "</form></div>\n";
+        
+        if ($row["notification_status"]==5 && !empty($row["notification_closing_time"]))
+        {
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"notification_closing_time\" class=\"form-control-label\">".gettext("Closing time").": </label></div>\n";
+        echo "<div class=\"col-12 col-md-3\">".date($lang_date_format." H:i", strtotime($row["notification_closing_time"]))."</div></div>\n";
+        
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"reason_to_close_".$lang."\" class=\"form-control-label\">".gettext("Reason to close").": </label></div>\n";
+        echo "<div class=\"col-12 col-md-3\">".$row["reason_to_close_".$lang]."</div></div>\n";
+        
+        }    
+    echo "</div>\n";
 echo "</div>\n";
 
 }
@@ -1721,8 +1732,8 @@ echo "<div class=\"card\"\>\n";
             
      //echo "</div>\n";  //card-body  
       echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-        echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-        echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button>\n";       
+        echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+        echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button>\n";       
      
             }
         echo "<input type=\"hidden\" name=\"page\" id=\"page\" value=\"".$_GET['param3']."\">";
@@ -1890,8 +1901,8 @@ echo "<div class=\"card\"><div class=\"card-header\">\n";
     
    
     echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-    echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> Reset </button></div>\n";
+    echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
     echo "<input type=\"hidden\" name=\"page\" id=\"page\" value=\"assets\">";
     echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
 
@@ -1944,10 +1955,10 @@ echo "<input type=\"hidden\" name=\"page\" id=\"page\" value=\"counters\">\n";
 echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
 
 echo "<button type=\"submit\" name=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext(" Submit ");
-echo "</button>\n";
+echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit");
+echo " </button>\n";
 echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\">\n";
-echo "<i class=\"fa fa-ban\"></i>".gettext(" Reset ")."</button>\n";
+echo "<i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button>\n";
 echo "</form>\n";
 echo "</div></div>\n";
 
@@ -2092,7 +2103,7 @@ echo "<div class=\"card\">";
 lm_die(gettext("You have no permission!"));
     echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
     echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext("Submit")."</button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i>".gettext("Reset")."</button></div>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
     echo "<input type='hidden' name='page' id='page' value='partners'>";
     echo "<input type='hidden' name='partner_id' id='partner_id' value='".$_GET['param2']."'>";
     echo "<input type='hidden' name='valid' id='valid' value='".$_SESSION['tit_id']."'>";
@@ -2322,7 +2333,7 @@ echo "<input type=\"hidden\" name=\"user_id\" id=\"user_id\" value=\"".(int) $_G
 echo "</div>";//card-body
     echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
     echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext("Submit")."</button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i>".gettext("Reset")."</button></div></form>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div></form>\n";
 echo "</div>";//card    
 }
 
@@ -2354,9 +2365,9 @@ else if (isset($_GET['param1']) && $_GET['param1']=="show_users_office-hours"){/
     
     echo "<div class=\"card-footer\">\n";
     echo "<button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-    echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext(" Submit ")."</button>\n";
+    echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
     echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\">";
-    echo "<i class=\"fa fa-ban\"></i>".gettext(" Reset ")."</button></div>\n";
+    echo "<i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
     }
 
 echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\">\n";
@@ -2446,7 +2457,7 @@ if ($i%2==0) echo "<br/>";
 
     echo "</div><div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
     echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext("Submit")."</button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i>".gettext("Reset")."</button></div></form>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div></form>\n";
 
 
 }
@@ -2540,7 +2551,7 @@ if ($i%2==0) echo "<br/>";
 
     echo "</div><div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
     echo "<i class=\"fa fa-dot-circle-o\"></i>".gettext("Submit")."</button>\n";
-    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i>".gettext("Reset")."</button></div></form>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div></form>\n";
 
 
 }
@@ -2759,7 +2770,7 @@ echo "<div class=\"row form-group\">\n";
    
    
    echo "<div class=\"card-footer\"><button name='submit' type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-   echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button></div>\n";
+   echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button></div>\n";
    echo "</div>";//card-body
    echo "</form></div>"; //card
 
@@ -2784,7 +2795,7 @@ echo "</div><div class=\"card-body card-block\">";
     echo $row['min_stock_quantity'];
     echo "\" required> </div> ".$unit[0]."</div>\n";
      echo "<div class=\"card-footer\"><button name='submit' type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-   echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button></div>\n";
+   echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button></div>\n";
     echo "<INPUT type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">\n";
     echo "<INPUT type=\"hidden\" name=\"page\" id=\"page\" value=\"stock\">\n";
      echo "<INPUT type=\"hidden\" name=\"stock_id\" id=\"stock_id\" value=\"".(int) $_GET['param2']."\">\n";
@@ -2935,4 +2946,48 @@ else if (isset($_GET['param1']) && $_GET['param1']=="notification_messages")
 
 }
 
+
+else if (isset($_GET['param1']) && $_GET['param1']=="closing_notification" && $_SESSION['user_level']<3)
+{
+$SQL="SELECT * FROM notifications WHERE notification_id=".(int) $_GET['param2'];
+$row=$dba->getRow($SQL);
+if (empty($row))
+lm_error("There is no such notification!");
+else
+    {
+    
+    echo "<button type=\"button\" class=\"close\" aria-label=\"Close\" onClick=\"document.getElementById('for_ajaxcall').innerHTML=''\">\n";
+    echo "<span aria-hidden=\"true\">×</span>\n</button>";
+    echo "<form action=\"index.php\" id=\"rename_form\" method=\"post\" enctype=\"multipart/form-data\" class=\"form-horizontal\">\n";
+    echo "<div class=\"card\"><div class=\"card-header\">\n";
+    echo "<strong>".gettext("Closing notification:")."</strong> ".$row['notification_short_'.LANG1];
+    echo "</div>";
+    echo "<div class=\"card-body card-block\">";
+    
+    if (isset($_SESSION['CAN_WRITE_LANG1']))
+    {
+    echo "<div class=\"row form-group\">\n";
+    echo "<div class=\"col col-md-3\"><label for=\"reason_to_close_".LANG1."\" class=\"form-control-label\">".gettext("The reason to close")." (".LANG1."):</label></div>\n";
+    echo "<div class=\"col-12 col-md-5\"><input type=\"text\" id=\"reason_to_close_".LANG1."\" name=\"reason_to_close_".LANG1."\" class=\"form-control\" value=\"".$row['reason_to_close_'.LANG1]."\" required></div></div>\n";
+    }
+    
+    if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
+    {
+    echo "<div class=\"row form-group\">\n";
+    echo "<div class=\"col col-md-3\"><label for=\"reason_to_close_".LANG2."\" class=\"form-control-label\">".gettext("The reason to close")." (".LANG2."):</label></div>\n";
+    echo "<div class=\"col-12 col-md-5\"><input type=\"text\" id=\"reason_to_close_".LANG2."\" name=\"reason_to_close_".LANG2."\" class=\"form-control\" value=\"".$row['reason_to_close_'.LANG2]."\" required></div></div>\n";
+    }
+    echo "<INPUT TYPE='hidden' name='notification_id' id='notification_id' VALUE='".(int) $_GET['param2']."'>";
+    echo "<INPUT TYPE='hidden' name='page' id='page' VALUE='notifications'>";
+    echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
+    echo "</div>";//card-body
+    
+    
+    echo "<div class=\"card-footer\"><button name='submit' type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
+    echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button></div>\n";
+   
+    echo "</form></div>"; //card
+    
+    }
+}
 ?>

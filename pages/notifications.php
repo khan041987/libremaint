@@ -267,312 +267,355 @@ if ($dba->Query($SQL)){
 if (LM_DEBUG)
 error_log($SQL,0);
 
-}else if (isset($_POST['page']) && isset($_POST["notification_id"]) && isset($_POST['modify_notification'])  && is_it_valid_submit()){ //it is from the modify notification form
-//repetitive priority service_interval_date service_interval_hours notification_short 
-$SQL="UPDATE notifications SET ";
-$SQL.="main_asset_id='".(int) $_POST['main_asset_id']."',";
-$SQL.="asset_id='".(int) $_POST['asset_id']."',";
-$SQL.="priority='".(int) $_POST["priority"]."',";
+}else if (isset($_POST['page']) && isset($_POST["notification_id"]) && isset($_POST['modify_notification']) && is_it_valid_submit()){ //it is from the modify notification form
+$own_notification=false;
+if (!isset($_SESSION['MODIFY_NOTIFICATION']))
+    {
+    $SQL="SELECT user_id FROM notifications WHERE notification_id=".(int) $_POST["notification_id"];
+    $row=$dba->getRow($SQL);
+    if (empty($row) || $row['user_id']!=$_SESSION['user_id'])
+    lm_error(gettext("You have no privilige to modify this notification!"));
+    else
+    $own_notification=true;
+    }
+else if (isset($_SESSION['MODIFY_NOTIFICATION']) || $own_notification){
+    $SQL="UPDATE notifications SET ";
+    $SQL.="main_asset_id='".(int) $_POST['main_asset_id']."',";
+    $SQL.="asset_id='".(int) $_POST['asset_id']."',";
+    $SQL.="priority='".(int) $_POST["priority"]."',";
 
-if ($_SESSION['CAN_WRITE_LANG1'])
-{
-$SQL.="notification_short_".LANG1."='".$dba->escapeStr($_POST["notification_short_".LANG1])."',";
-$SQL.="notification_".LANG1."='".$dba->escapeStr($_POST["notification_".LANG1])."',";
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    {
+    $SQL.="notification_short_".LANG1."='".$dba->escapeStr($_POST["notification_short_".LANG1])."',";
+    $SQL.="notification_".LANG1."='".$dba->escapeStr($_POST["notification_".LANG1])."',";
+    }
+
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    {
+    $SQL.="notification_short_".LANG2."='".$dba->escapeStr($_POST["notification_short_".LANG2])."',";
+    $SQL.="notification_".LANG2."='".$dba->escapeStr($_POST["notification_".LANG2])."',";
+    }
+
+    $SQL.="notification_type='".(int) $_POST["notification_type"]."'";
+    $SQL.=" WHERE notification_id='".(int) $_POST['notification_id']."'";
+    if ($dba->Query($SQL))
+            lm_info(gettext("The notification has been modified."));
+            else
+            lm_error(gettext("Failed to modify notification ").$SQL." ".$dba->err_msg);
+    if (LM_DEBUG)
+    error_log($SQL,0);
+    if ((int)$_POST['priority']==1){
+    $SQL="SELECT notification_id FROM telegram_messages WHERE notification_id=".(int) $_POST['notification_id'];
+    $result=$dba->Select($SQL);
+    if (empty($result)){
+        $SQL="SELECT assets_users FROM assets where asset_id=".get_whole_path_ids('asset',(int) $_POST["main_asset_id"],1)[0];
+                    if (LM_DEBUG)
+                    error_log($SQL,0); 
+                    $row=$dba->getRow($SQL);
+                    if(!empty($row))
+                    {
+                    $users_to_message=json_decode($row['assets_users'],true);
+                    
+                    foreach ($users_to_message as $user){
+                    $SQL="SELECT user_level,telegram_chat_id FROM users WHERE user_id=".$user;
+                    $row=$dba->getRow($SQL);
+                    if ($row['user_level']<3 && !empty($row['telegram_chat_id'])){// we need to notify only the managers
+                    $SQL="INSERT INTO telegram_messages (user_id,sensor_id,received_message,sensor_value,notification_id) VALUES (".$user.",0,0,0,".(int) $_POST['notification_id'].")";
+                    $dba->Query($SQL);
+                    if (LM_DEBUG)
+                    error_log($SQL,0); 
+                    }
+                    if(is_user_working($user))
+                    send_telegram_messages();
+                    }
+                    }
+                    }
+        }
+}
 }
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
-{
-$SQL.="notification_short_".LANG2."='".$dba->escapeStr($_POST["notification_short_".LANG2])."',";
-$SQL.="notification_".LANG2."='".$dba->escapeStr($_POST["notification_".LANG2])."',";
-}
+if (isset($_POST['reason_to_close_'.LANG1]) || isset($_POST['reason_to_close_'.LANG2]) && $_SESSION['user_level']<3 && is_it_valid_submit())
+    {
+    $SQL="UPDATE notifications SET ";
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.="reason_to_close_".LANG1."='".$dba->escapeStr($_POST['reason_to_close_'.LANG1])."'";
+    
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2'])
+    {
+    if ($_SESSION['CAN_WRITE_LANG1'])
+    $SQL.=",";
+    $SQL.="reason_to_close_".LANG2."='".$dba->escapeStr($_POST['reason_to_close_'.LANG2])."'";
+    }
+    $SQL.=" ,notification_status=5,notification_closing_time=NOW() WHERE notification_id=".(int) $_POST['notification_id'];
+    
+    if ($dba->Query($SQL))
+    lm_info(gettext("Notification has closed"));
+    else
+    lm_info(gettext("Failed to close notification"). $dba->err_msg);
+    }
 
-$SQL.="notification_type='".(int) $_POST["notification_type"]."'";
-$SQL.=" WHERE notification_id='".(int) $_POST['notification_id']."'";
-if ($dba->Query($SQL))
-        lm_info(gettext("The notification has been modified."));
-        else
-        lm_error(gettext("Failed to modify notification ").$SQL." ".$dba->err_msg);
-if (LM_DEBUG)
-error_log($SQL,0);
- if ((int)$_POST['priority']==1){
- $SQL="SELECT notification_id FROM telegram_messages WHERE notification_id=".(int) $_POST['notification_id'];
- $result=$dba->Select($SQL);
- if (empty($result)){
-      $SQL="SELECT assets_users FROM assets where asset_id=".get_whole_path_ids('asset',(int) $_POST["main_asset_id"],1)[0];
-                if (LM_DEBUG)
-                error_log($SQL,0); 
-                $row=$dba->getRow($SQL);
-                if(!empty($row))
-                {
-                $users_to_message=json_decode($row['assets_users'],true);
-                
-                foreach ($users_to_message as $user){
-                $SQL="SELECT user_level,telegram_chat_id FROM users WHERE user_id=".$user;
-                $row=$dba->getRow($SQL);
-                if ($row['user_level']<3 && !empty($row['telegram_chat_id'])){// we need to notify only the managers
-                $SQL="INSERT INTO telegram_messages (user_id,sensor_id,received_message,sensor_value,notification_id) VALUES (".$user.",0,0,0,".(int) $_POST['notification_id'].")";
-                $dba->Query($SQL);
-                if (LM_DEBUG)
-                error_log($SQL,0); 
-                }
-                if(is_user_working($user))
-                send_telegram_messages();
-                }
-                }
-                }
-       }
 
-}
+if (isset($_SESSION['ADD_NOTIFICATION']) && isset($_GET["new"]) || (isset($_GET["modify"]) && isset($_GET['notification_id']))){
+$own_notification=false;
+if (isset($_GET["modify"]) && !isset($_SESSION['MODIFY_NOTIFICATION']))
+    {
+    $SQL="SELECT user_id FROM notifications WHERE notification_id=".(int) $_POST["notification_id"];
+    $row=$dba->getRow($SQL);
+    if (empty($row) || $row['user_id']!=$_SESSION['user_id'])
+    lm_error(gettext("You have no privilige to modify this notification!"));
+    else
+    $own_notification=true;
+    }
+else if (isset($_GET["new"]) || isset($_SESSION['MODIFY_NOTIFICATION']) || $own_notification){
 
-if (isset($_SESSION['ADD_NOTIFICATION']) && isset($_GET["new"]) || (isset($_SESSION['MODIFY_NOTIFICATION']) && isset($_GET["modify"]) && isset($_GET['notification_id']))){
-if (isset($_GET['notification_id'])){
-$SQL="SELECT * FROM notifications WHERE notification_id='".(int) $_GET['notification_id']."'";
-$notification_row=$dba->getRow($SQL);}
-echo "<div id=\"notification_form\" class=\"card\">\n";
-?>
-<div class="card-header">
-<strong><?php 
-if (isset($_GET["new"]))
-    echo gettext("New notification ");
-else if (isset($_GET["modify"]))
-    echo gettext("Modify notification ");
-?></strong>
-</div><?php //card header 
+    if (isset($_GET['notification_id'])){
+    $SQL="SELECT * FROM notifications WHERE notification_id='".(int) $_GET['notification_id']."'";
+    $notification_row=$dba->getRow($SQL);}
+    echo "<div id=\"notification_form\" class=\"card\">\n";
+    ?>
+    <div class="card-header">
+    <strong><?php 
+    if (isset($_GET["new"]))
+        echo gettext("New notification ");
+    else if (isset($_GET["modify"]))
+        echo gettext("Modify notification ");
+    ?></strong>
+    </div><?php //card header 
 
-//we need to extend the assets e.g. if the main asset is 'air system' it's better to add its children e.g. 'air compressor 1', 'air_compressor 2', 'buffer'...
-/*
-$i=0;
-foreach ($users_assets as $users_asset_id){
-$i++;
-$SQL="SELECT grouped_asset,asset_id FROM assets WHERE asset_id=".$users_asset_id;
-$row=$dba->getRow($SQL);
-if ($row['grouped_asset']==1)
-{
-$SQL="SELECT asset_id FROM assets WHERE asset_parent_id=".$row['asset_id'];
-$result=$dba->Select($SQL);
-    if ($dba->affectedRows()>0){
-        foreach($result as $row){
-        array_splice( $users_assets, $i, 0, $row['asset_id'] ); 
+    //we need to extend the assets e.g. if the main asset is 'air system' it's better to add its children e.g. 'air compressor 1', 'air_compressor 2', 'buffer'...
+    /*
+    $i=0;
+    foreach ($users_assets as $users_asset_id){
+    $i++;
+    $SQL="SELECT grouped_asset,asset_id FROM assets WHERE asset_id=".$users_asset_id;
+    $row=$dba->getRow($SQL);
+    if ($row['grouped_asset']==1)
+    {
+    $SQL="SELECT asset_id FROM assets WHERE asset_parent_id=".$row['asset_id'];
+    $result=$dba->Select($SQL);
+        if ($dba->affectedRows()>0){
+            foreach($result as $row){
+            array_splice( $users_assets, $i, 0, $row['asset_id'] ); 
+            }
         }
     }
-}
 
-}
-*/
+    }
+    */
 
-?>
+    ?>
 
-<div class="card-body card-block">
+    <div class="card-body card-block">
 
-<form action="index.php" name="notification_form" id="notification_form" method="post" enctype="multipart/form-data" class="form-horizontal">
+    <form action="index.php" name="notification_form" id="notification_form" method="post" enctype="multipart/form-data" class="form-horizontal">
 
-<?php
-echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-2\">\n";
-        echo "<label for=\"main_asset_id\" class=\" form-control-label\">".gettext("Asset:")."</label>";
-    echo "</div>\n";
+    <?php
+    echo "<div class=\"row form-group\">";
+        echo "<div class=\"col col-md-2\">\n";
+            echo "<label for=\"main_asset_id\" class=\" form-control-label\">".gettext("Asset:")."</label>";
+        echo "</div>\n";
 
-    echo "<div class=\"col col-md-3\">";
-        echo "<select name=\"main_asset_id\" id=\"main_asset_id\" class=\"form-control\" required";
-        if (isset($_GET['modify']))
-        echo " onChange=\"location.href='index.php?page=notifications&notification_id=".(int) $_GET['notification_id']."&modify=1&mod_asset_id='+this.value\"";
-        echo ">\n";
-        echo "<option value=''>".gettext("Select an asset!")."</option>\n";
-        foreach($users_assets as $asset_id) 
-        {
-       
-        echo "<option value=\"".$asset_id."\"";
-        if (isset($_GET['modify']) && !isset($_GET['mod_asset_id']) && $notification_row['main_asset_id']==$asset_id || (isset($_GET['mod_asset_id']) && $_GET['mod_asset_id']==$asset_id))
-        echo " selected";
+        echo "<div class=\"col col-md-3\">";
+            echo "<select name=\"main_asset_id\" id=\"main_asset_id\" class=\"form-control\" required";
+            if (isset($_GET['modify']))
+            echo " onChange=\"location.href='index.php?page=notifications&notification_id=".(int) $_GET['notification_id']."&modify=1&mod_asset_id='+this.value\"";
+            echo ">\n";
+            echo "<option value=''>".gettext("Select an asset!")."</option>\n";
+            foreach($users_assets as $asset_id) 
+            {
         
-        echo ">".get_asset_name_from_id($asset_id,$lang)."</option>\n";
-        }
-        echo "</select>\n";
+            echo "<option value=\"".$asset_id."\"";
+            if (isset($_GET['modify']) && !isset($_GET['mod_asset_id']) && $notification_row['main_asset_id']==$asset_id || (isset($_GET['mod_asset_id']) && $_GET['mod_asset_id']==$asset_id))
+            echo " selected";
+            
+            echo ">".get_asset_name_from_id($asset_id,$lang)."</option>\n";
+            }
+            echo "</select>\n";
+        echo "</div>";
     echo "</div>";
-echo "</div>";
 
-if ($_SESSION['user_level']<4 && isset($_GET['modify']) && ($notification_row['main_asset_id']>0 || (isset($_GET['mod_asset_id']) && $_GET['mod_asset_id']>0)))
-{//the operators shouldn't change the asset_id
-echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-2\">\n";
-        echo "<label for=\"asset_id\" class=\" form-control-label\">".gettext("Asset:")."</label>";
-    echo "</div>\n";
+    if ($_SESSION['user_level']<4 && isset($_GET['modify']) && ($notification_row['main_asset_id']>0 || (isset($_GET['mod_asset_id']) && $_GET['mod_asset_id']>0)))
+    {//the operators shouldn't change the asset_id
+    echo "<div class=\"row form-group\">";
+        echo "<div class=\"col col-md-2\">\n";
+            echo "<label for=\"asset_id\" class=\" form-control-label\">".gettext("Asset:")."</label>";
+        echo "</div>\n";
 
-echo "<div id=\"tree\" class=\"col col-md-3\">\n";
-echo "<ul id=\"treeData\" style=\"display: none;\">\n";
-$resp="";
-include(INCLUDES_PATH."asset_tree_func.php");
-if (isset($_GET['mod_asset_id']))
-echo tree_construct($_GET['mod_asset_id'],0);
-else
-echo tree_construct($notification_row['main_asset_id'],0);    
-echo "</ul></div>";
-if (isset($_GET['modify']) && $notification_row['asset_id']>0){
-echo "<div id=\"asset_name\">";
-$n="";
-foreach (get_whole_path("asset",$notification_row['asset_id'],1) as $k){
-if ($n=="") // the first element is the main asset_id -> ignore it
-$n=" ";
-else
-$n.=$k."-><wbr>";}
+    echo "<div id=\"tree\" class=\"col col-md-3\">\n";
+    echo "<ul id=\"treeData\" style=\"display: none;\">\n";
+    $resp="";
+    include(INCLUDES_PATH."asset_tree_func.php");
+    if (isset($_GET['mod_asset_id']))
+    echo tree_construct($_GET['mod_asset_id'],0);
+    else
+    echo tree_construct($notification_row['main_asset_id'],0);    
+    echo "</ul></div>";
+    if (isset($_GET['modify']) && $notification_row['asset_id']>0){
+    echo "<div id=\"asset_name\">";
+    $n="";
+    foreach (get_whole_path("asset",$notification_row['asset_id'],1) as $k){
+    if ($n=="") // the first element is the main asset_id -> ignore it
+    $n=" ";
+    else
+    $n.=$k."-><wbr>";}
 
-if ($n!="")
-echo substr($n,0,-7);
-echo "</div>";
-}   
-else
-echo "<div id=\"asset_name\"></div>";
-echo "</div>";
-}
-echo "<input type='hidden' name='asset_id' id='asset_id'>";
-
-
-
-echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-2\">\n";
-        echo "<label for=\"notification_type\" class=\" form-control-label\">".gettext("Notification type:")."</label>";
-    echo "</div>\n";
-
-    echo "<div class=\"col col-md-3\">";
-        echo "<select name=\"notification_type\" id=\"notification_type\" class=\"form-control\" required>";
-        echo "<option value=''>".gettext("Select!")."\n";
-  //$notification_types from lm-settings.php
-        foreach ($notification_types as $id=>$notification_type)
-        {
-        echo "<option value=\"".++$id."\"";
-        if (isset($_GET["modify"]) && $notification_row['notification_type']==$id)
-        echo " selected";
-        echo ">".$notification_type."</option>\n";
-        
-        }
-         echo "</select>\n";
+    if ($n!="")
+    echo substr($n,0,-7);
     echo "</div>";
-echo "</div>"; 
+    }   
+    else
+    echo "<div id=\"asset_name\"></div>";
+    echo "</div>";
+    }
+    echo "<input type='hidden' name='asset_id' id='asset_id'>";
 
-echo "<div class=\"row form-group\">";
-    echo "<div class=\"col col-md-2\">\n";
-        echo "<label for=\"priority\" class=\" form-control-label\">".gettext("Priority:")."</label>";
-    echo "</div>\n";
 
-    echo "<div class=\"col col-md-3\">";
-        echo "<select name=\"priority\" id=\"priority\" class=\"form-control\" required>";
-        echo "<option value=''>".gettext("Select!")."</option>\n";
-        foreach($priority_types as $id => $priority_type) //$priority_types from config/lm-settings.php
-        {
-       
-        echo "<option value=\"".++$id."\"";//++$id because we store priority>0
-        if (isset($_GET['modify']) && $notification_row['priority']==$id)
-        echo " selected";
+
+    echo "<div class=\"row form-group\">";
+        echo "<div class=\"col col-md-2\">\n";
+            echo "<label for=\"notification_type\" class=\" form-control-label\">".gettext("Notification type:")."</label>";
+        echo "</div>\n";
+
+        echo "<div class=\"col col-md-3\">";
+            echo "<select name=\"notification_type\" id=\"notification_type\" class=\"form-control\" required>";
+            echo "<option value=''>".gettext("Select!")."\n";
+    //$notification_types from lm-settings.php
+            foreach ($notification_types as $id=>$notification_type)
+            {
+            echo "<option value=\"".++$id."\"";
+            if (isset($_GET["modify"]) && $notification_row['notification_type']==$id)
+            echo " selected";
+            echo ">".$notification_type."</option>\n";
+            
+            }
+            echo "</select>\n";
+        echo "</div>";
+    echo "</div>"; 
+
+    echo "<div class=\"row form-group\">";
+        echo "<div class=\"col col-md-2\">\n";
+            echo "<label for=\"priority\" class=\" form-control-label\">".gettext("Priority:")."</label>";
+        echo "</div>\n";
+
+        echo "<div class=\"col col-md-3\">";
+            echo "<select name=\"priority\" id=\"priority\" class=\"form-control\" required>";
+            echo "<option value=''>".gettext("Select!")."</option>\n";
+            foreach($priority_types as $id => $priority_type) //$priority_types from config/lm-settings.php
+            {
         
-        echo ">".$priority_type."</option>\n";
-        }
-        echo "</select>\n";
+            echo "<option value=\"".++$id."\"";//++$id because we store priority>0
+            if (isset($_GET['modify']) && $notification_row['priority']==$id)
+            echo " selected";
+            
+            echo ">".$priority_type."</option>\n";
+            }
+            echo "</select>\n";
+        echo "</div>";
+        
     echo "</div>";
     
-echo "</div>";
- 
-if ($_SESSION['CAN_WRITE_LANG1']) {
-echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"notification_short_".LANG1."\" class=\"form-control-label\">".gettext("Notification short (max.").$dba->get_max_fieldlength('notifications','notification_short_'.LANG1).":)</label></div>\n";
-echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"notification_short_".LANG1."\" name=\"notification_short_".LANG1."\" maxlength='".$dba->get_max_fieldlength('notifications','notification_short_'.LANG1)."' class=\"form-control\"";
+    if ($_SESSION['CAN_WRITE_LANG1']) {
+    echo "<div class=\"row form-group\">";
+    echo "<div class=\"col col-md-2\"><label for=\"notification_short_".LANG1."\" class=\"form-control-label\">".gettext("Notification short (max.").$dba->get_max_fieldlength('notifications','notification_short_'.LANG1).":)</label></div>\n";
+    echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"notification_short_".LANG1."\" name=\"notification_short_".LANG1."\" maxlength='".$dba->get_max_fieldlength('notifications','notification_short_'.LANG1)."' class=\"form-control\"";
 
-if (isset($_GET["modify"]))
-echo " value=\"".$notification_row['notification_short_'.LANG1]."\"";
+    if (isset($_GET["modify"]))
+    echo " value=\"".$notification_row['notification_short_'.LANG1]."\"";
 
-echo " required></div>\n";
-echo "</div>";   
- 
- 
-echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"notification\" class=\" form-control-label\">".gettext("Notification:")."</label></div>";
-echo "<div class=\"col-12 col-md-9\"><div id='worktext_lenght'></div><textarea name=\"notification_".LANG1."\" id=\"notification_".LANG1."\" rows=\"9\" placeholder=\"".gettext("notification")."\" class=\"form-control\" onKeyup=\"document.getElementById('worktext_lenght').innerHTML='".gettext('Characters left: ')."'+(".$dba->get_max_fieldlength('notifications','notification_'.LANG1)."-this.value.length)\">";
-if (isset($_GET["modify"]))
-echo $notification_row['notification_'.LANG1];
+    echo " required></div>\n";
+    echo "</div>";   
+    
+    
+    echo "<div class=\"row form-group\">";
+    echo "<div class=\"col col-md-2\"><label for=\"notification\" class=\" form-control-label\">".gettext("Notification:")."</label></div>";
+    echo "<div class=\"col-12 col-md-9\"><div id='worktext_lenght'></div><textarea name=\"notification_".LANG1."\" id=\"notification_".LANG1."\" rows=\"9\" placeholder=\"".gettext("notification")."\" class=\"form-control\" onKeyup=\"document.getElementById('worktext_lenght').innerHTML='".gettext('Characters left: ')."'+(".$dba->get_max_fieldlength('notifications','notification_'.LANG1)."-this.value.length)\">";
+    if (isset($_GET["modify"]))
+    echo $notification_row['notification_'.LANG1];
 
-echo "</textarea></div>\n";
-echo "</div>\n";
-}
+    echo "</textarea></div>\n";
+    echo "</div>\n";
+    }
 
 
-if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
-echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"notification_short_".LANG2."\" class=\"form-control-label\">".gettext("Notification short (").LANG2.", max.".$dba->get_max_fieldlength('notifications','notification_short_'.LANG2)."):</label></div>\n";
-echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"notification_short_".LANG2."\" name=\"notification_short_".LANG2."\" maxlength='".$dba->get_max_fieldlength('notifications','notification_short_'.LANG2)."' class=\"form-control\"";
+    if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+    echo "<div class=\"row form-group\">";
+    echo "<div class=\"col col-md-2\"><label for=\"notification_short_".LANG2."\" class=\"form-control-label\">".gettext("Notification short (").LANG2.", max.".$dba->get_max_fieldlength('notifications','notification_short_'.LANG2)."):</label></div>\n";
+    echo "<div class=\"col col-md-3\"><input type=\"text\" id=\"notification_short_".LANG2."\" name=\"notification_short_".LANG2."\" maxlength='".$dba->get_max_fieldlength('notifications','notification_short_'.LANG2)."' class=\"form-control\"";
 
-if (isset($_GET["modify"]))
-echo " value=\"".$notification_row['notification_short_'.LANG2]."\"";
+    if (isset($_GET["modify"]))
+    echo " value=\"".$notification_row['notification_short_'.LANG2]."\"";
 
-echo " required></div>\n";
-echo "</div>";
-
-
-echo "<div class=\"row form-group\">";
-echo "<div class=\"col col-md-2\"><label for=\"notification_".LANG2."\" class=\" form-control-label\">".gettext("Notification (").LANG2."):</label></div>";
-echo "<div class=\"col-12 col-md-9\"><div id='worktext_".LANG2."_lenght'></div><textarea name=\"notification_".LANG2."\" id=\"notification_".LANG2."\" rows=\"9\" placeholder=\"".gettext("notification")." ".LANG2."\" class=\"form-control\" onKeyup=\"document.getElementById('worktext_".LANG2."_lenght').innerHTML='".gettext('Characters left: ')."'+(".$dba->get_max_fieldlength('notifications','notification_'.LANG2)."-this.value.length)\">";
-if (isset($_GET["modify"]))
-echo $notification_row['notification_'.LANG2];
-
-echo "</textarea></div>\n";
-echo "</div>\n";
-}
-
-if (isset($_GET["modify"])){
-echo "<INPUT TYPE=\"hidden\" name=\"notification_id\" id=\"notification_id\" VALUE=\"".$_GET['notification_id']."\">";
-echo "<input type='hidden' name='modify_notification' id='modify_notification' value='1'>\n";}
-    else if (isset($_GET['new']))
-        echo "<input type='hidden' name='new_notification' id='new_notification' value='1'>\n";
-
-echo "<INPUT TYPE=\"hidden\" name=\"page\" id=\"page\" VALUE=\"notifications\">";
-echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
+    echo " required></div>\n";
+    echo "</div>";
 
 
-/*
-if (lm_isset_int('location_id')){
-echo "<INPUT TYPE=\"hidden\" name=\"asset_id\" id=\"asset_id\" value=\"0\">";
-echo "<INPUT TYPE=\"hidden\" name=\"location_id\" id=\"location_id\" VALUE=\"".lm_isset_int('asset_id')."\">";
-}*/
-echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Send")." </button>\n";
-echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
-echo "</form></div>";
-echo "<script>\n";
+    echo "<div class=\"row form-group\">";
+    echo "<div class=\"col col-md-2\"><label for=\"notification_".LANG2."\" class=\" form-control-label\">".gettext("Notification (").LANG2."):</label></div>";
+    echo "<div class=\"col-12 col-md-9\"><div id='worktext_".LANG2."_lenght'></div><textarea name=\"notification_".LANG2."\" id=\"notification_".LANG2."\" rows=\"9\" placeholder=\"".gettext("notification")." ".LANG2."\" class=\"form-control\" onKeyup=\"document.getElementById('worktext_".LANG2."_lenght').innerHTML='".gettext('Characters left: ')."'+(".$dba->get_max_fieldlength('notifications','notification_'.LANG2)."-this.value.length)\">";
+    if (isset($_GET["modify"]))
+    echo $notification_row['notification_'.LANG2];
 
-echo "$(\"#notification_form\").validate({
-  rules: {
-        asset_id:{
-        required: true
-        },
-        priority:{
-        required: true
-        },
-        notification_type:{
-        required:true
-        }";
-        if ($_SESSION['CAN_WRITE_LANG1'])
-        echo ",
-        notification_short_".LANG1.": {
-        required: true,
-        maxlength: ".$dba->get_max_fieldlength('notifications','notification_short_'.LANG1)."
-        },
-        notification_".LANG1.": {
-        maxlength: ".$dba->get_max_fieldlength('notifications','notification_'.LANG1)."
-        }";
-        if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
-        echo ",notification_short_".LANG2.": {
-        required: true,
-        maxlength: ".$dba->get_max_fieldlength('notifications','notification_short_'.LANG2)."
-        },
-        notification: {
-        maxlength: ".$dba->get_max_fieldlength('notifications','notification_'.LANG2)."
-        }";
-        }
-        
-      echo " }
-})\n";
-echo "</script>\n";
+    echo "</textarea></div>\n";
+    echo "</div>\n";
+    }
+
+    if (isset($_GET["modify"])){
+    echo "<INPUT TYPE=\"hidden\" name=\"notification_id\" id=\"notification_id\" VALUE=\"".$_GET['notification_id']."\">";
+    echo "<input type='hidden' name='modify_notification' id='modify_notification' value='1'>\n";}
+        else if (isset($_GET['new']))
+            echo "<input type='hidden' name='new_notification' id='new_notification' value='1'>\n";
+
+    echo "<INPUT TYPE=\"hidden\" name=\"page\" id=\"page\" VALUE=\"notifications\">";
+    echo "<input type=\"hidden\" name=\"valid\" id=\"valid\" value=\"".$_SESSION["tit_id"]."\">";
+
+
+    /*
+    if (lm_isset_int('location_id')){
+    echo "<INPUT TYPE=\"hidden\" name=\"asset_id\" id=\"asset_id\" value=\"0\">";
+    echo "<INPUT TYPE=\"hidden\" name=\"location_id\" id=\"location_id\" VALUE=\"".lm_isset_int('asset_id')."\">";
+    }*/
+    echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
+    echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Send")." </button>\n";
+    echo "<button type=\"reset\" class=\"btn btn-danger btn-sm\"><i class=\"fa fa-ban\"></i> ".gettext("Reset")." </button></div>\n";
+    echo "</form></div>";
+    echo "<script>\n";
+
+    echo "$(\"#notification_form\").validate({
+    rules: {
+            asset_id:{
+            required: true
+            },
+            priority:{
+            required: true
+            },
+            notification_type:{
+            required:true
+            }";
+            if ($_SESSION['CAN_WRITE_LANG1'])
+            echo ",
+            notification_short_".LANG1.": {
+            required: true,
+            maxlength: ".$dba->get_max_fieldlength('notifications','notification_short_'.LANG1)."
+            },
+            notification_".LANG1.": {
+            maxlength: ".$dba->get_max_fieldlength('notifications','notification_'.LANG1)."
+            }";
+            if (LANG2_AS_SECOND_LANG && $_SESSION['CAN_WRITE_LANG2']){
+            echo ",notification_short_".LANG2.": {
+            required: true,
+            maxlength: ".$dba->get_max_fieldlength('notifications','notification_short_'.LANG2)."
+            },
+            notification: {
+            maxlength: ".$dba->get_max_fieldlength('notifications','notification_'.LANG2)."
+            }";
+            }
+            
+        echo " }
+    })\n";
+    echo "</script>\n";
 
 }
-
+}
 
 ?>
 
@@ -647,9 +690,9 @@ echo "<i class=\"fa fa-warning\"></i>".gettext("All")."</a>";
 
 foreach ($notification_statuses as $key => $value){
 echo "<a class=\"dropdown-item media bg-flat-color-10\"";
-if (isset($_SESSION['notification_status']) && $_SESSION['notification_status']==$key-1)
+if (isset($_SESSION['notification_status']) && $_SESSION['notification_status']==++$key)
 echo " style=\"background-color:orange;\"";
-echo " href=\"index.php?page=notifications&notification_status=".++$key."\">\n";
+echo " href=\"index.php?page=notifications&notification_status=".$key."\">\n";
 echo "<i class=\"fa fa-warning\"></i>\n";
 echo $value."</a>";
                             
@@ -829,14 +872,17 @@ if (!isset($row1) || $row1['num']==0)
                             
                             
                              
-                             if (isset($_SESSION['MODIFY_NOTIFICATION']) && ($row['notification_status']<3)){
+                             if ((isset($_SESSION['MODIFY_NOTIFICATION']) || $row['user_id']==$_SESSION['user_id']) && ($row['notification_status']<3)){
                             echo "<a class=\"nav-link\" href=\"index.php?modify=1&page=notifications&asset_id=".$row['asset_id']."&notification_id=".$row['notification_id']."\"><i class=\"fa fa-user\"></i> ";
                              echo gettext("Modify")."</a>";
                              }
                              
-                             if (isset($_SESSION['MODIFY_NOTIFICATION']) && $row['notification_status']==1 && $_SESSION['user_level']<3){
+                             if (isset($_SESSION['MODIFY_NOTIFICATION']) && $row['notification_status']<3 && $_SESSION['user_level']<3){
                               echo "<a class=\"nav-link\" href=\"index.php?set_notification_status=2&page=notifications&notification_id=".$row['notification_id']."&valid=".$_SESSION["tit_id"]."\"><i class=\"fa fa-user\"></i> ";
                              echo gettext("Set it confirmed")."</a>";
+                             
+                              echo "<a class=\"nav-link\" href=\"javascript:ajax_call('closing_notification','".$row["notification_id"]."','','','','".URL."index.php','for_ajaxcall')\" title=\"".gettext("Close this notification")."\"><i class='fa fa-info-circle'></i> ".gettext("Close this notification")."</a> ";
+                             
                              }
                              if (isset($_SESSION["DELETE_NOTIFICATION"]) && $row['user_id']==$_SESSION['user_id'] || $_SESSION['user_level']<3){
                              echo "<a class=\"nav-link\" href=\"index.php?set_notification_status=6&page=notifications&notification_id=".$row['notification_id']."&valid=".$_SESSION["tit_id"]."\"><i class=\"fa fa-user\"></i> ";
