@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Libremaint\n"
-"POT-Creation-Date: 2021-01-30 12:04+0100\n"
-"PO-Revision-Date: 2021-01-30 12:04+0100\n"
+"POT-Creation-Date: 2021-02-06 12:37+0100\n"
+"PO-Revision-Date: 2021-02-06 12:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu_HU\n"
@@ -79,7 +79,7 @@ msgid "Q"
 msgstr "L"
 
 #: config/lm-settings.php:139 config/lm-settings_orig.php:136
-#: includes/pdf_create/work_stat_by_assets.php:210 pages/notifications.php:582
+#: includes/pdf_create/work_stat_by_assets.php:210 pages/notifications.php:625
 msgid "Notifications"
 msgstr "Bejelentések"
 
@@ -252,7 +252,7 @@ msgid "CV"
 msgstr "SzÉ"
 
 #: config/lm-settings.php:180 config/lm-settings_orig.php:177
-#: includes/ajax_calls.php:2855
+#: includes/ajax_calls.php:2866
 msgid "Messages"
 msgstr "Üzenetek"
 
@@ -270,7 +270,7 @@ msgid "msgt"
 msgstr "üz.szöveg"
 
 #: config/lm-settings.php:184 config/lm-settings_orig.php:181
-#: includes/ajax_calls.php:1739
+#: includes/ajax_calls.php:1750
 msgid "Connections"
 msgstr "Csatlakozások"
 
@@ -288,7 +288,7 @@ msgid "NCt"
 msgstr "ÚCs"
 
 #: config/lm-settings.php:186 config/lm-settings_orig.php:183
-#: pages/connections.php:27
+#: pages/connections.php:76
 msgid "New connection"
 msgstr "Új csatlakozás"
 
@@ -296,17 +296,17 @@ msgstr "Új csatlakozás"
 msgid "NCo"
 msgstr "ÚCs"
 
-#: config/lm-settings.php:189 config/lm-settings.php:195
+#: config/lm-settings.php:189 config/lm-settings.php:196
 #: config/lm-settings_orig.php:186 config/lm-settings_orig.php:192
 msgid "maintenance"
 msgstr "karbantartás"
 
-#: config/lm-settings.php:189 config/lm-settings.php:195
+#: config/lm-settings.php:189 config/lm-settings.php:196
 #: config/lm-settings_orig.php:186 config/lm-settings_orig.php:192
 msgid "fix"
 msgstr "javítás"
 
-#: config/lm-settings.php:189 config/lm-settings.php:195
+#: config/lm-settings.php:189 config/lm-settings.php:196
 #: config/lm-settings_orig.php:186 config/lm-settings_orig.php:192
 msgid "development"
 msgstr "fejlesztés"
@@ -327,92 +327,96 @@ msgstr "Sürgős"
 msgid "Schedulable"
 msgstr "Tervezhető"
 
-#: config/lm-settings.php:191 config/lm-settings.php:193
+#: config/lm-settings.php:192 config/lm-settings.php:194
 #: config/lm-settings_orig.php:188 config/lm-settings_orig.php:190
 msgid "Ongoing"
 msgstr "Folyamatban"
 
-#: config/lm-settings.php:191 config/lm-settings_orig.php:188
+#: config/lm-settings.php:192 config/lm-settings_orig.php:188
 msgid "Suspended (lack of time)"
 msgstr "Felfüggesztve (időhiány)"
 
-#: config/lm-settings.php:191 config/lm-settings_orig.php:188
+#: config/lm-settings.php:192 config/lm-settings_orig.php:188
 msgid "Waiting for material"
 msgstr "Anyagra vár"
 
-#: config/lm-settings.php:191 config/lm-settings_orig.php:188
+#: config/lm-settings.php:192 config/lm-settings_orig.php:188
 msgid "Waiting for decision"
 msgstr "Döntésre vár"
 
-#: config/lm-settings.php:191 config/lm-settings_orig.php:188
+#: config/lm-settings.php:192 config/lm-settings_orig.php:188
 #: pages/workrequests.php:922
 msgid "Ready"
 msgstr "Kész"
 
-#: config/lm-settings.php:191 config/lm-settings.php:193
-#: config/lm-settings.php:196 config/lm-settings_orig.php:188
+#: config/lm-settings.php:192 config/lm-settings.php:194
+#: config/lm-settings.php:198 config/lm-settings_orig.php:188
 #: config/lm-settings_orig.php:190 config/lm-settings_orig.php:193
 msgid "Deleted"
 msgstr "Törölt"
 
-#: config/lm-settings.php:193 config/lm-settings_orig.php:190
-#: pages/notifications.php:646 pages/operators_works.php:318
+#: config/lm-settings.php:194 config/lm-settings_orig.php:190
+#: pages/notifications.php:689 pages/operators_works.php:318
 #: pages/stock.php:264 pages/workorders.php:870 pages/works.php:566
 msgid "All"
 msgstr "Összes"
 
-#: config/lm-settings.php:193 config/lm-settings_orig.php:190
+#: config/lm-settings.php:194 config/lm-settings_orig.php:190
 msgid "Active"
 msgstr "Aktív"
 
-#: config/lm-settings.php:193 config/lm-settings_orig.php:190
+#: config/lm-settings.php:194 config/lm-settings_orig.php:190
 msgid "Finished"
 msgstr "Befejezett"
 
-#: config/lm-settings.php:196 config/lm-settings_orig.php:193
+#: config/lm-settings.php:196
+msgid "safety"
+msgstr "biztonság"
+
+#: config/lm-settings.php:198 config/lm-settings_orig.php:193
 #: includes/ajax_calls.php:915
 #: includes/modals/modal_add_new_product_form.php:119
 msgid "New"
 msgstr "Új"
 
-#: config/lm-settings.php:196 config/lm-settings_orig.php:193
+#: config/lm-settings.php:198 config/lm-settings_orig.php:193
 msgid "Confirmed"
 msgstr "Megerősítve"
 
-#: config/lm-settings.php:196 config/lm-settings_orig.php:193
+#: config/lm-settings.php:198 config/lm-settings_orig.php:193
 msgid "Work in progress"
 msgstr "Folyamatban"
 
-#: config/lm-settings.php:196 config/lm-settings_orig.php:193
+#: config/lm-settings.php:198 config/lm-settings_orig.php:193
 msgid "Resolved"
 msgstr "Megoldott"
 
-#: config/lm-settings.php:196 config/lm-settings_orig.php:193
+#: config/lm-settings.php:198 config/lm-settings_orig.php:193
 msgid "Closed"
 msgstr "Lezárt"
 
-#: config/lm-settings.php:198 config/lm-settings_orig.php:195
+#: config/lm-settings.php:200 config/lm-settings_orig.php:195
 msgid "Male"
 msgstr "Apa"
 
-#: config/lm-settings.php:198 config/lm-settings_orig.php:195
+#: config/lm-settings.php:200 config/lm-settings_orig.php:195
 msgid "Female"
 msgstr "Anya"
 
-#: config/lm-settings.php:198 config/lm-settings_orig.php:195
-#: pages/connections.php:159
+#: config/lm-settings.php:200 config/lm-settings_orig.php:195
+#: pages/connections.php:255
 msgid "Same"
 msgstr "Megegyező"
 
-#: config/lm-settings.php:200 config/lm-settings_orig.php:197
+#: config/lm-settings.php:202 config/lm-settings_orig.php:197
 msgid "Mr."
 msgstr "Úr"
 
-#: config/lm-settings.php:201 config/lm-settings_orig.php:198
+#: config/lm-settings.php:203 config/lm-settings_orig.php:198
 msgid "Mrs."
 msgstr "Hölgy"
 
-#: config/lm-settings.php:202 config/lm-settings_orig.php:199
+#: config/lm-settings.php:204 config/lm-settings_orig.php:199
 msgid "Ms."
 msgstr "Hölgy"
 
@@ -420,11 +424,19 @@ msgstr "Hölgy"
 msgid "Failed connecting to database"
 msgstr "Nem sikerült csatlakozni az adatbázishoz"
 
-#: includes/ajax_calls.php:12 includes/ajax_calls.php:978
-#: includes/ajax_calls.php:2094 includes/ajax_calls.php:2324
-#: includes/ajax_calls.php:2448 includes/ajax_calls.php:2542
-#: pages/operators_works.php:240 pages/partners.php:120 pages/settings.php:63
-#: pages/users.php:383 pages/works.php:422
+#: includes/ajax_calls.php:12 includes/ajax_calls.php:101
+#: includes/ajax_calls.php:188 includes/ajax_calls.php:390
+#: includes/ajax_calls.php:535 includes/ajax_calls.php:578
+#: includes/ajax_calls.php:719 includes/ajax_calls.php:978
+#: includes/ajax_calls.php:1217 includes/ajax_calls.php:1296
+#: includes/ajax_calls.php:1735 includes/ajax_calls.php:1904
+#: includes/ajax_calls.php:1958 includes/ajax_calls.php:2105
+#: includes/ajax_calls.php:2335 includes/ajax_calls.php:2368
+#: includes/ajax_calls.php:2459 includes/ajax_calls.php:2553
+#: includes/ajax_calls.php:2773 includes/ajax_calls.php:2798
+#: includes/ajax_calls.php:2987 pages/operators_works.php:240
+#: pages/partners.php:120 pages/settings.php:63 pages/users.php:383
+#: pages/work_stats.php:67 pages/works.php:422
 msgid "Submit"
 msgstr "Ment"
 
@@ -452,13 +464,13 @@ msgstr "Termékfajta hozzáadása"
 #: includes/ajax_calls.php:914 includes/ajax_calls.php:958
 #: includes/ajax_calls.php:1080 includes/ajax_calls.php:1125
 #: includes/ajax_calls.php:1152 includes/ajax_calls.php:1279
-#: includes/ajax_calls.php:1678 includes/ajax_calls.php:1700
-#: includes/ajax_calls.php:1714 includes/ajax_calls.php:2710
+#: includes/ajax_calls.php:1689 includes/ajax_calls.php:1711
+#: includes/ajax_calls.php:1725 includes/ajax_calls.php:2721
 #: includes/modals/modal_add_new_product_form.php:31
 #: includes/modals/modal_add_new_product_form.php:60
 #: includes/modals/modal_add_new_product_form.php:118
 #: includes/modals/modal_add_new_product_form.php:223 pages/assets.php:417
-#: pages/assets.php:460 pages/categories.php:85 pages/connections.php:45
+#: pages/assets.php:460 pages/categories.php:85 pages/connections.php:100
 #: pages/counters.php:52 pages/locations.php:89 pages/partners.php:81
 #: pages/products.php:259 pages/products.php:312 pages/products.php:446
 #: pages/stock.php:222 pages/users.php:278 pages/users.php:305
@@ -470,6 +482,19 @@ msgstr "Válassz"
 #: includes/ajax_calls.php:69
 msgid "No category"
 msgstr "Nincs termékfajta"
+
+#: includes/ajax_calls.php:102 includes/ajax_calls.php:189
+#: includes/ajax_calls.php:391 includes/ajax_calls.php:538
+#: includes/ajax_calls.php:579 includes/ajax_calls.php:720
+#: includes/ajax_calls.php:980 includes/ajax_calls.php:1218
+#: includes/ajax_calls.php:1297 includes/ajax_calls.php:1736
+#: includes/ajax_calls.php:1905 includes/ajax_calls.php:1961
+#: includes/ajax_calls.php:2106 includes/ajax_calls.php:2336
+#: includes/ajax_calls.php:2370 includes/ajax_calls.php:2460
+#: includes/ajax_calls.php:2554 pages/notifications.php:579
+#: pages/partners.php:121 pages/settings.php:64 pages/users.php:384
+msgid "Reset"
+msgstr "Alaphelyzet"
 
 #: includes/ajax_calls.php:104
 msgid "You have no permission to modify an asset!"
@@ -552,7 +577,7 @@ msgstr "Bizalmas:"
 
 #: includes/ajax_calls.php:380
 #: includes/modals/modal_add_new_product_form.php:208 pages/assets.php:513
-#: pages/notifications.php:915 pages/products.php:432 pages/workorders.php:612
+#: pages/notifications.php:961 pages/products.php:432 pages/workorders.php:612
 #: pages/workrequests.php:394 pages/workrequests.php:488
 #: pages/workrequests.php:1106 pages/works.php:311
 msgid "No"
@@ -592,20 +617,6 @@ msgstr "Termék:"
 #: includes/modals/modal_add_new_product_form.php:9 pages/products.php:238
 msgid "New product"
 msgstr "Új termék"
-
-#: includes/ajax_calls.php:535 includes/ajax_calls.php:1947
-#: includes/ajax_calls.php:2357
-#: includes/modals/modal_add_new_product_form.php:243 pages/assets.php:627
-#: pages/categories.php:122 pages/counters.php:84 pages/locations.php:125
-#: pages/messages.php:100 pages/products.php:461
-msgid " Submit "
-msgstr " Ment"
-
-#: includes/ajax_calls.php:538 includes/ajax_calls.php:1950
-#: includes/ajax_calls.php:2359 pages/assets.php:630 pages/categories.php:125
-#: pages/counters.php:87 pages/locations.php:128 pages/products.php:464
-msgid " Reset "
-msgstr " Alaphelyzet"
 
 #: includes/ajax_calls.php:565
 msgid "Add a workorder to "
@@ -647,7 +658,7 @@ msgstr "Min. mennyiség"
 msgid "Partner:"
 msgstr "Partner:"
 
-#: includes/ajax_calls.php:926 includes/ajax_calls.php:1979
+#: includes/ajax_calls.php:926 includes/ajax_calls.php:1990
 #: pages/partners.php:66
 msgid "Partner name:"
 msgstr "Partnernév:"
@@ -684,20 +695,16 @@ msgstr "hely"
 msgid "There can be only 1 such item in the stock!"
 msgstr "Csak egy ilyen cikk lehet raktáron!"
 
-#: includes/ajax_calls.php:980
-msgid " Reset"
-msgstr "Alaphelyzet"
-
 #: includes/ajax_calls.php:982 includes/ajax_calls.php:1220
 #: includes/ajax_calls.php:1404 includes/ajax_calls.php:1498
-#: includes/ajax_calls.php:1561 includes/ajax_calls.php:1661
-#: includes/ajax_calls.php:1868 includes/ajax_calls.php:1906
-#: includes/ajax_calls.php:1961 includes/ajax_calls.php:2092
-#: includes/ajax_calls.php:2285 includes/ajax_calls.php:2558
+#: includes/ajax_calls.php:1561 includes/ajax_calls.php:1672
+#: includes/ajax_calls.php:1879 includes/ajax_calls.php:1917
+#: includes/ajax_calls.php:1972 includes/ajax_calls.php:2103
+#: includes/ajax_calls.php:2296 includes/ajax_calls.php:2569
 #: includes/workorder_consumption.php:97
 #: includes/workorders_consumption_from_asset_id.php:184
 #: pages/connection_types.php:30 pages/connection_types.php:98
-#: pages/connections.php:34 pages/connections.php:170 pages/messages.php:350
+#: pages/connections.php:83 pages/connections.php:266 pages/messages.php:350
 #: pages/operators_works.php:416 pages/users.php:30 pages/users.php:86
 #: pages/users.php:118 pages/users.php:198 pages/users.php:267
 #: pages/users.php:470 pages/works.php:727
@@ -780,13 +787,14 @@ msgstr "Munkautasítás(rövid):"
 #: includes/ajax_calls.php:1377 includes/ajax_calls.php:1542
 #: includes/ajax_calls.php:1606 includes/pdf_create/work_stat_by_assets.php:235
 #: includes/pdf_create/work_stat_by_assets.php:272
-#: includes/pdf_create/work_stat_by_assets.php:310
+#: includes/pdf_create/work_stat_by_assets.php:319
+#: includes/pdf_create/work_stat_by_assets.php:365
 msgid "Type:"
 msgstr "Típus:"
 
 #: includes/ajax_calls.php:1410 includes/workorder_consumption.php:108
 #: includes/workorders_consumption_from_asset_id.php:128
-#: pages/notifications.php:665 pages/operators_works.php:272
+#: pages/notifications.php:708 pages/operators_works.php:272
 #: pages/stock_movements.php:30 pages/workorders.php:887
 #: pages/workrequests.php:896
 msgid "Date"
@@ -854,7 +862,8 @@ msgstr "Munkaigény(rövid):"
 #: includes/ajax_calls.php:1549 includes/ajax_calls.php:1612
 #: includes/pdf_create/work_stat_by_assets.php:233
 #: includes/pdf_create/work_stat_by_assets.php:270
-#: includes/pdf_create/work_stat_by_assets.php:308 pages/notifications.php:454
+#: includes/pdf_create/work_stat_by_assets.php:317
+#: includes/pdf_create/work_stat_by_assets.php:363 pages/notifications.php:497
 #: pages/workorders.php:365 pages/workrequests.php:424
 #: pages/workrequests.php:650
 msgid "Priority:"
@@ -870,7 +879,8 @@ msgstr "Bejelentette:"
 
 #: includes/ajax_calls.php:1592 includes/pdf_create/work_stat_by_assets.php:231
 #: includes/pdf_create/work_stat_by_assets.php:267
-#: includes/pdf_create/work_stat_by_assets.php:305
+#: includes/pdf_create/work_stat_by_assets.php:314
+#: includes/pdf_create/work_stat_by_assets.php:360
 msgid "Notification time:"
 msgstr "Bejelentés ideje:"
 
@@ -879,279 +889,291 @@ msgid "Notification(short):"
 msgstr "Bejelentés (rövid):"
 
 #: includes/ajax_calls.php:1600 includes/pdf_create/work_stat_by_assets.php:240
-#: includes/pdf_create/work_stat_by_assets.php:277
-#: includes/pdf_create/work_stat_by_assets.php:315 pages/notifications.php:487
+#: includes/pdf_create/work_stat_by_assets.php:278
+#: includes/pdf_create/work_stat_by_assets.php:325
+#: includes/pdf_create/work_stat_by_assets.php:370 pages/notifications.php:530
 msgid "Notification:"
 msgstr "Bejelentés:"
 
-#: includes/ajax_calls.php:1645 includes/ajax_calls.php:1647
+#: includes/ajax_calls.php:1619 includes/pdf_create/work_stat_by_assets.php:284
+#: includes/pdf_create/work_stat_by_assets.php:331
+msgid "Closing time"
+msgstr "Lezárás ideje"
+
+#: includes/ajax_calls.php:1623 includes/pdf_create/work_stat_by_assets.php:281
+#: includes/pdf_create/work_stat_by_assets.php:328
+msgid "Reason to close"
+msgstr "Lezárás oka"
+
+#: includes/ajax_calls.php:1656 includes/ajax_calls.php:1658
 #: includes/show_assets_tree_menu_ajax.php:96 pages/products.php:622
 msgid "Handle connection"
 msgstr "Csatlakozások"
 
-#: includes/ajax_calls.php:1669 pages/connection_types.php:39
-#: pages/connections.php:37
+#: includes/ajax_calls.php:1680 pages/connection_types.php:39
+#: pages/connections.php:92
 msgid "Connection category:"
 msgstr "Csatlakozásfajta:"
 
-#: includes/ajax_calls.php:1691
+#: includes/ajax_calls.php:1702
 msgid "Connection:"
 msgstr "Csatlakozás:"
 
-#: includes/ajax_calls.php:1711 pages/connections.php:66
+#: includes/ajax_calls.php:1722 pages/connections.php:135
 msgid "Connection type:"
 msgstr "Csatlakozás jellege:"
 
-#: includes/ajax_calls.php:1762
+#: includes/ajax_calls.php:1773
 msgid "You are about to delete a connection. Are you sure?"
 msgstr "Törölsz egy csatlakozást. Biztos?"
 
-#: includes/ajax_calls.php:1765 includes/ajax_calls.php:1827
+#: includes/ajax_calls.php:1776 includes/ajax_calls.php:1838
 #: pages/workrequests.php:1003
 msgid "Delete"
 msgstr "Töröl"
 
-#: includes/ajax_calls.php:1778 includes/ajax_calls.php:1803
-#: includes/ajax_calls.php:1845 includes/ajax_calls.php:2605
+#: includes/ajax_calls.php:1789 includes/ajax_calls.php:1814
+#: includes/ajax_calls.php:1856 includes/ajax_calls.php:2616
 msgid "built in"
 msgstr "Beépítve"
 
-#: includes/ajax_calls.php:1780 includes/ajax_calls.php:1841
-#: includes/ajax_calls.php:2581 includes/ajax_calls.php:2619
+#: includes/ajax_calls.php:1791 includes/ajax_calls.php:1852
+#: includes/ajax_calls.php:2592 includes/ajax_calls.php:2630
 msgid "in stock"
 msgstr "raktáron"
 
-#: includes/ajax_calls.php:1839
+#: includes/ajax_calls.php:1850
 msgid "built in to here"
 msgstr "beépítve ide"
 
-#: includes/ajax_calls.php:1858
+#: includes/ajax_calls.php:1869
 msgid "There is no connection..."
 msgstr "Nincsen csatlakozás..."
 
-#: includes/ajax_calls.php:1872
+#: includes/ajax_calls.php:1883
 msgid "Add new counter to"
 msgstr "Új termék hozzáadása"
 
-#: includes/ajax_calls.php:1877
+#: includes/ajax_calls.php:1888
 msgid "Counter unit:"
 msgstr "Mértékegység :"
 
-#: includes/ajax_calls.php:1910 pages/counters.php:30
+#: includes/ajax_calls.php:1921 pages/counters.php:30
 msgid "New counter value"
 msgstr "Új számlálóérték"
 
-#: includes/ajax_calls.php:1921 pages/counters.php:44
+#: includes/ajax_calls.php:1932 pages/counters.php:44
 #: pages/workrequests.php:525
 msgid "Counter:"
 msgstr "Számláló:"
 
-#: includes/ajax_calls.php:1936
+#: includes/ajax_calls.php:1947
 msgid "Counter value (last "
 msgstr "Számláló érték (utolsó "
 
-#: includes/ajax_calls.php:1937 pages/counters.php:65 pages/counters.php:68
+#: includes/ajax_calls.php:1948 pages/counters.php:65 pages/counters.php:68
 #: pages/works.php:176
 msgid "Counter value"
 msgstr "Számlálóérték"
 
-#: includes/ajax_calls.php:1937
+#: includes/ajax_calls.php:1948
 msgid "The value must be greater than "
 msgstr "Nagyobbnak kell lenni, mint "
 
-#: includes/ajax_calls.php:1971
+#: includes/ajax_calls.php:1982
 msgid "Modify partner details..."
 msgstr "Partner módosítása..."
 
-#: includes/ajax_calls.php:1989
+#: includes/ajax_calls.php:2000
 msgid "Address:"
 msgstr "Cím:"
 
-#: includes/ajax_calls.php:2000
+#: includes/ajax_calls.php:2011
 msgid "contact"
 msgstr "kapcsolattartó"
 
-#: includes/ajax_calls.php:2002 pages/assets.php:481 pages/categories.php:113
+#: includes/ajax_calls.php:2013 pages/assets.php:481 pages/categories.php:113
 #: pages/locations.php:117 pages/users.php:435
 msgid "Name"
 msgstr "Név"
 
-#: includes/ajax_calls.php:2045
+#: includes/ajax_calls.php:2056
 msgid "Position"
 msgstr "Beosztás"
 
-#: includes/ajax_calls.php:2055 pages/partners.php:107 pages/partners.php:159
+#: includes/ajax_calls.php:2066 pages/partners.php:107 pages/partners.php:159
 #: pages/users.php:370 pages/users.php:435
 msgid "Phone"
 msgstr "Telefon"
 
-#: includes/ajax_calls.php:2065 pages/partners.php:102 pages/partners.php:159
+#: includes/ajax_calls.php:2076 pages/partners.php:102 pages/partners.php:159
 #: pages/users.php:362 pages/users.php:435
 msgid "Email"
 msgstr "Email"
 
-#: includes/ajax_calls.php:2079 pages/partners.php:111
+#: includes/ajax_calls.php:2090 pages/partners.php:111
 msgid "Partner tags:"
 msgstr "Partner címkék:"
 
-#: includes/ajax_calls.php:2095 includes/ajax_calls.php:2325
-#: includes/ajax_calls.php:2449 includes/ajax_calls.php:2543
-#: pages/notifications.php:536 pages/partners.php:121 pages/settings.php:64
-#: pages/users.php:384
-msgid "Reset"
-msgstr "Alaphelyzet"
-
-#: includes/ajax_calls.php:2112 includes/ajax_calls.php:2114
-#: includes/ajax_calls.php:2164
+#: includes/ajax_calls.php:2123 includes/ajax_calls.php:2125
+#: includes/ajax_calls.php:2175
 msgid "Assets with:"
 msgstr "Vagyontárgy ezzel:"
 
-#: includes/ajax_calls.php:2130 includes/ajax_calls.php:2194
+#: includes/ajax_calls.php:2141 includes/ajax_calls.php:2205
 #: includes/workorders_consumption_from_asset_id.php:29
-#: pages/notifications.php:712 pages/operators_works.php:285
+#: pages/notifications.php:755 pages/operators_works.php:285
 #: pages/workorders.php:892 pages/workrequests.php:901 pages/works.php:521
 msgid "Asset"
 msgstr "Vagyontárgy"
 
-#: includes/ajax_calls.php:2152
+#: includes/ajax_calls.php:2163
 msgid "There is no asset with this product."
 msgstr "Ez a termék nem szerepel egyetlen vagyontárgyban sem."
 
-#: includes/ajax_calls.php:2216
+#: includes/ajax_calls.php:2227
 msgid "There is no asset with this connection."
 msgstr "Nincs vagyontárgy ilyen csatlakozással."
 
-#: includes/ajax_calls.php:2226
+#: includes/ajax_calls.php:2237
 msgid "Products with:"
 msgstr "Termék ezzel:"
 
-#: includes/ajax_calls.php:2256 includes/workorder_consumption.php:108
+#: includes/ajax_calls.php:2267 includes/workorder_consumption.php:108
 #: includes/workorders_consumption_from_asset_id.php:128 pages/stock.php:298
 #: pages/stock_movements.php:30
 msgid "Product"
 msgstr "Termék"
 
-#: includes/ajax_calls.php:2270
+#: includes/ajax_calls.php:2281
 msgid "There is no product with this connection."
 msgstr "Nincs termék ilyen csatlakozással."
 
-#: includes/ajax_calls.php:2289
+#: includes/ajax_calls.php:2300
 msgid "Show user details..."
 msgstr "Felhasználó részletei..."
 
-#: includes/ajax_calls.php:2296 includes/ajax_calls.php:2426
+#: includes/ajax_calls.php:2307 includes/ajax_calls.php:2437
 msgid "Invert check"
 msgstr "Jelölés megfordít"
 
-#: includes/ajax_calls.php:2297 includes/ajax_calls.php:2427
+#: includes/ajax_calls.php:2308 includes/ajax_calls.php:2438
 msgid "Check/uncheck all"
 msgstr "összes jelöl/nem jelöl"
 
-#: includes/ajax_calls.php:2335
+#: includes/ajax_calls.php:2346
 msgid "Modify "
 msgstr "Módosítás"
 
-#: includes/ajax_calls.php:2341
+#: includes/ajax_calls.php:2352
 msgid "New value:"
 msgstr "Új érték:"
 
-#: includes/ajax_calls.php:2371 includes/workorder_consumption.php:53
+#: includes/ajax_calls.php:2382 includes/workorder_consumption.php:53
 #: includes/workorders_consumption_from_asset_id.php:30 pages/works.php:507
 msgid "Start"
 msgstr "Kezdet"
 
-#: includes/ajax_calls.php:2371 includes/workorder_consumption.php:54
+#: includes/ajax_calls.php:2382 includes/workorder_consumption.php:54
 #: includes/workorders_consumption_from_asset_id.php:31 pages/works.php:508
 msgid "End"
 msgstr "Vég"
 
-#: includes/ajax_calls.php:2372
+#: includes/ajax_calls.php:2383
 msgid "Monday"
 msgstr "Hétfő"
 
-#: includes/ajax_calls.php:2372
+#: includes/ajax_calls.php:2383
 msgid "Tuesday"
 msgstr "Kedd"
 
-#: includes/ajax_calls.php:2372
+#: includes/ajax_calls.php:2383
 msgid "Wednesday"
 msgstr "Szerda"
 
-#: includes/ajax_calls.php:2372
+#: includes/ajax_calls.php:2383
 msgid "Thursday"
 msgstr "Csütörtök"
 
-#: includes/ajax_calls.php:2372
+#: includes/ajax_calls.php:2383
 msgid "Friday"
 msgstr "Péntek"
 
-#: includes/ajax_calls.php:2372
+#: includes/ajax_calls.php:2383
 msgid "Saturday"
 msgstr "Szombat"
 
-#: includes/ajax_calls.php:2372
+#: includes/ajax_calls.php:2383
 msgid "Sunday"
 msgstr "Vasárnap"
 
-#: includes/ajax_calls.php:2423
+#: includes/ajax_calls.php:2434
 msgid "Assets belong to"
 msgstr "Vagyontárgyak hozzá"
 
-#: includes/ajax_calls.php:2506
+#: includes/ajax_calls.php:2517
 msgid "Entry points access for "
 msgstr "Belépési engedélyek"
 
-#: includes/ajax_calls.php:2509
+#: includes/ajax_calls.php:2520
 msgid "Check all"
 msgstr "összes jelö"
 
-#: includes/ajax_calls.php:2560
+#: includes/ajax_calls.php:2571
 msgid "Products can be built to"
 msgstr "Beépíthető termékek ide"
 
-#: includes/ajax_calls.php:2573
+#: includes/ajax_calls.php:2584
 msgid "The product built in:"
 msgstr "A beépített alkatrész:"
 
-#: includes/ajax_calls.php:2603
+#: includes/ajax_calls.php:2614
 msgid "built in here"
 msgstr "beépítve ide"
 
-#: includes/ajax_calls.php:2638
+#: includes/ajax_calls.php:2649
 msgid "Assets on this place:"
 msgstr "Vagyontárgyak itt:"
 
-#: includes/ajax_calls.php:2694
+#: includes/ajax_calls.php:2705
 msgid "moving from"
 msgstr "mozgatás innen"
 
-#: includes/ajax_calls.php:2702
+#: includes/ajax_calls.php:2713
 msgid "Destination:"
 msgstr "Cél:"
 
-#: includes/ajax_calls.php:2723
+#: includes/ajax_calls.php:2734
 msgid "Dest. stock place"
 msgstr "Cél raktárhely"
 
-#: includes/ajax_calls.php:2736
+#: includes/ajax_calls.php:2747
 msgid "Quantity "
 msgstr "Mennyiség"
 
-#: includes/ajax_calls.php:2744
+#: includes/ajax_calls.php:2755
 msgid "The value must be smaller or equal than"
 msgstr "Kisebb-egyenlőnek kell lenni, mint "
 
-#: includes/ajax_calls.php:2779
+#: includes/ajax_calls.php:2790
 msgid "Minimum quantity:"
 msgstr "Minimum mennyiség:"
 
-#: includes/ajax_calls.php:2922
+#: includes/ajax_calls.php:2933
 msgid "Type Message ..."
 msgstr "Üzenj itt"
 
-#: includes/ajax_calls.php:2923 pages/notifications.php:535
+#: includes/ajax_calls.php:2934 pages/notifications.php:578
 msgid "Send"
 msgstr "Küld"
+
+#: includes/ajax_calls.php:2963
+msgid "Closing notification:"
+msgstr "Bejelentés lezárása:"
+
+#: includes/ajax_calls.php:2970 includes/ajax_calls.php:2977
+msgid "The reason to close"
+msgstr "A lezárás oka"
 
 #: includes/asset_tree_func.php:114 pages/assets.php:607
 msgid "asset note"
@@ -1425,6 +1447,12 @@ msgstr "Igen, de egyedi darab"
 msgid "Default stock:"
 msgstr "Alapértelmezett raktár:"
 
+#: includes/modals/modal_add_new_product_form.php:243 pages/assets.php:627
+#: pages/categories.php:122 pages/counters.php:84 pages/locations.php:125
+#: pages/messages.php:100 pages/products.php:461
+msgid " Submit "
+msgstr " Ment"
+
 #: includes/pagination.php:29
 msgid "Previous"
 msgstr "Előző"
@@ -1433,7 +1461,7 @@ msgstr "Előző"
 msgid "(current)"
 msgstr "(jelenlegi)"
 
-#: includes/pagination.php:64 pages/work_stats.php:133
+#: includes/pagination.php:64 pages/work_stats.php:135
 msgid "Next"
 msgstr "Következő"
 
@@ -1507,19 +1535,22 @@ msgstr "Aktív bejelentések"
 
 #: includes/pdf_create/work_stat_by_assets.php:232
 #: includes/pdf_create/work_stat_by_assets.php:268
-#: includes/pdf_create/work_stat_by_assets.php:306
+#: includes/pdf_create/work_stat_by_assets.php:315
+#: includes/pdf_create/work_stat_by_assets.php:361
 msgid "Notifier:"
 msgstr "Bejelentette:"
 
 #: includes/pdf_create/work_stat_by_assets.php:237
 #: includes/pdf_create/work_stat_by_assets.php:274
-#: includes/pdf_create/work_stat_by_assets.php:312 pages/works.php:323
+#: includes/pdf_create/work_stat_by_assets.php:321
+#: includes/pdf_create/work_stat_by_assets.php:367 pages/works.php:323
 msgid "Status:"
 msgstr "Állapot:"
 
 #: includes/pdf_create/work_stat_by_assets.php:238
-#: includes/pdf_create/work_stat_by_assets.php:275
-#: includes/pdf_create/work_stat_by_assets.php:313 pages/partners.php:77
+#: includes/pdf_create/work_stat_by_assets.php:276
+#: includes/pdf_create/work_stat_by_assets.php:323
+#: includes/pdf_create/work_stat_by_assets.php:368 pages/partners.php:77
 msgid "Title:"
 msgstr "Cím:"
 
@@ -1528,12 +1559,17 @@ msgstr "Cím:"
 msgid "Solved notifications"
 msgstr "Megoldott bejelentések"
 
-#: includes/pdf_create/work_stat_by_assets.php:295
-#: includes/pdf_create/work_stat_by_assets.php:296
+#: includes/pdf_create/work_stat_by_assets.php:304
+#: includes/pdf_create/work_stat_by_assets.php:305
+msgid "Closed notifications"
+msgstr "Lezárt bejelentések"
+
+#: includes/pdf_create/work_stat_by_assets.php:350
+#: includes/pdf_create/work_stat_by_assets.php:351
 msgid "New notifications"
 msgstr "Új bejelentések"
 
-#: includes/pdf_create/work_stat_by_assets.php:332
+#: includes/pdf_create/work_stat_by_assets.php:387
 msgid "Table Of Content"
 msgstr "Tartalomjegyzék"
 
@@ -1579,7 +1615,7 @@ msgstr "Menü ehhez"
 
 #: includes/show_assets_tree_menu_ajax.php:67
 #: includes/show_categories_tree_menu.php:14
-#: includes/show_locations_tree_menu.php:14 pages/notifications.php:828
+#: includes/show_locations_tree_menu.php:14 pages/notifications.php:871
 #: pages/workrequests.php:982
 msgid "Show info file(s)"
 msgstr "Fájlok mutatása"
@@ -1902,7 +1938,7 @@ msgstr "Nincs gyűjtő kategória"
 msgid "Importance:"
 msgstr "Fontosság:"
 
-#: pages/assets.php:551 pages/notifications.php:438 pages/notifications.php:459
+#: pages/assets.php:551 pages/notifications.php:481 pages/notifications.php:502
 msgid "Select!"
 msgstr "Válassz!"
 
@@ -1949,6 +1985,11 @@ msgstr "Vagyontárgy megjegyzés (bizalmas):"
 #: pages/assets.php:615
 msgid "asset note (conf)"
 msgstr "vagyontárgy megjegyzés (bizalmas):"
+
+#: pages/assets.php:630 pages/categories.php:125 pages/counters.php:87
+#: pages/locations.php:128 pages/products.php:464
+msgid " Reset "
+msgstr " Alaphelyzet"
 
 #: pages/assets.php:678
 msgid "All locations"
@@ -2006,67 +2047,63 @@ msgstr "Csatlakozásfajta (angol):"
 msgid "connection category"
 msgstr "csatlakozásfajta"
 
-#: pages/connection_types.php:78 pages/connections.php:126
+#: pages/connection_types.php:78 pages/connections.php:216
 msgid "Connection category"
 msgstr "csatlakozásfajta"
 
-#: pages/connections.php:16
+#: pages/connections.php:31
 msgid "The new connection has been saved."
 msgstr "Az új csatlakozás elmentve."
 
-#: pages/connections.php:18
+#: pages/connections.php:33
 msgid "Failed to save new connection."
 msgstr "Nem sikerült elmenteni a csatlakozást."
 
-#: pages/connections.php:55
-msgid "Connection name en:"
-msgstr "Csatlakozásnév (angol):"
-
-#: pages/connections.php:56
-msgid "connection name en"
-msgstr "csatlakozásnév (angol)"
-
-#: pages/connections.php:61
-msgid "Connection name:"
-msgstr "Csatlakozásnév:"
-
 #: pages/connections.php:62
-msgid "connection name"
-msgstr "csatlakozásnév"
+msgid "The connection has been modified."
+msgstr "A csatlakozás módosítva."
 
-#: pages/connections.php:79
-msgid "Connection review en:"
-msgstr "Csatlakozás leírása:"
+#: pages/connections.php:64
+msgid "Failed to modify connection."
+msgstr "Nem sikerült módosítani a csatlakozást."
 
-#: pages/connections.php:80
-msgid "connection review en"
-msgstr "csatlakozás leírás (angol):"
-
-#: pages/connections.php:84
-msgid "Connection review:"
-msgstr "Csatlakozásleírás:"
-
-#: pages/connections.php:85
-msgid "connection review"
-msgstr "csatlakozás leírás"
-
-#: pages/connections.php:126
+#: pages/connections.php:112 pages/connections.php:216
 msgid "Connection name"
 msgstr "Csatlakozásnév"
 
-#: pages/connections.php:127
-msgid "Connection type"
-msgstr "Csatlakozásfajta"
+#: pages/connections.php:113 pages/connections.php:126
+msgid "connection name"
+msgstr "csatlakozásnév"
 
-#: pages/connections.php:128
+#: pages/connections.php:125
+msgid "Connection name:"
+msgstr "Csatlakozásnév:"
+
+#: pages/connections.php:152 pages/connections.php:218
 msgid "Connection review"
 msgstr "Csatlakozás leírása"
 
-#: pages/connections.php:148
+#: pages/connections.php:153 pages/connections.php:164
+msgid "connection review"
+msgstr "csatlakozás leírás"
+
+#: pages/connections.php:163
+msgid "Connection review:"
+msgstr "Csatlakozásleírás:"
+
+#: pages/connections.php:217
+msgid "Connection type"
+msgstr "Csatlakozásfajta"
+
+#: pages/connections.php:238
 msgid "Show assets, product with this connection"
 msgstr "Vagyontárgyak, termékek ilyen csatlakozással"
 
-#: pages/connections.php:157
+#: pages/connections.php:243
+msgid "Modify connection"
+msgstr "Új csatlakozás"
+
+#: pages/connections.php:253
 msgid "Male-female"
 msgstr "apa-anya"
 
@@ -2175,7 +2212,7 @@ msgstr "lezárt bejelentés"
 msgid "recorded work"
 msgstr "bevitt munka"
 
-#: pages/dashboard.php:424 pages/dashboard.php:444 pages/work_stats.php:185
+#: pages/dashboard.php:424 pages/dashboard.php:444 pages/work_stats.php:187
 msgid "Working hours per priorities"
 msgstr "Munkaórák száma prioritás szernt"
 
@@ -2187,11 +2224,11 @@ msgstr "Munkaórák száma munkatípusok szerint"
 msgid "List last month's activities..."
 msgstr "Elmúlt hónap mutatása"
 
-#: pages/dashboard.php:536 pages/work_stats.php:263
+#: pages/dashboard.php:536 pages/work_stats.php:265
 msgid "others"
 msgstr "egyéb"
 
-#: pages/dashboard.php:541 pages/dashboard.php:569 pages/work_stats.php:268
+#: pages/dashboard.php:541 pages/dashboard.php:569 pages/work_stats.php:270
 msgid "Working hours per assets"
 msgstr "Munkaórák száma vagyontárgyak szerint"
 
@@ -2368,119 +2405,135 @@ msgstr "Az új bejelentés elmentve."
 msgid "Failed to save new notification "
 msgstr "Nem sikerült elmenteni a bejelentést."
 
-#: pages/notifications.php:292
+#: pages/notifications.php:277 pages/notifications.php:365
+msgid "You have no privilige to modify this notification!"
+msgstr "Nincs jogosultságod módosítani a bejelentést!"
+
+#: pages/notifications.php:302
 msgid "The notification has been modified."
 msgstr "A bejelentés módosítva."
 
-#: pages/notifications.php:294
+#: pages/notifications.php:304
 msgid "Failed to modify notification "
 msgstr "Nem sikerült módosítani a bejelentést."
 
-#: pages/notifications.php:336
+#: pages/notifications.php:352
+msgid "Notification has closed"
+msgstr "Bejelentés lezárva"
+
+#: pages/notifications.php:354
+msgid "Failed to close notification"
+msgstr "Nem sikerült lezárni a bejelentést."
+
+#: pages/notifications.php:379
 msgid "New notification "
 msgstr "Új bejelentés"
 
-#: pages/notifications.php:338
+#: pages/notifications.php:381
 msgid "Modify notification "
 msgstr "Bejelentés módosítása"
 
-#: pages/notifications.php:372 pages/notifications.php:398
+#: pages/notifications.php:415 pages/notifications.php:441
 #: pages/operators_works.php:150
 msgid "Asset:"
 msgstr "Vagyontárgy"
 
-#: pages/notifications.php:380 pages/operators_works.php:157
+#: pages/notifications.php:423 pages/operators_works.php:157
 msgid "Select an asset!"
 msgstr "Válassz vagyontárgyat!"
 
-#: pages/notifications.php:433
+#: pages/notifications.php:476
 msgid "Notification type:"
 msgstr "Bejelentés típusa:"
 
-#: pages/notifications.php:476
+#: pages/notifications.php:519
 msgid "Notification short (max."
 msgstr "Bejelentés röviden (max."
 
-#: pages/notifications.php:488 pages/notifications.php:511
+#: pages/notifications.php:531 pages/notifications.php:554
 msgid "notification"
 msgstr "bejelentés"
 
-#: pages/notifications.php:488 pages/notifications.php:511 pages/works.php:360
+#: pages/notifications.php:531 pages/notifications.php:554 pages/works.php:360
 #: pages/works.php:379
 msgid "Characters left: "
 msgstr "Ennyi karakter lehet:"
 
-#: pages/notifications.php:499
+#: pages/notifications.php:542
 msgid "Notification short ("
 msgstr "Bejelentés ("
 
-#: pages/notifications.php:510
+#: pages/notifications.php:553
 msgid "Notification ("
 msgstr "Bejelentés ("
 
-#: pages/notifications.php:638 pages/stock.php:257 pages/workrequests.php:874
+#: pages/notifications.php:681 pages/stock.php:257 pages/workrequests.php:874
 msgid "S"
 msgstr "Áll."
 
-#: pages/notifications.php:672
+#: pages/notifications.php:715
 msgid "All type"
 msgstr "Minden típus"
 
-#: pages/notifications.php:687
+#: pages/notifications.php:730
 msgid "User"
 msgstr "Felhasználó"
 
-#: pages/notifications.php:695
+#: pages/notifications.php:738
 msgid "All users"
 msgstr "Minden felhasználó"
 
-#: pages/notifications.php:721 pages/operators_works.php:295
+#: pages/notifications.php:764 pages/operators_works.php:295
 #: pages/workorders.php:899 pages/workrequests.php:907 pages/works.php:537
 msgid "All assets"
 msgstr "Minden vagyontárgy"
 
-#: pages/notifications.php:738
+#: pages/notifications.php:781
 msgid "Notification"
 msgstr "Bejelentés"
 
-#: pages/notifications.php:823 pages/partners.php:177 pages/workorders.php:1129
+#: pages/notifications.php:866 pages/partners.php:177 pages/workorders.php:1129
 #: pages/workrequests.php:977
 msgid "Show details"
 msgstr "Részletek"
 
-#: pages/notifications.php:834 pages/partners.php:181
+#: pages/notifications.php:877 pages/partners.php:181
 #: pages/workrequests.php:988
 msgid "Modify"
 msgstr "Módosítás"
 
-#: pages/notifications.php:839
+#: pages/notifications.php:882
 msgid "Set it confirmed"
 msgstr "Megerősítve"
 
-#: pages/notifications.php:843
+#: pages/notifications.php:884
+msgid "Close this notification"
+msgstr "Bejelentés lezárása"
+
+#: pages/notifications.php:889
 msgid "Set it deleted"
 msgstr "Töröl"
 
-#: pages/notifications.php:902 pages/workrequests.php:1093
+#: pages/notifications.php:948 pages/workrequests.php:1093
 msgid "Create workorder"
 msgstr "Munkautasítás készítése"
 
-#: pages/notifications.php:907 pages/workorders.php:452
+#: pages/notifications.php:953 pages/workorders.php:452
 #: pages/workrequests.php:1098
 msgid "Partner involved in this workorder:"
 msgstr "Résztvevő partner:"
 
-#: pages/notifications.php:924 pages/workorders.php:479
+#: pages/notifications.php:970 pages/workorders.php:479
 #: pages/workrequests.php:1115
 msgid "Partner supervisor:"
 msgstr "Partner felügyelője:"
 
-#: pages/notifications.php:930 pages/workorders.php:485
+#: pages/notifications.php:976 pages/workorders.php:485
 #: pages/workrequests.php:1121
 msgid "Select"
 msgstr "Választ"
 
-#: pages/notifications.php:940 pages/workrequests.php:1131
+#: pages/notifications.php:986 pages/workrequests.php:1131
 msgid "Employee(s):"
 msgstr "Dolgozó(k):"
 
@@ -2791,15 +2844,15 @@ msgstr "Kezdet:"
 msgid "End date:"
 msgstr "Vége:"
 
-#: pages/work_stats.php:32
+#: pages/work_stats.php:33
 msgid "Only the important machine:"
 msgstr "Csak a fontos gépek:"
 
-#: pages/work_stats.php:36
+#: pages/work_stats.php:37
 msgid "YES"
 msgstr "Igen"
 
-#: pages/work_stats.php:37
+#: pages/work_stats.php:38
 msgid "NO"
 msgstr "Nem"
 
@@ -3122,6 +3175,21 @@ msgstr "Utolsó 5 tevékenység..."
 #: pages/works.php:590
 msgid "Work done"
 msgstr "Elvégzett munka"
+
+#~ msgid " Reset"
+#~ msgstr "Alaphelyzet"
+
+#~ msgid "Connection name en:"
+#~ msgstr "Csatlakozásnév (angol):"
+
+#~ msgid "connection name en"
+#~ msgstr "csatlakozásnév (angol)"
+
+#~ msgid "Connection review en:"
+#~ msgstr "Csatlakozás leírása:"
+
+#~ msgid "connection review en"
+#~ msgstr "csatlakozás leírás (angol):"
 
 #~ msgid "Maintenance works"
 #~ msgstr "Munkák"
