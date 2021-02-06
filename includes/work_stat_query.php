@@ -1,27 +1,36 @@
 <?php 
 function work_stat_query($start_date,$end_date,$request_type,$priority,$sum_field,$group_by_field,$asset_vs_product):string{
-global $dba,$lang_date_format,$lang;
+global $dba,$lang_date_format,$lang,$important_only;
+
 $html='';
 $all_user=array();
 $total_workers_array=array();
-$SQL="SELECT user_id,username FROM users";
+$SQL="SELECT user_id,surname,firstname FROM users WHERE user_level<4";
 $result=$dba->Select($SQL);
 foreach($result as $row)
-$all_user[$row['user_id']]=$row['username'];
+    if (FIRSTNAME_IS_FIRST)
+    $all_user[$row['user_id']]=$row['firstname']." ".$row['surname'];
+    else
+    $all_user[$row['user_id']]=$row['surname']." ".$row['firstname'];
 
-$SQL="select "; 
+$SQL="SELECT "; 
 if (!empty($sum_field) && $sum_field=='workhour' && ($group_by_field=='priority' || $group_by_field=='request_type'))
     $SQL.="sum(TIME_TO_SEC(workorder_worktime)/3600) as ".$sum_field." ";
     else
-    $SQL.="workorder_".$lang.",workorder_user_id,workorder_short_".$lang.",workorder_work_end_time,workorder_work_start_time,workorder_worktime, priority,workorder_work_".$lang.",workorders.main_asset_id,workorders.asset_id";
-if ($asset_vs_product==1)
-    $SQL.=", asset_name_".$lang;
-else
-    $SQL.=",product_id_to_refurbish";
-$SQL.=" FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id";
-if ($asset_vs_product==1)
-$SQL.=" LEFT JOIN assets ON assets.asset_id=workorder_works.main_asset_id";
-$SQL.=" WHERE workorder_works.deleted<>1";
+    $SQL.="workorder_".$lang.",workorder_user_id,workorder_short_".$lang.",workorder_work_end_time,workorder_work_start_time,workorder_worktime, priority,workorder_work_".$lang.",workorders.main_asset_id,workorders.asset_id,unplanned_shutdown";
+    if ($asset_vs_product==1)
+        $SQL.=", asset_name_".$lang;
+    else
+        $SQL.=",product_id_to_refurbish";
+    $SQL.=" FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id";
+
+    if ($asset_vs_product==1)
+        $SQL.=" LEFT JOIN assets ON assets.asset_id=workorder_works.main_asset_id";
+
+    $SQL.=" WHERE workorder_works.deleted<>1";
+
+if ($asset_vs_product==1 && $important_only==1)
+$SQL.=" AND asset_importance=1";
 
 if ($request_type>0)
 $SQL.=" AND request_type=".$request_type;
@@ -160,12 +169,17 @@ $i++;
         
         $total_workers_array[$row['workorder_user_id']]+=$dur;
         $total_hours+=$dur;
-        $html.= "<td>".$duration->format("%H:%I")."</td>";
+        $html.= "<td style=\"width:30px;text-align:left;\">".$duration->format("%H:%I")."</td>";
         $sum_hours += round($duration->s / 3600 + $duration->i / 60 + $duration->h + $duration->days * 24, 1);
-        if (!empty($row['workorder_work_'.$lang]))
-        $html.="<td>".$row['workorder_work_'.$lang]."</td>";
-        else
-        $html.="<td></td>";
+       
+        $html.="<td style=\"width:200px;text-align:left;\">";
+        if ($row['unplanned_shutdown'])
+        $html.="<strong>".gettext("Unplanned shutdown")."</strong>";
+        if ($row['unplanned_shutdown'] && !empty($row['workorder_work_'.$lang]))
+        $html.=": ";
+        $html.=$row['workorder_work_'.$lang]."</td>";
+        
+        
         $html.="</tr>";
         
         

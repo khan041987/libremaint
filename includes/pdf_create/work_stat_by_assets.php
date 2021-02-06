@@ -94,8 +94,17 @@ $request_type=(int) $_POST['request_type'];
 else
 $request_type=0;
 
+if (isset($_POST['important_only']) && $_POST['important_only']==1)
+$important_only=1;
+else
+$important_only=0;
+
 $pdf->writeHTML($html, true, false, true, false, '');
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, asset_name_".$lang." FROM workorder_works LEFT JOIN assets ON workorder_works.main_asset_id=assets.asset_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorder_works.asset_id>0 GROUP BY main_asset_id ORDER BY workhour DESC" ; 
+$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, asset_name_".$lang." FROM workorder_works LEFT JOIN assets ON workorder_works.main_asset_id=assets.asset_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorder_works.asset_id>0";
+
+if ($important_only==1)
+$SQL.=" AND asset_importance=1";
+$SQL.=" GROUP BY main_asset_id ORDER BY workhour DESC" ; 
 $result=$dba->Select($SQL);
 $html='<table border="0" cellspacing="2" cellpadding="2"><thead><tr><td width="20"></td><td><strong>'.gettext("Asset name").'</strong></td><td width="60" style="text-align:right"><strong>'.gettext("Workhours").'</strong></td></tr></thead>';
 $i=0;
@@ -106,14 +115,19 @@ $html.='<tr><td width="20">'.++$i.'</td><td><strong>'.$row['asset_name_'.$lang].
 $total+=round($row['workhour'],1);
 }
 }
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, product_id_to_refurbish FROM workorder_works LEFT JOIN workorders ON workorder_works.workorder_id=workorders.workorder_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorders.product_id_to_refurbish>0 GROUP BY product_id_to_refurbish ORDER BY workhour DESC" ; 
-$result=$dba->Select($SQL);
-if ($dba->affectedRows()>0){
-foreach ($result as $row){
-$html.='<tr><td width="20">'.++$i.'</td><td><strong>'.get_product_name_from_id($row['product_id_to_refurbish'],$lang).'</strong></td><td width="60" style="text-align:right">'.round($row['workhour'],1).'</td></tr>';
-$total+=round($row['workhour'],1);
+
+if ($important_only==0)
+{
+    $SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, product_id_to_refurbish FROM workorder_works LEFT JOIN workorders ON workorder_works.workorder_id=workorders.workorder_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorders.product_id_to_refurbish>0 GROUP BY product_id_to_refurbish ORDER BY workhour DESC" ; 
+    $result=$dba->Select($SQL);
+    if ($dba->affectedRows()>0){
+        foreach ($result as $row){
+        $html.='<tr><td width="20">'.++$i.'</td><td><strong>'.get_product_name_from_id($row['product_id_to_refurbish'],$lang).'</strong></td><td width="60" style="text-align:right">'.round($row['workhour'],1).'</td></tr>';
+        $total+=round($row['workhour'],1);
+        }
+    }
 }
-}
+
 $html.='<tr><td width="20"></td><td><strong>'.gettext("Total").':</strong></td><td width="60" style="text-align:right">'.$total.' '.gettext('hours').'</td></tr>';
 
 $html.='</table>';
@@ -129,14 +143,15 @@ foreach ($priority_types as $index=>$priority){
 
 $h=work_stat_query($start,$end,0,++$index,'','',1);
 $h.=work_stat_query($start,$end,0,$index,'','',0);
-if ($h!='')
+if (!empty($h))
 {
 $pdf->Bookmark($priority, 1, 0, '', '', array(0,64,128));
 $html="<h1><u>".$priority."</u></h1>";
 $html.=$h;
-}
+
 $pdf->writeHTML($html, true, false, true, false, '');
 $pdf->AddPage();
+}
 }
 
 
@@ -234,7 +249,7 @@ if ($dba->affectedRows())
     $pdf->writeHTML($html, true, false, true, false, '');
 }
 
-$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_closing_time) <= DATE('".$end."') AND DATE(notification_closing_time) >= DATE('".$start."') AND notification_status=4 OR notification_status=5 ORDER BY asset_name_".$lang;
+$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_closing_time) <= DATE('".$end."') AND DATE(notification_closing_time) >= DATE('".$start."') AND notification_status=4 ORDER BY asset_name_".$lang;
 $result=$dba->Select($SQL);
 if (LM_DEBUG)
 error_log($SQL,0);
@@ -258,9 +273,64 @@ if ($dba->affectedRows()>0)
     $html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
 
     $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
+    
     $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
     if ($row['notification_'.$lang]!="")
-    $html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
+    $html.="<strong>".gettext("Notification:")." </strong>".$row['notification_'.$lang]."<br/>";
+    
+     if (!empty($row['reason_to_close_'.$lang]))
+    $html.="<strong>".gettext("Reason to close").": </strong>".$row['reason_to_close_'.$lang]."<br/>";
+    
+    if (!empty($row['notification_closing_time']))
+    $html.="<strong>".gettext("Closing time").": </strong>".date($lang_date_format." H:i", strtotime($row["notification_closing_time"]))."<br/>";
+    
+    $html.= "<hr size='1'>";
+
+    $main_asset_id=$row["main_asset_id"];
+
+    }
+    //$html.= "<hr size='1'>";
+    // Output the HTML content
+    $pdf->writeHTML($html, true, false, true, false, '');
+}
+
+
+
+$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_closing_time) <= DATE('".$end."') AND DATE(notification_closing_time) >= DATE('".$start."') AND notification_status=5 ORDER BY asset_name_".$lang;
+$result=$dba->Select($SQL);
+if (LM_DEBUG)
+error_log($SQL,0);
+if ($dba->affectedRows()>0)
+{
+    $pdf->Bookmark(gettext("Closed notifications"), 1, 0, '', '', array(0,64,128));
+    $html='<H1>'.gettext('Closed notifications')." ".$date_termin.'</H1>';
+
+    $main_asset_id=0;
+    foreach ($result as $row){
+    if ($main_asset_id!=$row["main_asset_id"]){
+        if ($main_asset_id>0)
+        $html.= "<hr size='1'><br/>";
+    $html.="<H2>".$row["asset_name_".$lang]."</H2>";
+    }
+    $html.="<strong>".gettext("Notification time:")." </strong>".date($lang_date_format." h:i", strtotime($row["notification_time"]))."<br/>";
+    $html.="<strong>".gettext("Notifier:")." </strong>".get_user_full_name_from_id($row['user_id'])."<br/>";
+
+    $html.="<strong>".gettext("Priority:")." </strong>".$priority_types[$row['priority']-1]."<br/>";
+
+    $html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
+
+    $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
+    
+    $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
+    if ($row['notification_'.$lang]!="")
+    $html.="<strong>".gettext("Notification:")." </strong>".$row['notification_'.$lang]."<br/>";
+    
+     if (!empty($row['reason_to_close_'.$lang]))
+    $html.="<strong>".gettext("Reason to close").": </strong>".$row['reason_to_close_'.$lang]."<br/>";
+    
+    if (!empty($row['notification_closing_time']))
+    $html.="<strong>".gettext("Closing time").": </strong>".date($lang_date_format." H:i", strtotime($row["notification_closing_time"]))."<br/>";
+    
     $html.= "<hr size='1'>";
 
     $main_asset_id=$row["main_asset_id"];
@@ -331,4 +401,4 @@ $pdf->addTOC(1, 'courier', '.', 'INDEX', 'B', array(128,0,0));
 $pdf->endTOCPage();
 
  //ob_end_clean();
-$pdf->Output('maintenance_report_'.$date_termin.'.pdf', 'I');
+$pdf->Output('maintenance_report_'.$date_termin.'_'.$lang.'.pdf', 'I');

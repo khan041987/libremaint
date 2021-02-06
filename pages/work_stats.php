@@ -29,6 +29,16 @@ echo "<script src=\"".VENDORS_LOC."chartjs-plugin-piechart-outlabels/chartjs-plu
         echo "\"></div></div>";
         
         
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"importance\" class=\"form-control-label\">".gettext("Only the important machine:")."</label></div>\n";
+        echo "<div class=\"col col-md-3\">";
+        
+        echo "<SELECT name='important_only' id='important_only'>";
+        echo "<OPTION VALUE='1'>".gettext("YES");
+        echo "<OPTION VALUE='0'>".gettext("NO");
+        echo "</SELECT>";
+        echo "</div></div>";
+        
         echo "<input type=\"hidden\" id='page' name='page' value='work_stats'>\n";
         echo "<input type=\"hidden\" id='make_chart' name='make_chart' value='1'>\n";
   /*      
@@ -52,11 +62,11 @@ echo "</div>";
 */
 echo "</div>";//card-body
 
-        echo "<div class='card-footer'>";
+        
         echo "<div class=\"card-footer\"><button type=\"submit\" class=\"btn btn-primary btn-sm\">\n";
-        echo "<i class=\"fa fa-dot-circle-o\"></i> Submit </button>\n";
+        echo "<i class=\"fa fa-dot-circle-o\"></i> ".gettext("Submit")." </button>\n";
         echo "</form>";
-        echo "</div>";
+        //echo "</div>";
         echo "</div></div>\n";
         //echo "</div>\n";
 }else{
@@ -64,18 +74,51 @@ $start=$dba->escapeStr($_POST['start_date']);
 $end=$dba->escapeStr($_POST['end_date']);
 
 
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, priority FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE DATE(workorder_work_start_time) >=DATE('".$start."') AND DATE(workorder_work_end_time) <=DATE('".$end."') GROUP BY priority ORDER BY workhour DESC" ; 
+$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, priority FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id";
+
+if (isset($_POST['important_only']) && $_POST['important_only']==1)
+$SQL.=" LEFT JOIN assets ON assets.asset_id=workorders.asset_id";
+
+
+
+$SQL.=" WHERE";
+
+if (isset($_POST['important_only']) && $_POST['important_only']==1)
+$SQL.=" assets.asset_importance=1 AND";
+
+$SQL.=" DATE(workorder_work_start_time) >=DATE('".$start."') AND DATE(workorder_work_end_time) <=DATE('".$end."') GROUP BY priority ORDER BY workhour DESC" ; 
+
 $result=$dba->Select($SQL);
 if (LM_DEBUG)
 error_log($SQL,0);
 
-$SQL2="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, request_type FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id WHERE DATE(workorder_work_start_time) >=DATE('".$start."') AND DATE(workorder_work_end_time) <=DATE('".$end."') GROUP BY request_type ORDER BY workhour DESC" ; 
+$SQL2="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, request_type FROM workorder_works LEFT JOIN workorders ON workorders.workorder_id=workorder_works.workorder_id";
+
+if (isset($_POST['important_only']) && $_POST['important_only']==1)
+$SQL2.=" LEFT JOIN assets ON assets.asset_id=workorders.asset_id";
+
+$SQL2.=" WHERE";
+
+if (isset($_POST['important_only']) && $_POST['important_only']==1)
+$SQL2.=" assets.asset_importance=1 AND";
+
+$SQL2.=" DATE(workorder_work_start_time) >=DATE('".$start."') AND DATE(workorder_work_end_time) <=DATE('".$end."') GROUP BY request_type ORDER BY workhour DESC" ; 
 $result2=$dba->Select($SQL2);
 if (LM_DEBUG)
 error_log($SQL2,0);
 
 
-$SQL3="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, main_asset_id FROM workorder_works WHERE DATE(workorder_work_start_time) >=DATE('".$start."') AND DATE(workorder_work_end_time) <=DATE('".$end."') GROUP BY main_asset_id ORDER BY workhour DESC" ; 
+$SQL3="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, main_asset_id FROM workorder_works";
+
+if (isset($_POST['important_only']) && $_POST['important_only']==1)
+$SQL3.=" LEFT JOIN assets ON assets.asset_id=workorder_works.main_asset_id";
+
+$SQL3.=" WHERE";
+
+if (isset($_POST['important_only']) && $_POST['important_only']==1)
+$SQL3.=" assets.asset_importance=1 AND";
+
+$SQL3.=" DATE(workorder_work_start_time) >=DATE('".$start."') AND DATE(workorder_work_end_time) <=DATE('".$end."') GROUP BY main_asset_id ORDER BY workhour DESC"; 
 
 
 $result3=$dba->Select($SQL3);
