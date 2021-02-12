@@ -189,18 +189,11 @@ echo "</script>\n";
 }
 
 if (isset($_SESSION['SEE_CONNECTION_TYPE'])){
+if (isset($_GET['connection_category_id']) && $_GET['connection_category_id']>0)
+$_SESSION['connection_category_id']=(int) $_GET['connection_category_id'];
+else if (isset($_GET['connection_category_id']) && $_GET['connection_category_id']==0)
+unset($_SESSION['connection_category_id']);
 $pagenumber=lm_isset_int('pagenumber');
-if ($pagenumber<1)
-$pagenumber=1;
-$from=1;
-$SQL="SELECT connection_id,connection_category_".$lang.",connection_name_".$lang.",connection_review_".$lang.",connection_type FROM connections LEFT JOIN connection_categories ON connection_categories.connection_category_id=connections.connection_category_id ORDER BY connection_category_".$lang;
-$result_all=$dba->Select($SQL);
-$number_all=$dba->affectedRows();
-$from=($pagenumber-1)*ROWS_PER_PAGE;
-$SQL.=" limit $from,".ROWS_PER_PAGE;
-$result=$dba->Select($SQL);
-if (LM_DEBUG)
-error_log("page:".$pagenumber." ".$SQL,0);
 
 ?>
 <div id='for_ajaxcall'>
@@ -213,13 +206,41 @@ error_log("page:".$pagenumber." ".$SQL,0);
 <?php 
 
 
-echo "<th>".gettext("Connection category")."</th><th>".gettext("Connection name")."</th>";
+echo "<th>";
+echo "<SELECT name='connection_id' id='connection_id' onChange=\"location.href='index.php?page=connections&connection_category_id='+this.value\">";
+echo "<OPTION VALUE='0'>".gettext("All connection");
+$SQL="SELECT connection_category_id, connection_category_".$lang." FROM connection_categories";
+$result=$dba->Select($SQL);
+foreach($result as $row){
+echo "<OPTION VALUE='".$row['connection_category_id']."'";
+if (isset($_SESSION['connection_category_id']) && $row['connection_category_id']==$_SESSION['connection_category_id'])
+echo " selected";
+echo ">".$row['connection_category_'.$lang];
+
+}
+echo "</SELECT>";
+echo "</th><th>".gettext("Connection name")."</th>";
 echo "<th>".gettext("Connection type")."</th>";
 echo "<th>".gettext("Connection review")."</th></tr>";
+
 ?>
 </thead>
 <tbody>
 <?php
+if ($pagenumber<1)
+$pagenumber=1;
+$from=1;
+$SQL="SELECT connection_id,connection_category_".$lang.",connection_name_".$lang.",connection_review_".$lang.",connection_type FROM connections LEFT JOIN connection_categories ON connection_categories.connection_category_id=connections.connection_category_id";
+if (isset($_SESSION['connection_category_id']) && $_SESSION['connection_category_id']>0)
+$SQL.=" WHERE connections.connection_category_id=".$_SESSION['connection_category_id'];
+$SQL.=" ORDER BY connection_category_".$lang;
+$result_all=$dba->Select($SQL);
+$number_all=$dba->affectedRows();
+$from=($pagenumber-1)*ROWS_PER_PAGE;
+$SQL.=" limit $from,".ROWS_PER_PAGE;
+$result=$dba->Select($SQL);
+if (LM_DEBUG)
+error_log("page:".$pagenumber." ".$SQL,0);
 
 foreach ($result as $row)
 {
