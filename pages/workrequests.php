@@ -822,7 +822,29 @@ echo "</script>\n";
 <div class="card">
 <div class="card-header">
 <?php 
+if (!isset($_SESSION['list_workorder_types']))
+$_SESSION['list_workorder_types']=1;
+
+if (isset($_GET['list_workorder_types']) && (int) $_GET['list_workorder_types']>=0)
+$_SESSION['list_workorder_types']= (int) $_GET['list_workorder_types'];
+
+
+
 echo "<h2 style='display:inline;'>".gettext("Workrequests")." </h2>";
+echo "<select name='list_workorder_types' id='list_workorder_types' onchange=\"location.href='index.php?page=workrequests&list_workorder_types='+this.value\">\n";
+echo "<OPTION VALUE='0'";
+if ($_SESSION['list_workorder_types']==0)
+echo " selected";
+echo ">".gettext('All types');
+echo "<OPTION VALUE='1'";
+if ($_SESSION['list_workorder_types']==1)
+echo " selected";
+echo ">".gettext('Only for maintenance group');
+echo "<OPTION VALUE='2'";
+if ($_SESSION['list_workorder_types']==2)
+echo " selected";
+echo ">".gettext('Only for operators');
+echo "</select>";
 ?>
 <strong>
 <?php
@@ -941,6 +963,12 @@ else if (isset($_GET['main_asset_id']) && $_GET["main_asset_id"]!='all')
     $SQL.=" AND  product_id_to_refurbish>0";
 if (isset($_SESSION['workrequest_status']) && $_SESSION['workrequest_status']>0)
 $SQL.=" AND workrequest_status='".$_SESSION['workrequest_status']."'";
+
+if ($_SESSION['list_workorder_types']==1)
+    $SQL.=" AND for_operators<>1";
+else if ($_SESSION['list_workorder_types']==2)
+    $SQL.=" AND for_operators=1";
+    
 $SQL.=" ORDER BY workrequest_time DESC";
 
 $result_all=$dba->Select($SQL);
