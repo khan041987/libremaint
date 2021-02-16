@@ -19,11 +19,11 @@ $SQL.="'".$dba->escapeStr($_POST['connection_review_'.LANG1])."',";
 
 if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2'])){
 $SQL.="'".$dba->escapeStr($_POST['connection_name_'.LANG2])."',";
-$SQL.="'".$dba->escapeStr($_POST['connection_review_'.LANG2])."'";
+$SQL.="'".$dba->escapeStr($_POST['connection_review_'.LANG2])."',";
 }
 
 $SQL.=(int) $_POST['connection_type'].",";
-$SQL.=(int) $_POST['connection_category_id'].",";
+$SQL.=(int) $_POST['connection_category_id'];
 $SQL.=")";
 
 
