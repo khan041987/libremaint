@@ -658,7 +658,7 @@ function get_task_from_id($where,$id):string{
 global $dba,$lang;
 if ($where!="workorder" && $where!="workrequest")
 lm_die("wrong parameter in get_task_from_id at line ".__line__);
-$SQL="SELECT ".$where."_short_".$lang.",replace_to_product_id FROM ".$where."s WHERE ".$where."_id='".$id."'";
+$SQL="SELECT ".$where."_short_".$lang.",".$where."_".$lang.",replace_to_product_id FROM ".$where."s WHERE ".$where."_id='".$id."'";
 if (LM_DEBUG)
 error_log("get_task_from_id".$SQL,0);
 
@@ -668,7 +668,7 @@ return gettext("replace");
 else if (empty($row[$where.'_short_'.$lang]))
 return gettext("missing translation??");
 else
-return $row[$where.'_short_'.$lang];
+return $row[$where.'_short_'.$lang]."<p>".$row[$where.'_'.$lang]."</p>";
 }
 
 
