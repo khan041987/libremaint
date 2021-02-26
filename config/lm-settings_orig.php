@@ -65,7 +65,7 @@ define('LM_DEBUG_LOG',true);
 define('ROWS_PER_PAGE',10);
 define('MAX_INFO_FILE_SIZE',20000000);
 define('DAYS_ALLOW_TO_MODIFY_WORKS',14);
-
+define('WHAT_IS_IMPORTANT_NOW',1);
  
 
 define('ACCEPTED_FILE_TYPES', [
