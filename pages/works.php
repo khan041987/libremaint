@@ -83,6 +83,7 @@ else
 $SQL.=",workorder_user_id='".(int) $_POST['workorder_user_id']."'";
 $SQL.=",workorder_status='".(int) $_POST['workorder_status']."'";
 $SQL.=",unplanned_shutdown=".(int) $_POST['unplanned_shutdown'];
+$SQL.=",after_work_machine_can_run=".(int) $_POST['after_work_machine_can_run'];
 
 if (isset($_POST['workorder_partner_id']))
 $SQL.=",workorder_partner_id='".$workorder_row['workorder_partner_id']."'";
@@ -316,7 +317,23 @@ ajax_call('show_worktimebar',document.getElementById('workorder_work_start_date'
     echo "</select>\n";    
     echo "</div>\n</div>";
     
-    
+    echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\">\n";
+            echo "<label for=\"workorder_status\" class=\" form-control-label\">".gettext("After work machine can run").":</label>";
+        echo "</div>\n";
+
+    echo "<div class=\"col col-md-3\">\n";
+        echo "<select name=\"after_work_machine_can_run\" id=\"after_work_machine_can_run\" class=\"form-control\" >";
+    echo "<option value='1'";
+    if (isset($_GET['modify']) && $row_mod['after_work_machine_can_run']==1)
+    echo " selected";
+    echo ">".gettext("Yes")."\n";
+    echo "<option value='0'";
+    if (isset($_GET['modify']) && $row_mod['after_work_machine_can_run']==0)
+    echo " selected";
+    echo ">".gettext("No")."\n";
+    echo "</select>\n";    
+    echo "</div>\n</div>";
     
     echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\">\n";

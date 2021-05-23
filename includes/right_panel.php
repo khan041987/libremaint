@@ -49,7 +49,7 @@ $SQL.=$value;
 $SQL.=")";
 
 $SQL.=" AND message_type>2";
-$SQL.=" AND user_id_who_checked=0";
+$SQL.=" AND user_id_who_checked=0 LIMIT 0,10";
 $result=$dba->Select($SQL);
 $message_number=$dba->affectedRows();
 

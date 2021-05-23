@@ -2009,6 +2009,34 @@ echo "<div class=\"card\">";
         while (isset($row["contact".$i."_surname"]))
         {
         echo "<strong>".$i.". ".gettext("contact")."</strong>";
+        
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"contact".$i."_firstname_is_first\" class=\"form-control-label\">".gettext("Firstname is first").":</label></div>\n";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+        {
+            
+            echo "<div class=\"col col-md-3\">";
+            echo "<select name=\"contact".$i."_firstname_is_first\" id=\"contact".$i."_firstname_is_first\">";
+            echo "<option value='1'";
+            if ($row["contact".$i."_firstname_is_first"]==1)
+            echo " selected";
+            echo ">".gettext("Yes");
+            echo "<option value='0'";
+            if ($row["contact".$i."_firstname_is_first"]==0)
+            echo " selected";
+            echo ">".gettext("No");
+            echo "</options></select>";
+            
+        echo "</div>";
+        }else{
+        if ($row["contact".$i."_firstname_is_first"]==1)
+        echo gettext("Yes");
+        else
+        echo gettext("No");
+        }
+        echo "</div>\n";
+        
+        
         echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"contact".$i."_surname\" class=\"form-control-label\">".gettext("Name").":</label></div>\n";
         if (isset($_GET['param3']) && $_GET['param3']=='modify')
@@ -2033,8 +2061,8 @@ echo "<div class=\"card\">";
             echo "<div class=\"col col-md-3\">";
         if (isset($_GET['param3']) && $_GET['param3']=='modify')
             {
-                echo "<input type='text' name=\"contact".$i."_firstname\" name=\"contact".$i."_firstname\" value=\"".$row["contact".$i."_firstname"]."\" size='5'>";
-                echo "<input type='text' name=\"contact".$i."_surname\" name=\"contact".$i."_surname\" value=\"".$row["contact".$i."_surname"]."\" size='5'>";
+                echo "<input type='text' placeholder='firstname' name=\"contact".$i."_firstname\" name=\"contact".$i."_firstname\" value=\"".$row["contact".$i."_firstname"]."\" size='5'>";
+                echo "<input type='text' placeholder='surname' name=\"contact".$i."_surname\" name=\"contact".$i."_surname\" value=\"".$row["contact".$i."_surname"]."\" size='5'>";
             }
             else
             echo $row["contact".$i."_firstname"]." ".$row["contact".$i."_surname"];
@@ -2044,8 +2072,8 @@ echo "<div class=\"card\">";
         {
         if (isset($_GET['param3']) && $_GET['param3']=='modify')
             {
-               echo "<input type='text' name=\"contact".$i."_surname\" name=\"contact".$i."_surname\" value=\"".$row["contact".$i."_surname"]."\" size='5'>";
-               echo "<input type='text' name=\"contact".$i."_firstname\" name=\"contact".$i."_firstname\" value=\"".$row["contact".$i."_firstname"]."\" size='5'>";
+               echo "<input type='text' placeholder='surname' name=\"contact".$i."_surname\" name=\"contact".$i."_surname\" value=\"".$row["contact".$i."_surname"]."\" size='5'>";
+               echo "<input type='text' placeholder='firstname' name=\"contact".$i."_firstname\" name=\"contact".$i."_firstname\" value=\"".$row["contact".$i."_firstname"]."\" size='5'>";
                
             }
             else
@@ -2084,8 +2112,70 @@ echo "<div class=\"card\">";
         
        $i++;
         }
+        #last contact
+         echo "<strong>".$i.". ".gettext("contact")."</strong>";
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"contact".$i."_surname\" class=\"form-control-label\">".gettext("Name").":</label></div>\n";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+        {
+        echo "<select name=\"contact".$i."_title\" id=\"contact".$i."_title\">";
+        foreach(TITLES as $key=>$value)
+        {
+        echo "<option value='".$key++."'";
+        
+        echo ">".$value;
+        
+        }
+        echo "</options>\n";
+        echo "</select>\n";
+        }
+        
+        if ($row['contact'.$i."_firstname_is_first"]==true)
+        {
+            echo "<div class=\"col col-md-3\">";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+            {
+                echo "<input type='text' placeholder='firstname' name=\"contact".$i."_firstname\" name=\"contact".$i."_firstname\" value=\"\" size='5'>";
+                echo "<input type='text' placeholder='surname' name=\"contact".$i."_surname\" name=\"contact".$i."_surname\" value=\"\" size='5'>";
+            }
+            echo "</div></div>\n";
+        }
+        else
+        {
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+            {
+               echo "<input type='text' placeholder='surname' name=\"contact".$i."_surname\" name=\"contact".$i."_surname\" value=\"\" size='5'>";
+               echo "<input type='text' placeholder='firstname' name=\"contact".$i."_firstname\" name=\"contact".$i."_firstname\" value=\"\" size='5'>";
+               
+            }
+            echo "</div></div>\n";
+        }
+        echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"contact".$i."_position\" class=\"form-control-label\">".gettext("Position").":</label></div>\n";
+        echo "<div class=\"col col-md-3\">";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+         echo "<input type='text' class=\"form-control\" name=\"contact".$i."_position\" name=\"contact".$i."_position\" value=\"\">";   
+        
+        echo "</div></div>\n";
         
         
+         echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"contact".$i."_phone\" class=\"form-control-label\">".gettext("Phone").":</label></div>\n";
+        echo "<div class=\"col col-md-3\">";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+         echo "<input type='text' class=\"form-control\" name=\"contact".$i."_phone\" name=\"contact".$i."_phone\" value=\"\">";   
+        echo "</div></div>\n";
+        
+        
+           echo "<div class=\"row form-group\">\n";
+        echo "<div class=\"col col-md-2\"><label for=\"contact".$i."_email\" class=\"form-control-label\">".gettext("Email").":</label></div>\n";
+        echo "<div class=\"col col-md-3\">";
+        if (isset($_GET['param3']) && $_GET['param3']=='modify')
+         echo "<input type='text' class=\"form-control\" name=\"contact".$i."_email\" name=\"contact".$i."_email\" value=\"\">";   
+        echo "</div></div>\n";
+        
+        
+        #last contact end
         echo "<div class=\"row form-group\">\n";
         echo "<div class=\"col col-md-2\"><label for=\"partner_tags\" class=\"form-control-label\">".gettext("Partner tags:")."</label></div>\n";
         echo "<div class=\"col col-md-3\">";

@@ -41,7 +41,7 @@ error_log($SQL,0);
     if ($_SESSION['CAN_WRITE_LANG1'])
     $SQL.=",workorder_work_".LANG1;
     
-    $SQL.=",main_asset_id,asset_id,workorder_user_id,workorder_status,unplanned_shutdown";
+    $SQL.=",main_asset_id,asset_id,workorder_user_id,workorder_status,unplanned_shutdown,after_work_machine_can_run";
     
     if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.=",workorder_work_".LANG2;
@@ -69,8 +69,8 @@ error_log($SQL,0);
     else
     $SQL.=(int) $_SESSION['user_id'].",";
     $SQL.=(int) $_POST['workorder_status'].",";
-    $SQL.=(int) $_POST['unplanned_shutdown'];
-    
+    $SQL.=(int) $_POST['unplanned_shutdown'].",";
+    $SQL.=(int) $_POST['after_work_machine_can_run'];
     if (LANG2_AS_SECOND_LANG && isset($_SESSION['CAN_WRITE_LANG2']))
     $SQL.=",'".$dba->escapeStr($_POST['workorder_work_'.LANG2])."'";
     
@@ -586,20 +586,20 @@ foreach($row1 as $key => $value)
         $products_can_connect=array_merge(get_products_id_can_connect($value,$row1['connection_type'.substr($key,13)]),$products_can_connect);
     
     }
-    
+   
 if (count($products_can_connect)>0){
-//remove the part from the list if it is not at stock
+//remove the part from the list if it is not at stock (built in)
 foreach ($products_can_connect as $k=>$pr){
 $SQL="SELECT 1 FROM stock WHERE product_id=".$pr." AND stock_location_id=0";
 $r=$dba->Select($SQL);
-
 if ($dba->affectedRows()>0){
 unset($products_can_connect[$k]);
 
 }
 }
 
-}    
+} 
+
 if (count($products_can_connect)>1)
 {
     echo "<div class=\"row form-group\">\n";

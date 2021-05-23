@@ -67,7 +67,7 @@ $html.="<IMG src=\"".$filePath2."\">";
 $pdf->writeHTML($html, true, false, true, false, '');
 $pdf->AddPage();
 
-
+$pdf->Bookmark(gettext("Workhours by assets and KPIs"), 0, 0, '', '', array(0,64,128));
 
 $html='<h2>'.gettext('Workhours by assets').' '.$date_termin.'</h2>';
 //$pdf->Image('@'.$imgData,'C');
@@ -100,21 +100,90 @@ else
 $important_only=0;
 
 $pdf->writeHTML($html, true, false, true, false, '');
-$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour, asset_name_".$lang." FROM workorder_works LEFT JOIN assets ON workorder_works.main_asset_id=assets.asset_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorder_works.asset_id>0";
+
+require(INCLUDES_PATH."get_working_days_function.php"); 
+$working_days=getWorkingDays($start,$end,'');
+
+$SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour,workorder_works.main_asset_id as main_asset_id, asset_name_".$lang." FROM workorder_works LEFT JOIN assets ON workorder_works.main_asset_id=assets.asset_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorder_works.asset_id>0";
 
 if ($important_only==1)
 $SQL.=" AND asset_importance=1";
 $SQL.=" GROUP BY main_asset_id ORDER BY workhour DESC" ; 
 $result=$dba->Select($SQL);
-$html='<table border="0" cellspacing="2" cellpadding="2"><thead><tr><td width="20"></td><td><strong>'.gettext("Asset name").'</strong></td><td width="60" style="text-align:right"><strong>'.gettext("Workhours").'</strong></td></tr></thead>';
+$html='<table border="0" cellspacing="2" cellpadding="2"><thead><tr><td width="20"></td><td><strong>'.gettext("Asset name").'</strong></td><td width="60" style="text-align:right"><strong>'.gettext("Workhours").'</strong></td>';
+if (TAM_TAI){
+$html.= '<td><strong>'.gettext("Loss of production time").'</strong></td>';
+$html.= '<td><strong>'.gettext("TAM or TAI").'</strong></td>';
+$html.= '<td><strong>'.gettext("Unplanned lossed production time").'</strong></td>';
+$html.= '<td><strong>'.gettext("TAM or TAI (only unplanned)").'</strong></td>';
+}
+$html.='</tr></thead>';
 $i=0;
 $total=0;
 if ($dba->affectedRows()>0){
+
+if (TAM_TAI)
+{
+require(INCLUDES_PATH."TAM_TAI.php"); 
+$tam=TAM_TAI($start,$end,1,0);
+$tai=TAM_TAI($start,$end,0,0);
+$tampcs=count($tam);
+$taipcs=count($tai);
+
+$tamx=TAM_TAI($start,$end,1,1);
+$taix=TAM_TAI($start,$end,0,1);
+}
+
 foreach ($result as $row){
-$html.='<tr><td width="20">'.++$i.'</td><td><strong>'.$row['asset_name_'.$lang].'</strong></td><td width="60" style="text-align:right">'.round($row['workhour'],1).'</td></tr>';
+$html.='<tr><td width="20">'.++$i.'</td>';
+
+if (TAM_TAI && array_key_exists($row['main_asset_id'],$tam))
+$html.='<td><strong><i>'.$row['asset_name_'.$lang].' (TAM)</i></strong></td>';
+
+else if (TAM_TAI && array_key_exists($row['main_asset_id'],$tai))
+$html.='<td><i><strong>'.$row['asset_name_'.$lang].' (TAI)</i></strong></td>';
+
+else
+$html.='<td><strong>'.$row['asset_name_'.$lang].'</strong></td>';
+
+$html.='<td width="60" style="text-align:right">'.round($row['workhour'],1).'</td>';
+
+if (TAM_TAI && array_key_exists($row['main_asset_id'],$tam)){
+$html.='<td style="text-align:right">'.round($tam[$row['main_asset_id']]/60,1).' '.gettext("hour(s)").'</td>';
+$html.= '<td style="text-align:right"> '.round(100-($tam[$row['main_asset_id']]/($working_days*24*60)*100),1).'% </td>';
+$html.='<td style="text-align:right">'.round($tamx[$row['main_asset_id']]/60,1).' '.gettext("hour(s)").'</td>';
+$html.= '<td style="text-align:right"> '.round(100-($tamx[$row['main_asset_id']]/($working_days*24*60)*100),1).'% </td>';
+}
+
+else if (TAM_TAI && array_key_exists($row['main_asset_id'],$tai)){
+$html.='<td style="text-align:right">'.round($tam[$row['main_asset_id']]/60,1).' '.gettext("hour(s)").'</td>';
+$html.= '<td style="text-align:right"> '.round(100-($tai[$row['main_asset_id']]/($working_days*24*60)*100),1).'% </td>';
+$html.='<td style="text-align:right">'.round($taix[$row['main_asset_id']]/60,1).' '.gettext("hour(s)").'</td>';
+$html.= '<td style="text-align:right"> '.round(100-($taix[$row['main_asset_id']]/($working_days*24*60)*100),1).'% </td>';
+}
+else if (TAM_TAI)
+$html.="<td> - </td><td> - </td><td> - </td><td> - </td><td> - </td>";
+$html.= '</tr>';
 $total+=round($row['workhour'],1);
+
 }
+
 }
+
+if (TAM_TAI)
+{
+    foreach($tam as $key=>$a){
+    if($a==0)
+    $html.='<tr><td width="20">'.++$i.'</td><td><i><strong>'.get_asset_name_from_id($key,$lang).' (TAM)</i></strong></td><td width="60" style="text-align:right"> 0 </td><td> 100% </td><td> 100% </td></tr>';
+
+    }
+    foreach($tai as $key=>$a){
+    if($a==0)
+    $html.='<tr><td width="20">'.++$i.'</td><td><i><strong>'.get_asset_name_from_id($key,$lang).' (TAI)</i></strong></td><td width="60" style="text-align:right"> 0 </td><td> 100% </td><td> 100% </td></tr>';
+
+    }
+}
+
 
 if ($important_only==0)
 {
@@ -131,6 +200,18 @@ if ($important_only==0)
 $html.='<tr><td width="20"></td><td><strong>'.gettext("Total").':</strong></td><td width="60" style="text-align:right">'.$total.' '.gettext('hours').'</td></tr>';
 
 $html.='</table>';
+$sumtam=100-round(array_sum($tam)/($tampcs*$working_days*24*60)*100,1);
+$sumtai=100-round(array_sum($tai)/($taipcs*$working_days*24*60)*100,1);
+
+$sumtamx=100-round(array_sum($tamx)/($tampcs*$working_days*24*60)*100,1);
+$sumtaix=100-round(array_sum($taix)/($taipcs*$working_days*24*60)*100,1);
+
+$html.='<p><strong>TAM: </strong>'.$sumtam.' % ('.$working_days.' '.gettext('day(s)').', '.$tampcs.' '.gettext("pcs machines").')</p>';
+$html.='<p><strong>TAI: </strong>'.$sumtai.' % ('.$working_days.' '.gettext('day(s)').', '.$taipcs.' '.gettext("pcs infrastructure units").')</p>';
+
+$html.='<p><strong>TAMX: </strong>'.$sumtamx.' % ('.$working_days.' '.gettext('day(s)').', '.$tampcs.' '.gettext("pcs machines").')</p>';
+
+$html.='<p><strong>TAIX: </strong>'.$sumtaix.' % ('.$working_days.' '.gettext('day(s)').', '.$taipcs.' '.gettext("pcs infrastructure units").')</p>';
 $pdf->writeHTML($html, true, false, false, false, '');
 
 
@@ -214,7 +295,7 @@ $pdf->Bookmark(gettext("Active notifications"), 1, 0, '', '', array(0,64,128));
 $html='<H1>'.gettext("Active notifications")." ".$date_termin.'</H1>';
 
 
-$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE notification_status<4 ORDER BY asset_name_".$lang;
+$SQL="SELECT asset_name_".$lang.",notifications.asset_id as asset_id,notifications.main_asset_id as main_asset_id,notification_time,user_id,notification_type,priority,notification_status,notification_short_".$lang.",notification_".$lang." FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE notification_status<4 ORDER BY asset_name_".$lang;
 $result=$dba->Select($SQL);
 
 if ($dba->affectedRows())
@@ -237,6 +318,21 @@ if ($dba->affectedRows())
 
     $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row["notification_status"]-1]."<br/>";
     $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
+    if ($row['asset_id']>0 && $row['asset_id']!=$row['main_asset_id']){
+    $html.="<strong>".gettext("Asset:")." </strong>";
+    $k="";
+        $n="";
+               
+        foreach ($asset_path=get_whole_path("asset",$asset_id=$row['asset_id'],1) as $k){
+            if ($n=="") // the first element is the main asset_id -> ignore it
+            $n=" ";
+            else
+            $n.=$k."-><wbr>";
+        }
+        
+        $html.= substr($n,0,-7);
+    $html.="<br/>";
+    }
     if ($row['notification_'.$lang]!="")
     $html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";
     $html.= "<hr size='1'>";
@@ -274,6 +370,21 @@ if ($dba->affectedRows()>0)
 
     $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
     
+    if ($row['asset_id']>0 && $row['asset_id']!=$row['main_asset_id']){
+    $html.="<strong>".gettext("Asset:")." </strong>";
+    $k="";
+        $n="";
+       
+        foreach ($asset_path=get_whole_path("asset",$asset_id=$row['asset_id'],1) as $k){
+            if ($n=="") // the first element is the main asset_id -> ignore it
+            $n=" ";
+            else
+            $n.=$k."-><wbr>";
+        }
+        
+        $html.= substr($n,0,-7);
+    $html.="<br/>";
+    }
     $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
     if ($row['notification_'.$lang]!="")
     $html.="<strong>".gettext("Notification:")." </strong>".$row['notification_'.$lang]."<br/>";
@@ -320,7 +431,21 @@ if ($dba->affectedRows()>0)
     $html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
 
     $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
-    
+    if ($row['asset_id']>0 && $row['asset_id']!=$row['main_asset_id']){
+    $html.="<strong>".gettext("Asset:")." </strong>";
+    $k="";
+        $n="";
+       
+        foreach ($asset_path=get_whole_path("asset",$asset_id=$row['asset_id'],1) as $k){
+            if ($n=="") // the first element is the main asset_id -> ignore it
+            $n=" ";
+            else
+            $n.=$k."-><wbr>";
+        }
+        
+        $html.= substr($n,0,-7);
+    $html.="<br/>";
+    }
     $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
     if ($row['notification_'.$lang]!="")
     $html.="<strong>".gettext("Notification:")." </strong>".$row['notification_'.$lang]."<br/>";
@@ -343,7 +468,7 @@ if ($dba->affectedRows()>0)
 
 
 
-$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_time) <= DATE('".$end."') AND DATE(notification_time) >= DATE('".$start."') AND notification_status<4 ORDER BY asset_name_".$lang;
+$SQL="SELECT * FROM notifications LEFT JOIN assets ON notifications.main_asset_id=assets.asset_id WHERE DATE(notification_time) <= DATE(DATE_ADD('".$end."', INTERVAL +1 DAY)) AND DATE(notification_time) >= DATE('".$start."') AND notification_status<4 ORDER BY asset_name_".$lang;
 $result=$dba->Select($SQL);
 
 if ($dba->affectedRows()>0)
@@ -366,6 +491,21 @@ if ($dba->affectedRows()>0)
     $html.="<strong>".gettext("Type:")." </strong>".$notification_types[$row['notification_type']-1]."<br/>";
 
     $html.="<strong>".gettext("Status:")." </strong>".$notification_statuses[$row['notification_status']-1]."<br/>";
+    if ($row['asset_id']>0 && $row['asset_id']!=$row['main_asset_id']){
+    $html.="<strong>".gettext("Asset:")." </strong>";
+    $k="";
+        $n="";
+       
+        foreach ($asset_path=get_whole_path("asset",$asset_id=$row['asset_id'],1) as $k){
+            if ($n=="") // the first element is the main asset_id -> ignore it
+            $n=" ";
+            else
+            $n.=$k."-><wbr>";
+        }
+        
+        $html.= substr($n,0,-7);
+    $html.="<br/>";
+    }
     $html.="<strong>".gettext("Title:")." </strong>".$row['notification_short_'.$lang]."<br/>";
     if ($row['notification_'.$lang]!="")
     $html.="<strong>".gettext("Notification:")." </strong><p>".$row['notification_'.$lang]."</p><br/>";

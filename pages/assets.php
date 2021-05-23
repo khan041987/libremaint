@@ -326,13 +326,11 @@ $asset_tree_has_changed[]=get_whole_path('asset',(int) $_POST['asset_id'],1)[0];
 else if (isset($_GET['set_as_main_part']) && isset($_GET["asset_id"])){ 
  $SQL="UPDATE assets SET main_part=".(int) $_GET['set_as_main_part']." WHERE asset_id='".(int) $_GET['asset_id']."'";
  if ($dba->Query($SQL)){
+    $asset_tree_has_changed[]=get_whole_path('asset',(int) $_GET['asset_id'],1)[0];
         if ($_GET['set_as_main_part']==1)
         lm_info(gettext("The asset has set as main part."));
         else if ($_GET['set_as_main_part']==0){
         lm_error(gettext("The asset has unset as main part."));
-        
-      
-$asset_tree_has_changed[]=get_whole_path('asset',(int) $_GET['asset_id'],1)[0];
         }
         else
         lm_info(gettext("Failed to set as main part ").$dba->err_msg);

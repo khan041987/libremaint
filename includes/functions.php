@@ -1021,7 +1021,8 @@ else if ($workorder_row['workorder_status']==5) // it was finished, but now it i
         include(INCLUDES_PATH."asset_tree.php");
          }
      if ($workorder_row['product_id_to_refurbish']>0){
-     $SQL="INSERT INTO stock_movements (product_id,stock_movement_quantity,from_stock_location_id,to_partner_id,workorder_id) VALUES (";
+     
+     $SQL="INSERT INTO stock_movements (product_id,stock_movement_quantity,to_stock_location_id,to_partner_id,workorder_id) VALUES (";
                     $SQL.=$workorder_row['product_id_to_refurbish'].",1,".$workorder_row['orig_stock_location_id'].",".(int) $workorder_row['workorder_partner_id'].",".$workorder_id.")";
                     if (!$dba->Query($SQL))
                     lm_die($dba->err_msg." ".$SQL);
@@ -1340,4 +1341,12 @@ if (!empty($row))
 return $row['max'];
 else
 lm_die("Something went wrong... ".$dba->err_msg." ".$SQL);
+}
+
+function is_date_mysql_format($date):bool
+{
+    if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date))
+        return true;
+    else
+        return false;
 }

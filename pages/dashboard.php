@@ -42,6 +42,7 @@ if ($row['count']>1)
 echo gettext("pcs");
 else
 echo gettext("pc");
+
 ?>
                             </span>
                         </h4>
@@ -183,14 +184,11 @@ echo "</span>";
 
                 </div>
             </div>
+<?php
 
- 
- 
- 
- 
   
-  <?php 
- }//if ($_SESSION['user_level']<4) 
+   
+  }//if ($_SESSION['user_level']<4) 
   /*
   #
   #
@@ -368,7 +366,7 @@ echo gettext("pcs");
 else
 echo gettext("pc");
 }
-echo "0 pc";
+//echo "0 pc";
 
 ?>
                             </span>
@@ -380,9 +378,372 @@ echo "0 pc";
                 </div>
                 </a>
             </div>
- 
+ <?php
+ }//$_SESSION['user_level']>3
+ ?>
+<div class="content mt-3">
+<div class="col-sm-6 col-lg-6">
+  <canvas id="bar-chart-not" width="500" height="500"></canvas>
+  <script>
 <?php
-  }//$_SESSION['user_level']>3
+$SQL="select CONCAT(surname,' ', firstname) as name , count(notification_id) as n from notifications left join users on notifications.user_id=users.user_id group by notifications.user_id ORDER BY n DESC" ; 
+$result=$dba->Select($SQL);  
+  ?>
+  new Chart(document.getElementById("bar-chart-not"), {
+    type: 'bar',
+    data: {
+    labels: [<?php
+    $i=0;
+    foreach ($result as $row){
+   
+    if (!empty($row["name"])){ 
+    if ($i!=0)
+    echo ",";
+    echo "\"".$row['name']."\"";
+    $i++;}
+    }
+    ?>],
+      datasets: [{
+        label: "<?php echo gettext("Notification numbers per person");?>",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#f88fff","#808080","#009900","black","yellow","purple","orange"],
+        data: [<?php
+        $k=array();
+        $i=0;
+        foreach ($result as $row){
+        if ($row["n"]>0){ 
+        if ($i!=0)
+        echo ",";
+        echo $row['n'];
+        $i++;
+        }
+        }
+        
+        ?>]
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: '<?php echo gettext("Notification numbers per person");?>'
+      },
+      scales: {
+        xAxes: [{
+            beginAtZero: true,
+            ticks: {
+            autoSkip: false
+      }
+        }]
+    }
+    }
+});</script>
+
+  </div>
+
+<div class="col-sm-6 col-lg-6">
+  <canvas id="pie-chart-not2" width="500" height="500"></canvas>
+  <script>
+<?php
+$SQL="select CONCAT(surname,' ', firstname) as name , count(operator_work_id) as n from operator_works left join users on operator_works.operator_user_id=users.user_id where main_asset_id=1 group by operator_works.operator_user_id ORDER BY n DESC" ; 
+$result=$dba->Select($SQL);  
+  ?>
+  new Chart(document.getElementById("pie-chart-not2"), {
+    type: 'bar',
+    data: {
+    labels: [<?php
+    $i=0;
+    foreach ($result as $row){
+   
+    if (!empty($row["name"])){ 
+    if ($i!=0)
+    echo ",";
+    echo "\"".$row['name']."\"";
+    $i++;}
+    }
+    ?>],
+      datasets: [{
+        label: "<?php echo gettext("Operator works per person Alpha3");?>",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#ffffff","#808080","#009900","black","yellow","purple","orange"],
+        data: [<?php
+        $k=array();
+        $i=0;
+        foreach ($result as $row){
+        if ($row["n"]>0){ 
+        if ($i!=0)
+        echo ",";
+        echo $row['n'];
+        $i++;
+        }
+        }
+        
+        ?>]
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: '<?php echo gettext("Operator works per person Alpha3");?>'
+      },
+      scales: {
+       yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    precision: 0
+                }
+            }]
+    }
+    }
+});</script>
+
+  </div>
+  
+</div>
+
+<div class="content mt-3">
+<div class="col-sm-6 col-lg-6">
+  <canvas id="pie-chart-not3" width="500" height="500"></canvas>
+  <script>
+<?php
+$SQL="select CONCAT(surname,' ', firstname) as name , count(operator_work_id) as n from operator_works left join users on operator_works.operator_user_id=users.user_id where main_asset_id=28 group by operator_works.operator_user_id ORDER BY n DESC" ; 
+$result=$dba->Select($SQL);  
+  ?>
+  new Chart(document.getElementById("pie-chart-not3"), {
+    type: 'bar',
+    data: {
+    labels: [<?php
+    $i=0;
+    foreach ($result as $row){
+   
+    if (!empty($row["name"])){ 
+    if ($i!=0)
+    echo ",";
+    echo "\"".$row['name']."\"";
+    $i++;}
+    }
+    ?>],
+      datasets: [{
+        label: "<?php echo gettext("Operator works per person Alpha2");?>",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#ffffff","#808080","#009900","black","yellow","purple","orange"],
+        data: [<?php
+        $k=array();
+        $i=0;
+        foreach ($result as $row){
+        if ($row["n"]>0){ 
+        if ($i!=0)
+        echo ",";
+        echo $row['n'];
+        $i++;
+        }
+        }
+        
+        ?>]
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: '<?php echo gettext("Operator works per person Alpha2");?>'
+      },
+      scales: {
+        yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    precision: 0
+                }
+            }]
+    }
+    }
+});</script>
+
+  </div>
+
+<div class="col-sm-6 col-lg-6">
+  <canvas id="pie-chart-not4" width="500" height="500"></canvas>
+  <script>
+<?php
+$SQL="select asset_name_".$lang." as name , count(operator_work_id) as n from operator_works left join assets on operator_works.asset_id=assets.asset_id where main_asset_id=1 group by operator_works.asset_id ORDER BY n DESC" ; 
+$result=$dba->Select($SQL);  
+  ?>
+  new Chart(document.getElementById("pie-chart-not4"), {
+    type: 'bar',
+    data: {
+    labels: [<?php
+    $i=0;
+    foreach ($result as $row){
+   
+    if (!empty($row["name"])){ 
+    if ($i!=0)
+    echo ",";
+    echo "\"".$row['name']."\"";
+    $i++;}
+    }
+    ?>],
+      datasets: [{
+        label: "<?php echo gettext("Operator works per parts Alpha3");?>",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#ff88ff","#808080","#009900","black","yellow","purple","orange"],
+        data: [<?php
+        $k=array();
+        $i=0;
+        foreach ($result as $row){
+        if ($row["n"]>0){ 
+        if ($i!=0)
+        echo ",";
+        echo $row['n'];
+        $i++;
+        }
+        }
+        
+        ?>]
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: '<?php echo gettext("Operator works per parts Alpha3");?>'
+      },
+      scales: {
+        yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    precision: 0
+                }
+            }]
+    }
+    }
+});</script>
+
+</div>
+
+  
+  </div>
+<div class="content mt-3">
+<div class="col-sm-6 col-lg-6">
+  <canvas id="pie-chart-not5" width="500" height="500"></canvas>
+  <script>
+<?php
+$SQL="select asset_name_".$lang." as name , count(operator_work_id) as n from operator_works left join assets on operator_works.asset_id=assets.asset_id where main_asset_id=28 group by operator_works.asset_id ORDER BY n DESC" ; 
+$result=$dba->Select($SQL);  
+  ?>
+  new Chart(document.getElementById("pie-chart-not5"), {
+    type: 'bar',
+    data: {
+    labels: [<?php
+    $i=0;
+    foreach ($result as $row){
+   
+    if (!empty($row["name"])){ 
+    if ($i!=0)
+    echo ",";
+    echo "\"".$row['name']."\"";
+    $i++;}
+    }
+    ?>],
+      datasets: [{
+        label: "<?php echo gettext("Operator works per parts Alpha2");?>",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#ff88ff","#808080","#009900","black","yellow","purple","orange","#abc111","#2edcba","#aa89aa"],
+        data: [<?php
+        $k=array();
+        $i=0;
+        foreach ($result as $row){
+        if ($row["n"]>0){ 
+        if ($i!=0)
+        echo ",";
+        echo $row['n'];
+        $i++;
+        }
+        }
+        
+        ?>]
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: '<?php echo gettext("Operator works per parts Alpha2");?>'
+      },
+      scales: {
+         xAxes: [{
+            ticks: {
+            autoSkip: false
+      }
+        }],
+        yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    fixedStepSize: 1
+                }
+            }]
+    }
+    }
+});</script>
+
+</div>
+
+<div class="col-sm-6 col-lg-6">
+  <canvas id="pie-chart-not6" width="500" height="500"></canvas>
+  <script>
+<?php
+$SQL="select notification_type , count(notification_id) as n from notifications group by notification_type ORDER BY n DESC" ; 
+$result=$dba->Select($SQL);  
+  ?>
+  new Chart(document.getElementById("pie-chart-not6"), {
+    type: 'bar',
+    data: {
+    labels: [<?php
+    $i=0;
+    foreach ($result as $row){
+   
+    if (!empty($row["notification_type"])){ 
+    if ($i!=0)
+    echo ",";
+    echo "\"".$notification_types[$row['notification_type']-1]."\"";
+    $i++;}
+    }
+    ?>],
+      datasets: [{
+        label: "<?php echo gettext("Notification types by number");?>",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#ff88ff","#808080","#009900","black","yellow","purple","orange","#abc111","#2edcba","#aa89aa"],
+        data: [<?php
+        $k=array();
+        $i=0;
+        foreach ($result as $row){
+        if ($row["n"]>0){ 
+        if ($i!=0)
+        echo ",";
+        echo $row['n'];
+        $i++;
+        }
+        }
+        
+        ?>]
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: '<?php echo gettext("Notification types by number");?>'
+      },
+      scales: {
+         xAxes: [{
+            ticks: {
+            autoSkip: false
+      }
+        }],
+        yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    precision: 0
+                }
+            }]
+    }
+    }
+});</script>
+
+</div>
+
+</div>
+
+  <?php
+ 
   
   
   if (isset($_SESSION['SEE_STATS_OF_WORKS']))

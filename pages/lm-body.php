@@ -35,6 +35,7 @@ if (isset($req_page)) //$req_page from lm-header.php
             case "settings": require_once( PAGES_PATH.'settings.php' );$valid_page=true;break;
             case "pdf_create": require_once( PAGES_PATH.'pdf_create.php' );$valid_page=true;break;
             case "messages": require_once( PAGES_PATH.'messages.php' );$valid_page=true;break;
+            case "iot_intervals": require_once( PAGES_PATH.'iot_intervals.php' );$valid_page=true;break;
             case "stock_movements":require_once( PAGES_PATH.'stock_movements.php' );$valid_page=true;break;
             case "connections":require_once( PAGES_PATH.'connections.php' );$valid_page=true;break;
             case "connection_types":require_once( PAGES_PATH.'connection_types.php' );$valid_page=true;break;

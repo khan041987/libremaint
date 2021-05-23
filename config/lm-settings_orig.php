@@ -189,7 +189,7 @@ $pages = array
   
   $workrequest_statuses=array(gettext("All"),gettext("Active"),gettext("Ongoing"),gettext("Finished"),gettext("Deleted"));
   
-  $notification_types=array(gettext("maintenance"),gettext("fix"),gettext("development"));
+  $notification_types=array(gettext("maintenance"),gettext("fix"),gettext("development"),gettext("safety"),gettext("material demand"));
   $notification_statuses=array(gettext("New"),gettext("Confirmed"),gettext("Work in progress"),gettext("Resolved"),gettext("Closed"),gettext("Deleted"));
   
   $connection_types=array(gettext("Male"),gettext("Female"),gettext("Same"));
@@ -200,4 +200,5 @@ define('TITLES', [
    ]);  
 define( 'IMG_SIZE',1500);  //after image uploading we resize it
 define( 'THUMB_IMG_SIZE',80); 
- 
+$shift_change_times=array("06:00","14:00","22:00"); //it is used in includes/operating_by_shifts.php  
+define('IOT_INTERVALS_ASSET_IDS',[]);
