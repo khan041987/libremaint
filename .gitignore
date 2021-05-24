@@ -5,6 +5,8 @@
 /info_files/**
 /config/lm-settings.php
 /includes/access_query.php
+/includes/spec_graphs.php
 lm-debug.log
+todo
 /.**
 
