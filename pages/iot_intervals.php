@@ -17,9 +17,10 @@ echo "<div class=\"col-md-auto\">\n";
 operating_by_shifts($iot,$begin,$end); 
 operating_timebar($iot,date('Y-m-d'));
 echo "</div>\n";
+$i++;
 if ($i%2==0)
 echo "</div>\n";
-$i++;
+
 
 }
 echo "</div>";
