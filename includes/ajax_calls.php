@@ -4,6 +4,7 @@ header("Location: by.php");
 if (isset($_GET['param1']) && $_GET['param1']=="is_it_valid_time_period"){
 $start_time=new DateTime($dba->escapeStr($_GET['param2']));
 $end_time=new DateTime($dba->escapeStr($_GET['param3']));
+
 if (is_it_valid_worktime_period($dba->escapeStr($_GET['param2']),$dba->escapeStr($_GET['param3']),(int) $_GET['param4'],(int) $_GET['param5']) && $end_time>=$start_time)
 
 {
@@ -19,6 +20,15 @@ echo "<div class='bg-flat-color-4'>".gettext("There is a recorded work in this t
 
 
 } 
+else if (isset($_GET['param1']) && $_GET['param1']=="is_it_valid_time_period_for_partners"){
+echo "<button type=\"submit\" id='submit_button' class=\"btn btn-primary btn-sm\">";
+    echo "<i class=\"fa fa-dot-circle-o\"></i>";
+    echo gettext("Submit");
+    echo " </button>\n";
+
+}
+
+
 else if (isset($_GET['param1']) && $_GET['param1']=="locations" && $_GET['param2']>0){//new asset form
 
     echo "<select name=\"asset_location\" id=\"asset_location\" class=\"form-control\">";

@@ -11,7 +11,11 @@ var start_time=document.getElementById('workorder_work_start_date').value+' '+do
 var end_time=document.getElementById('workorder_work_end_date').value+' '+document.getElementById('workorder_work_end_time').value;
 <?php
 if (isset($_GET['workorder_id']) && $workorder_row['workorder_status']<5){
-echo "ajax_call('is_it_valid_time_period',start_time,end_time,document.getElementById('workorder_user_id').value,'";
+echo "
+if (workorder_partner_id.checked)
+ajax_call('is_it_valid_time_period_for_partners',start_time,end_time,document.getElementById('workorder_user_id').value,'','".URL."index.php','ajax_button');
+else
+ajax_call('is_it_valid_time_period',start_time,end_time,document.getElementById('workorder_user_id').value,'";
 if (isset($_GET['modify']) && isset($_GET['workorder_id']))
 echo (int) $_GET['workorder_id'];
 else
@@ -233,7 +237,9 @@ echo "<div class=\"card-body card-block\">";
             echo " checked='true'";
             echo ">";
             echo "<span> ".get_partner_name_from_id($row['workorder_partner_id'])."</span>\n</div></div>\n";
-            }
+            }else
+            echo "<input type='hidden' name='workorder_partner_id' id='workorder_partner_id' value='null'>\n";
+            
         }
         echo "<div class=\"row form-group\">\n";
         

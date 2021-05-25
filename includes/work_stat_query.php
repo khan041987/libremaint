@@ -17,7 +17,7 @@ $SQL="SELECT ";
 if (!empty($sum_field) && $sum_field=='workhour' && ($group_by_field=='priority' || $group_by_field=='request_type'))
     $SQL.="sum(TIME_TO_SEC(workorder_worktime)/3600) as ".$sum_field." ";
     else
-    $SQL.="workorder_".$lang.",workorder_user_id,workorder_short_".$lang.",workorder_work_end_time,workorder_work_start_time,workorder_worktime, priority,workorder_work_".$lang.",workorders.main_asset_id,workorders.asset_id,unplanned_shutdown";
+    $SQL.="workorder_".$lang.",workorder_user_id,workorder_works.workorder_partner_id ,workorder_short_".$lang.",workorder_work_end_time,workorder_work_start_time,workorder_worktime, priority,workorder_work_".$lang.",workorders.main_asset_id,workorders.asset_id,unplanned_shutdown";
     if ($asset_vs_product==1)
         $SQL.=", asset_name_".$lang;
     else
@@ -116,9 +116,9 @@ $i++;
         $html.="<H2></H2><H2>".$main_asset_name."</H2>";
          $workers_array=array();
         }
-       if (!isset($workers_array[$row['workorder_user_id']]))
+       if (empty($row['workorder_partner_id']) && !isset($workers_array[$row['workorder_user_id']]))
         $workers_array[$row['workorder_user_id']]=0;
-       if (!isset($total_workers_array[$row['workorder_user_id']])) 
+       if (empty($row['workorder_partner_id']) && !isset($total_workers_array[$row['workorder_user_id']])) 
         $total_workers_array[$row['workorder_user_id']]=0;
         $s_main_asset_id=$row['main_asset_id'];
         if($asset_vs_product==0)
@@ -159,16 +159,21 @@ $i++;
         }
      
       //print_r($workers_array);
+        if ($row['workorder_partner_id']>0)
+        $html.="<tr><td><strong>".get_partner_name_from_id($row['workorder_partner_id'])." </strong></td>";
+        else
         $html.="<tr><td><strong>".$all_user[$row['workorder_user_id']]." </strong></td>";
         $html.="<td>".date($lang_date_format." H:i", strtotime($row['workorder_work_start_time']))." - ".date("H:i", strtotime($row['workorder_work_end_time']))."</td>";
         $startTime = new DateTime($row['workorder_work_start_time']);
         $endTime = new DateTime($row['workorder_work_end_time']);
         $duration = $startTime->diff($endTime); //$duration is a DateInterval object
         $dur=round($duration->s / 3600 + $duration->i / 60 + $duration->h + $duration->days * 24,1);
+        if (empty($row['workorder_partner_id']))
+        {
         $workers_array[$row['workorder_user_id']]+=$dur;
-        
         $total_workers_array[$row['workorder_user_id']]+=$dur;
         $total_hours+=$dur;
+        }
         $html.= "<td style=\"width:30px;text-align:left;\">".$duration->format("%H:%I")."</td>";
         $sum_hours += round($duration->s / 3600 + $duration->i / 60 + $duration->h + $duration->days * 24, 1);
        

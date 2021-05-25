@@ -30,7 +30,7 @@ if ($_SESSION['user_level']<3)
 else if ($_SESSION['user_level']>2)
     $user_id=(int) $_SESSION['user_id'];
 
-if (is_it_valid_worktime_period($_POST['workorder_work_start_date']." ".$_POST['workorder_work_start_time'],$_POST['workorder_work_end_date']." ".$_POST['workorder_work_end_time'],$user_id,(int) $_POST['workorder_id']))
+if ((int) $_POST['workorder_partner_id']>0 || is_it_valid_worktime_period($_POST['workorder_work_start_date']." ".$_POST['workorder_work_start_time'],$_POST['workorder_work_end_date']." ".$_POST['workorder_work_end_time'],$user_id,(int) $_POST['workorder_id']))
 {
     
     $SQL="SELECT * FROM workorders WHERE workorder_id=".(int) $_POST['workorder_id'];

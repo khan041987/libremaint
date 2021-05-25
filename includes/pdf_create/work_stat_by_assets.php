@@ -102,7 +102,7 @@ $important_only=0;
 $pdf->writeHTML($html, true, false, true, false, '');
 
 require(INCLUDES_PATH."get_working_days_function.php"); 
-$working_days=getWorkingDays($start,$end,'');
+$working_days=getWorkingDays($start,$end,$holidays);
 
 $SQL="select SUM(TIME_TO_SEC(workorder_worktime)/3600) as workhour,workorder_works.main_asset_id as main_asset_id, asset_name_".$lang." FROM workorder_works LEFT JOIN assets ON workorder_works.main_asset_id=assets.asset_id WHERE workorder_works.deleted<>1 AND DATE(workorder_work_start_time) >= DATE('".$start."') AND DATE(workorder_work_end_time) <= DATE('".$end."') AND workorder_works.asset_id>0";
 
@@ -162,7 +162,7 @@ $html.='<td style="text-align:right">'.round($taix[$row['main_asset_id']]/60,1).
 $html.= '<td style="text-align:right"> '.round(100-($taix[$row['main_asset_id']]/($working_days*24*60)*100),1).'% </td>';
 }
 else if (TAM_TAI)
-$html.="<td> - </td><td> - </td><td> - </td><td> - </td><td> - </td>";
+$html.="<td style=\"text-align:right\"> - </td><td style=\"text-align:right\"> - </td><td style=\"text-align:right\"> - </td><td style=\"text-align:right\"> - </td>";
 $html.= '</tr>';
 $total+=round($row['workhour'],1);
 
@@ -174,12 +174,12 @@ if (TAM_TAI)
 {
     foreach($tam as $key=>$a){
     if($a==0)
-    $html.='<tr><td width="20">'.++$i.'</td><td><i><strong>'.get_asset_name_from_id($key,$lang).' (TAM)</i></strong></td><td width="60" style="text-align:right"> 0 </td><td> 100% </td><td> 100% </td></tr>';
+    $html.='<tr><td width="20">'.++$i.'</td><td><i><strong>'.get_asset_name_from_id($key,$lang).' (TAM)</i></strong></td><td width="60" style="text-align:right"> 0 </td><td style="text-align:right"> 0 '.gettext("hour").'</td><td style="text-align:right"> 100% </td><td style="text-align:right"> 0 '.gettext("hour").'</td><td style="text-align:right"> 100% </td></tr>';
 
     }
     foreach($tai as $key=>$a){
     if($a==0)
-    $html.='<tr><td width="20">'.++$i.'</td><td><i><strong>'.get_asset_name_from_id($key,$lang).' (TAI)</i></strong></td><td width="60" style="text-align:right"> 0 </td><td> 100% </td><td> 100% </td></tr>';
+    $html.='<tr><td width="20">'.++$i.'</td><td><i><strong>'.get_asset_name_from_id($key,$lang).' (TAI)</i></strong></td><td width="60" style="text-align:right"> 0 </td><td style="text-align:right"> 0 '.gettext("hour").'</td><td style="text-align:right"> 100% </td><td style="text-align:right"> 0 '.gettext("hour").'</td><td style="text-align:right"> 100% </td></tr>';
 
     }
 }
