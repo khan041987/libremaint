@@ -202,3 +202,4 @@ define( 'IMG_SIZE',1500);  //after image uploading we resize it
 define( 'THUMB_IMG_SIZE',80); 
 $shift_change_times=array("06:00","14:00","22:00"); //it is used in includes/operating_by_shifts.php  
 define('IOT_INTERVALS_ASSET_IDS',[]);
+$holidays=array();//for includes/get_working_days_function.php
